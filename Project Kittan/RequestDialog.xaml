@@ -1,0 +1,33 @@
+﻿<Window
+    x:Class="Project_Kittan.RequestDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Project_Kittan"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Project Kittan"
+    Width="400"
+    Height="137"
+    Closing="Window_Closing"
+    ResizeMode="NoResize"
+    mc:Ignorable="d">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="8">
+            <TextBlock x:Name="CharactersLeftTextBlock" Text="The current &quot;Version List&quot; exeeds of 0 characters." />
+            <TextBox
+                x:Name="VersionListTextBox"
+                Height="48"
+                Margin="0,4,0,0"
+                TextChanged="TextBox_TextChanged"
+                TextWrapping="Wrap" />
+            <Button
+                x:Name="ContinueButton"
+                Width="120"
+                Margin="0,4,0,0"
+                HorizontalAlignment="Right"
+                Click="Button_Click"
+                Content="Save and continue"
+                IsEnabled="False" />
+        </StackPanel>
+    </ScrollViewer>
+</Window>
