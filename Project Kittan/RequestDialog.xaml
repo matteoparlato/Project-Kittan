@@ -13,7 +13,7 @@
     mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="8">
-            <TextBlock x:Name="CharactersLeftTextBlock" Text="The current &quot;Version List&quot; exeeds of 0 characters." />
+            <TextBlock x:Name="CharactersLeftTextBlock" Text="The current &quot;Version List&quot; exceeds the maximum length by 0 characters." />
             <TextBox
                 x:Name="VersionListTextBox"
                 Height="48"
