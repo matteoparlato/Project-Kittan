@@ -6,14 +6,17 @@
     xmlns:local="clr-namespace:Project_Kittan"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Project Kittan"
-    Width="400"
-    Height="137"
+    Width="410"
+    Height="147"
     Closing="Window_Closing"
     ResizeMode="NoResize"
     mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="8">
-            <TextBlock x:Name="CharactersLeftTextBlock" Text="The current &quot;Version List&quot; exeeds of 0 characters." />
+            <TextBlock
+                x:Name="CharactersLeftTextBlock"
+                Text="The current &quot;Version List&quot; exceeds the maximum length by 0 characters."
+                TextWrapping="Wrap" />
             <TextBox
                 x:Name="VersionListTextBox"
                 Height="48"

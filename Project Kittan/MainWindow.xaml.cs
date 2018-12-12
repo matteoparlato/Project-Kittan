@@ -164,6 +164,10 @@ namespace Project_Kittan
                                         }
                                 }
                             }
+                            else
+                            {
+                                builder.AppendLine(line);
+                            }
 
                             line = reader.ReadLine();
                             if (line.Contains("Time"))
@@ -185,7 +189,7 @@ namespace Project_Kittan
                             if (line.Contains("Version List"))
                             {
                                 // Check if the user defined tag is already in the "Version List"
-                                if (!string.IsNullOrWhiteSpace(VersionTextTextBox.Text) && !line.Contains(VersionTextTextBox.Text))
+                                if (!string.IsNullOrWhiteSpace(VersionTextTextBox.Text) && line.IndexOf(VersionTextTextBox.Text, StringComparison.OrdinalIgnoreCase) == -1)
                                 {
                                     line = line.Replace(";", ",");
                                     line = line + VersionTextTextBox.Text + ";";
@@ -273,7 +277,7 @@ namespace Project_Kittan
                 {
                     files.Add(f);
                 }
-                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.Equals(".hg")))
+                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.EndsWith(".hg")))
                 {
                     files.AddRange(FindFiles(d));
                 }
