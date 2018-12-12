@@ -30,7 +30,7 @@ namespace Project_Kittan
             VersionList = versionList;
 			_maxLength = maxLength;
 
-			CharactersLeftTextBlock.Text = string.Format("The current \"Version List\" exeeds of {0} characters.", VersionListTextBox.Text.Length - _maxLength);
+			CharactersLeftTextBlock.Text = string.Format("The current \"Version List\" exceeds the maximum length by {0} characters.", VersionListTextBox.Text.Length - _maxLength);
 
 			WindowStartupLocation = WindowStartupLocation.CenterScreen;
 		}
@@ -55,7 +55,7 @@ namespace Project_Kittan
         /// <param name="e"></param>
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			CharactersLeftTextBlock.Text = string.Format("The \"Version List\" exeeds of {0} characters.", VersionListTextBox.Text.Length - _maxLength);
+			CharactersLeftTextBlock.Text = string.Format("The \"Version List\" exceeds the maximum length by {0} characters.", VersionListTextBox.Text.Length - _maxLength);
 
 			if (string.IsNullOrWhiteSpace(VersionListTextBox.Text) || VersionListTextBox.Text.Length > _maxLength)
 			{
