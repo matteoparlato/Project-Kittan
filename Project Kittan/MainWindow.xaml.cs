@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
@@ -27,6 +28,7 @@ namespace Project_Kittan
             InitializeComponent();
 
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            Title = "Project Kittan - " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         /// <summary>
@@ -271,7 +273,7 @@ namespace Project_Kittan
                 {
                     files.Add(f);
                 }
-                foreach (string d in Directory.GetDirectories(Path))
+                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.Equals(".hg")))
                 {
                     files.AddRange(FindFiles(d));
                 }
