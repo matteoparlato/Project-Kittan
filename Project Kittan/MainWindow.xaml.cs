@@ -271,7 +271,7 @@ namespace Project_Kittan
                 {
                     files.Add(f);
                 }
-                foreach (string d in Directory.GetDirectories(Path))
+                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.Equals(".hg")))
                 {
                     files.AddRange(FindFiles(d));
                 }
