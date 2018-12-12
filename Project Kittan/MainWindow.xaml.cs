@@ -189,7 +189,7 @@ namespace Project_Kittan
                             if (line.Contains("Version List"))
                             {
                                 // Check if the user defined tag is already in the "Version List"
-                                if (!string.IsNullOrWhiteSpace(VersionTextTextBox.Text) && !line.Contains(VersionTextTextBox.Text))
+                                if (!string.IsNullOrWhiteSpace(VersionTextTextBox.Text) && line.IndexOf(VersionTextTextBox.Text, StringComparison.OrdinalIgnoreCase) == -1)
                                 {
                                     line = line.Replace(";", ",");
                                     line = line + VersionTextTextBox.Text + ";";
