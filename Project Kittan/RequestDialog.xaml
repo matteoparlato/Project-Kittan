@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Project_Kittan"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Project Kittan"
-    Width="410"
+    Width="430"
     Height="147"
     Closing="Window_Closing"
     ResizeMode="NoResize"
