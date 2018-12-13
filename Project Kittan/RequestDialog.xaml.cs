@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Project_Kittan
@@ -54,15 +55,18 @@ namespace Project_Kittan
         /// <param name="sender"></param>
         /// <param name="e"></param>
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			CharactersLeftTextBlock.Text = string.Format("The current \"Version List\" exceeds the maximum length by {0} characters.", VersionListTextBox.Text.Length - _maxLength);
-
+		{            
 			if (string.IsNullOrWhiteSpace(VersionListTextBox.Text) || VersionListTextBox.Text.Length > _maxLength)
 			{
-				ContinueButton.IsEnabled = false;
+                CharactersLeftTextBlock.Text = string.Format("The current \"Version List\" exceeds the maximum length by {0} characters.", VersionListTextBox.Text.Length - _maxLength);
+                ContinueButton.IsEnabled = false;
 				_closable = false;
 				return;
 			}
+            else
+            {
+                CharactersLeftTextBlock.Text = string.Format("The current \"Version List\" length is valid. You can add {0} characters.", Math.Abs(VersionListTextBox.Text.Length - _maxLength));
+            }
 
 			ContinueButton.IsEnabled = true;
 			_closable = true;
