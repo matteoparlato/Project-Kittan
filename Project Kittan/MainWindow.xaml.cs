@@ -20,6 +20,8 @@ namespace Project_Kittan
 
         private string _path = string.Empty;
 
+        private bool _avoidUpdateDateTime = false;
+
         /// <summary>
         /// Parameterless constructor of MainWindow class.
         /// </summary>
@@ -52,6 +54,7 @@ namespace Project_Kittan
                     SelectedFolderTextBlock.Text = "Pick a folder to continue";
                     NAVVersionComboBox.IsEnabled = false;
                     //DateFormatComboBox.IsEnabled = false;
+                    DateTimeUpdateCheckBox.IsEnabled = false;
                     VersionTextTextBox.IsEnabled = false;
                     GoButton.IsEnabled = false;
                     return;
@@ -64,6 +67,7 @@ namespace Project_Kittan
 
             NAVVersionComboBox.IsEnabled = true;
             //DateFormatComboBox.IsEnabled = true;
+            DateTimeUpdateCheckBox.IsEnabled = true;
             VersionTextTextBox.IsEnabled = true;
             GoButton.IsEnabled = true;
         }
@@ -93,6 +97,7 @@ namespace Project_Kittan
                             SelectedFolderTextBlock.Text = "Pick a folder to continue";
                             NAVVersionComboBox.IsEnabled = false;
                             //DateFormatComboBox.IsEnabled = false;
+                            DateTimeUpdateCheckBox.IsEnabled = false;
                             VersionTextTextBox.IsEnabled = false;
                             GoButton.IsEnabled = false;
                             return;
@@ -105,6 +110,7 @@ namespace Project_Kittan
 
                     NAVVersionComboBox.IsEnabled = true;
                     //DateFormatComboBox.IsEnabled = true;
+                    DateTimeUpdateCheckBox.IsEnabled = true;
                     VersionTextTextBox.IsEnabled = true;
                     GoButton.IsEnabled = true;
                 }
@@ -148,7 +154,7 @@ namespace Project_Kittan
                             builder.AppendLine(reader.ReadLine()); // Add "  {"
 
                             line = reader.ReadLine();
-                            if (line.Contains("Date"))
+                            if (line.Contains("Date") && !_avoidUpdateDateTime)
                             {
                                 switch (DateFormatComboBox.SelectedIndex)
                                 {
@@ -170,7 +176,7 @@ namespace Project_Kittan
                             }
 
                             line = reader.ReadLine();
-                            if (line.Contains("Time"))
+                            if (line.Contains("Time") && !_avoidUpdateDateTime)
                             {
                                 builder.AppendLine(string.Format("    Time={0:HH:mm:ss};", DateTime.Now)); // Add "Time..."
                             }
@@ -288,6 +294,16 @@ namespace Project_Kittan
             }
 
             return files;
+        }
+
+        /// <summary>
+        /// Method invoked when the user click on DateTimeUpdateCheckBox control.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            _avoidUpdateDateTime = (bool)DateTimeUpdateCheckBox.IsChecked;
         }
     }
 }

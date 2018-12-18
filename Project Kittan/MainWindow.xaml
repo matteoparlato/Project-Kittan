@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Project Kittan"
     Width="500"
-    Height="532"
+    Height="504"
     ResizeMode="NoResize"
     mc:Ignorable="d">
 
@@ -68,15 +68,23 @@
             <TextBlock
                 Margin="0,8,0,0"
                 Text="Select the date format you want to use."
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap"
+                Visibility="Collapsed" />
             <ComboBox
                 x:Name="DateFormatComboBox"
                 Margin="0,4,0,0"
                 IsEnabled="False"
-                SelectedIndex="1">
+                SelectedIndex="1"
+                Visibility="Collapsed">
                 <ComboBoxItem Content="Italy" />
                 <ComboBoxItem Content="English (recommended)" />
             </ComboBox>
+
+            <CheckBox
+                x:Name="DateTimeUpdateCheckBox"
+                Margin="0,8,0,0"
+                Click="CheckBox_Click"
+                Content="Avoid date and time update" />
 
             <Button
                 x:Name="GoButton"
