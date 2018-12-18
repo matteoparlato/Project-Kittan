@@ -20,6 +20,8 @@ namespace Project_Kittan
 
         private string _path = string.Empty;
 
+        private bool _avoidUpdateDateTime = false;
+
         /// <summary>
         /// Parameterless constructor of MainWindow class.
         /// </summary>
@@ -288,6 +290,16 @@ namespace Project_Kittan
             }
 
             return files;
+        }
+
+        /// <summary>
+        /// Method invoked when the user click on DateTimeUpdateCheckBox control.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            _avoidUpdateDateTime = (bool)DateTimeUpdateCheckBox.IsChecked;
         }
     }
 }
