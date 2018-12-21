@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Project_Kittan.Models;
 
 namespace Project_Kittan
 {
@@ -256,7 +257,106 @@ namespace Project_Kittan
                     writer.Write(builder.ToString());
                 }
             }
+
+            ConflictsFinder();
+
             StatusTextBlock.Text = "Done!";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ConflictsFinder()
+        {
+            int lineNumber = 0;
+            List<ObjectElements> elements = new List<ObjectElements>();
+
+            foreach (string file in _files)
+            {
+                using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read))
+                using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                {
+                    ObjectElements element = new ObjectElements();
+                    element.FilePath = Path.GetFileName(file);
+
+                    string line;
+
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        lineNumber++;
+                        if (line.Equals("  CONTROLS"))
+                        {
+                            while ((line = reader.ReadLine()) != null && !line.Equals("  }"))
+                            {
+                                lineNumber++;
+                                if (line.Contains("{"))
+                                {
+                                    var lineParts = line.Split(';');
+                                    if (lineParts.Length > 0)
+                                    {
+                                        string id = lineParts[0].Replace('{', ' ').Trim();
+                                        if (id.Length > 0 && !id.Contains("ID="))
+                                        {
+                                            ControlProperties properties = new ControlProperties();
+                                            properties.ID = id;
+                                            properties.LineNumber = lineNumber.ToString();
+                                            properties.LinePreview = line;
+                                            element.Controls.Add(properties);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //if(line.Equals("  CODE"))
+                        //{
+                        //    while ((line = reader.ReadLine()) != null && !line.Equals("  }"))
+                        //    {
+                        //        counter++;
+                        //        if (line.Contains("PROCEDURE"))
+                        //        {
+                        //            var el = line.Split('@');
+                        //            var temp = el[1].Split('(');
+
+                        //            ControlProperties cp = new ControlProperties();
+                        //            cp.ID = temp[0];
+                        //            cp.LineNumber = counter.ToString();
+                        //            cp.LinePreview = line;
+                        //            objel.Controls.Add(cp);
+                        //        }
+                        //    }
+                        //}
+                    }
+
+                    foreach (ControlProperties control in element.Controls)
+                    {
+                        Search(control, element.Controls, ref element);
+                    }
+
+                    element.Conflicts.Sort();
+
+                    elements.Add(element);
+                }
+            }
+
+            ConflictsListView.ItemsSource = elements;
+        }
+
+        /// <summary>
+        /// Method which searches the given ControlProperties object in the passed collection of ControlObjects.
+        /// Any occurrence is added to the Conflicts collection of passed ObjectElements.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="elements"></param>
+        /// <param name="objp"></param>
+        private void Search(ControlProperties element, List<ControlProperties> elements, ref ObjectElements objp)
+        {
+            foreach (ControlProperties elem in elements)
+            {
+                if (element.ID.Equals(elem.ID) && !element.LineNumber.Equals(elem.LineNumber))
+                {
+                    objp.Conflicts.Add(elem);
+                }
+            }
         }
 
         /// <summary>
