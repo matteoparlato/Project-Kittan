@@ -11,6 +11,8 @@ namespace Project_Kittan.Models
 
         public List<ControlProperties> Controls { get; set; } = new List<ControlProperties>();
 
+        public List<ControlProperties> Procedures { get; set; } = new List<ControlProperties>();
+
         public List<ControlProperties> Conflicts { get; set; } = new List<ControlProperties>();
     }
 }

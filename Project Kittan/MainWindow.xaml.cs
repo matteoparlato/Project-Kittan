@@ -307,29 +307,33 @@ namespace Project_Kittan
                                 }
                             }
                         }
-                        //if(line.Equals("  CODE"))
-                        //{
-                        //    while ((line = reader.ReadLine()) != null && !line.Equals("  }"))
-                        //    {
-                        //        counter++;
-                        //        if (line.Contains("PROCEDURE"))
-                        //        {
-                        //            var el = line.Split('@');
-                        //            var temp = el[1].Split('(');
+                        if (line.Equals("  CODE"))
+                        {
+                            while ((line = reader.ReadLine()) != null && !line.Equals("  }"))
+                            {
+                                lineNumber++;
+                                if (line.Contains("PROCEDURE"))
+                                {
+                                    ControlProperties properties = new ControlProperties();
 
-                        //            ControlProperties cp = new ControlProperties();
-                        //            cp.ID = temp[0];
-                        //            cp.LineNumber = counter.ToString();
-                        //            cp.LinePreview = line;
-                        //            objel.Controls.Add(cp);
-                        //        }
-                        //    }
-                        //}
+                                    var lineParts = line.Split('@');
+                                    properties.ID = lineParts[1].Split('(')[0];
+                                    properties.LineNumber = lineNumber.ToString();
+                                    properties.LinePreview = line;
+                                    element.Procedures.Add(properties);
+                                }
+                            }
+                        }
                     }
 
                     foreach (ControlProperties control in element.Controls)
                     {
                         Search(control, element.Controls, ref element);
+                    }
+
+                    foreach (ControlProperties control in element.Procedures)
+                    {
+                        Search(control, element.Procedures, ref element);
                     }
 
                     element.Conflicts.Sort();
