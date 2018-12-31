@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Project_Kittan.Helpers;
@@ -68,6 +69,9 @@ namespace Project_Kittan
         private void OpenFolder(string selectedPath)
         {
             SelectedFolderTextBlock.Text = Path = selectedPath;
+
+            Files.Clear();
+            FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
 
             FoundFilesListBox.ItemsSource = Files = FilesExtensions.FindFiles(Path);
 
@@ -147,6 +151,43 @@ namespace Project_Kittan
         private void TextBlock_MouseDown_1(object sender, MouseButtonEventArgs e)
         {
             Process.Start("https://github.com/matteoparlato/Project-Kittan/issues");
+        }
+
+        /// <summary>
+        /// Method invoked when the user drag and drop a file on left pane.
+        /// Add dropped *.txt files to Files collection.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StackPanel_Drop(object sender, System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+                files = files.Where(i => i.EndsWith(".txt")).ToArray();
+                foreach (string file in files)
+                {
+                    Files.Add(new Models.File(file));
+                }
+            }
+
+            FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
+            FoundFilesListBox.ItemsSource = Files;
+        }
+
+        /// <summary>
+        /// Method invoked when the user clicks on Clear textblock.
+        /// Clear Files collection and FoundFilesListBox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBlock_MouseDown_2(object sender, MouseButtonEventArgs e)
+        {
+            Files.Clear();
+            FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
+            FoundFilesListBox.ItemsSource = Files;
+            Path = string.Empty;
+            SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
         }
     }
 }

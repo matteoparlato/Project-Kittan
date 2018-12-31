@@ -27,32 +27,57 @@
             Grid.Row="0"
             Grid.Column="0"
             VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="8">
+            <StackPanel
+                Margin="8"
+                AllowDrop="True"
+                Drop="StackPanel_Drop">
                 <TextBlock Text="Select the folder containing all the text files of the objects exported from NAV IDE." TextWrapping="Wrap" />
-                <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                <StackPanel
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
                     <Button
                         HorizontalAlignment="Left"
                         Click="Button_Click"
                         Content="Browse folder" />
+                    <TextBlock
+                        Margin="8,2,0,0"
+                        Opacity="0.6"
+                        Text="or" />
                     <Button
                         Margin="8,0,0,0"
                         HorizontalAlignment="Left"
                         Click="Button_Click_2"
                         Content="Use current folder" />
+                    <TextBlock
+                        Margin="8,2,0,0"
+                        Opacity="0.6"
+                        Text="or" />
+                    <TextBlock Margin="8,2,0,0" Text="Drag and drop files" />
                 </StackPanel>
-
                 <TextBlock
                     x:Name="SelectedFolderTextBlock"
                     Margin="0,8,0,0"
                     FontStyle="Italic"
-                    Text="Pick a folder to continue"
+                    Text="Pick a folder and/or drag and drop files to continue"
                     TextWrapping="Wrap" />
 
-                <TextBlock
-                    Margin="0,8,0,0"
-                    HorizontalAlignment="Left"
-                    Text="Found files"
-                    TextWrapping="Wrap" />
+                <Grid>
+                    <TextBlock
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Left"
+                        Text="Found files"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Right"
+                        Cursor="Hand"
+                        Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                        MouseDown="TextBlock_MouseDown_2"
+                        Text="Clear list"
+                        TextDecorations="Underline"
+                        TextWrapping="Wrap" />
+                </Grid>
 
                 <ListBox x:Name="FoundFilesListBox" Height="120">
                     <ListBox.ItemTemplate>
