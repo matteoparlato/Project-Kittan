@@ -9,10 +9,10 @@ namespace Project_Kittan.Models
     {
         public string FilePath { get; set; } = string.Empty;
 
-        public List<ControlProperties> Controls { get; set; } = new List<ControlProperties>();
+        public List<ElementProperties> Controls { get; private set; } = new List<ElementProperties>();
 
-        public List<ControlProperties> Procedures { get; set; } = new List<ControlProperties>();
+        public List<ElementProperties> Procedures { get; private set; } = new List<ElementProperties>();
 
-        public List<ControlProperties> Conflicts { get; set; } = new List<ControlProperties>();
+        public HashSet<ElementProperties> Conflicts { get; set; } = new HashSet<ElementProperties>();
     }
 }

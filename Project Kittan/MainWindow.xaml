@@ -3,11 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="clr-namespace:Project_Kittan.Helpers"
     xmlns:local="clr-namespace:Project_Kittan"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Project Kittan"
     Width="800"
-    Height="524"
+    Height="544"
     ResizeMode="NoResize"
     mc:Ignorable="d">
 
@@ -16,23 +17,30 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer
+            Grid.Row="0"
+            Grid.Column="0"
+            VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="8">
                 <TextBlock Text="Select the folder containing all the text files of the objects exported from NAV IDE." TextWrapping="Wrap" />
                 <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
                     <Button
-                        x:Name="BrowseFolderButton"
                         HorizontalAlignment="Left"
                         Click="Button_Click"
                         Content="Browse folder" />
                     <Button
-                        x:Name="CurrentFolderButton"
                         Margin="8,0,0,0"
                         HorizontalAlignment="Left"
                         Click="Button_Click_2"
                         Content="Use current folder" />
                 </StackPanel>
+
                 <TextBlock
                     x:Name="SelectedFolderTextBlock"
                     Margin="0,8,0,0"
@@ -42,93 +50,114 @@
 
                 <TextBlock
                     Margin="0,8,0,0"
+                    HorizontalAlignment="Left"
                     Text="Found files"
                     TextWrapping="Wrap" />
-                <ListBox
-                    x:Name="FoundFilesListBox"
-                    Height="120"
-                    ItemsSource="{Binding Files}" />
 
-                <TextBlock
+                <ListBox x:Name="FoundFilesListBox" Height="120">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding FileName}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Expander
+                    x:Name="TaggerExpander"
                     Margin="0,18,0,0"
-                    Text="Select the version of NAV where you'll import processed files."
-                    TextWrapping="Wrap" />
-                <ComboBox
-                    x:Name="NAVVersionComboBox"
-                    Margin="0,4,0,0"
+                    Header="Tag objects"
                     IsEnabled="False"
-                    SelectedIndex="0">
-                    <ComboBoxItem Content="NAV 2013 and below (max. 80 chars for &quot;Version List&quot; field)" />
-                    <ComboBoxItem Content="NAV 2015 and above (max. 250 chars for &quot;Version List&quot; field)" />
-                </ComboBox>
+                    IsExpanded="False">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Select the version of NAV where you'll import processed files." TextWrapping="Wrap" />
+                        <ComboBox
+                            x:Name="NAVVersionComboBox"
+                            Margin="0,4,0,0"
+                            SelectedIndex="0">
+                            <ComboBoxItem Content="NAV 2013 and below (max. 80 chars for &quot;Version List&quot; field)" />
+                            <ComboBoxItem Content="NAV 2015 and above (max. 250 chars for &quot;Version List&quot; field)" />
+                        </ComboBox>
 
-                <TextBlock
-                    Margin="0,8,0,0"
-                    Text="Write the tag you want to add to &quot;Version List&quot;. (if empty updates only date and checks &quot;Version List&quot; length)"
-                    TextWrapping="Wrap" />
-                <TextBox
-                    x:Name="VersionTextTextBox"
-                    Margin="0,4,0,0"
-                    IsEnabled="False" />
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            Text="Write the tag you want to add to &quot;Version List&quot;. (if empty updates only date and time and checks &quot;Version List&quot; length)"
+                            TextWrapping="Wrap" />
+                        <TextBox x:Name="VersionTextTextBox" Margin="0,4,0,0" />
 
-                <TextBlock
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            Text="Select the date format you want to use."
+                            TextWrapping="Wrap"
+                            Visibility="Collapsed" />
+
+                        <CheckBox
+                            x:Name="DateTimeUpdateCheckBox"
+                            Margin="0,8,0,0"
+                            Content="Avoid date and time update" />
+
+                        <Button
+                            Width="160"
+                            Margin="0,18,0,0"
+                            HorizontalAlignment="Left"
+                            Click="Button_Click_1"
+                            Content="Update OBJECT-PROPERTIES" />
+                    </StackPanel>
+                </Expander>
+
+                <Expander
+                    x:Name="ConflictsExpander"
                     Margin="0,8,0,0"
-                    Text="Select the date format you want to use."
-                    TextWrapping="Wrap"
-                    Visibility="Collapsed" />
-                <ComboBox
-                    x:Name="DateFormatComboBox"
-                    Margin="0,4,0,0"
+                    Header="Conflicts finder"
                     IsEnabled="False"
-                    SelectedIndex="1"
-                    Visibility="Collapsed">
-                    <ComboBoxItem Content="Italy" />
-                    <ComboBoxItem Content="English (recommended)" />
-                </ComboBox>
-
-                <CheckBox
-                    x:Name="DateTimeUpdateCheckBox"
-                    Margin="0,8,0,0"
-                    Click="CheckBox_Click"
-                    Content="Avoid date and time update" />
-
-                <Button
-                    x:Name="GoButton"
-                    Margin="0,18,0,0"
-                    Click="Button_Click_1"
-                    Content="GO"
-                    IsEnabled="False" />
-
-                <TextBlock
-                    x:Name="StatusTextBlock"
-                    Margin="0,4,0,0"
-                    FontStyle="Italic"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap" />
-
-                <TextBlock
-                    Margin="0,18,0,0"
-                    Cursor="Hand"
-                    FontStyle="Italic"
-                    Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
-                    MouseDown="TextBlock_MouseDown"
-                    Text="Find more about Project Kittan on GitHub"
-                    TextAlignment="Center"
-                    TextDecorations="Underline"
-                    TextWrapping="Wrap">
-                    <TextBlock.Background>
-                        <ImageBrush />
-                    </TextBlock.Background>
-                </TextBlock>
+                    IsExpanded="False">
+                    <StackPanel Margin="10">
+                        <Button
+                            Width="110"
+                            HorizontalAlignment="Left"
+                            Click="Button_Click_3"
+                            Content="Search for conflicts" />
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            Text="This feature is currently under developement. If you find something strange in the output please open an issue on GitHub."
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            HorizontalAlignment="Right"
+                            Cursor="Hand"
+                            Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                            MouseDown="TextBlock_MouseDown_1"
+                            Text="Open issue on GitHub→"
+                            TextDecorations="Underline"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Expander>
             </StackPanel>
         </ScrollViewer>
 
-        <StackPanel Grid.Column="1" Margin="8,8,8,8">
-            <TextBlock Text="Conficts found:" />
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="0,8,0,8"
+            Cursor="Hand"
+            FontStyle="Italic"
+            Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+            MouseDown="TextBlock_MouseDown"
+            Text="Find more about Project Kittan on GitHub"
+            TextAlignment="Center"
+            TextDecorations="Underline"
+            TextWrapping="Wrap" />
+
+        <StackPanel
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Margin="8,8,8,8">
+            <TextBlock Text="Conflicts found:" />
             <ListView
                 x:Name="ConflictsListView"
-                Height="444"
+                Height="440"
                 Margin="0,8,0,0"
+                ItemsSource="{x:Static helpers:ObjectExtensions.Conflicts}"
                 ScrollViewer.CanContentScroll="False">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -146,6 +175,7 @@
                                                 <RowDefinition Height="*" />
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
+
                                             <TextBlock Grid.Row="0" Grid.Column="0">
                                                 <Run Text="ID:" />
                                                 <Run Text="{Binding ID}" />
@@ -170,6 +200,30 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2">
+            <Grid>
+                <ProgressBar
+                    x:Name="StatusProgressBar"
+                    Height="3"
+                    Panel.ZIndex="1"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                <ProgressBar
+                    x:Name="StatusOverlayProgressBar"
+                    Height="3"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Foreground="Gainsboro" />
+            </Grid>
+            <StatusBar>
+                <TextBlock x:Name="StatusTextBlock" Text="Ready" />
+            </StatusBar>
         </StackPanel>
     </Grid>
 </Window>
