@@ -14,7 +14,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="370" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -172,26 +172,35 @@
             TextDecorations="Underline"
             TextWrapping="Wrap" />
 
-        <StackPanel
+        <Grid
             Grid.Row="0"
             Grid.RowSpan="2"
             Grid.Column="1"
             Margin="8,8,8,8">
-            <TextBlock Text="Conflicts found:" />
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Conflicts found:" />
             <ListView
                 x:Name="ConflictsListView"
-                Height="440"
+                Grid.Row="1"
                 Margin="0,8,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
                 ItemsSource="{x:Static helpers:ObjectExtensions.Conflicts}"
                 ScrollViewer.CanContentScroll="False">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
+                        <Grid>
                             <TextBlock Text="{Binding FilePath}" TextWrapping="Wrap" />
-                            <ListView ItemsSource="{Binding Conflicts}">
+                            <ListView HorizontalAlignment="Stretch" ItemsSource="{Binding Conflicts}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Margin="0,2,0,2">
+                                        <Grid Margin="0,2,0,2" HorizontalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="*" />
@@ -204,28 +213,60 @@
                                             <TextBlock Grid.Row="0" Grid.Column="0">
                                                 <Run Text="ID:" />
                                                 <Run Text="{Binding ID}" />
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem
+                                                            Click="MenuItem_Click"
+                                                            CommandParameter="{Binding ID}"
+                                                            Header="Copy ID" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
                                             </TextBlock>
                                             <TextBlock Grid.Row="0" Grid.Column="1">
                                                 <Run Text="Line:" />
                                                 <Run Text="{Binding LineNumber}" />
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem
+                                                            Click="MenuItem_Click"
+                                                            CommandParameter="{Binding LineNumber}"
+                                                            Header="Copy line number" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
                                             </TextBlock>
                                             <TextBlock
                                                 Grid.Row="1"
                                                 Grid.Column="0"
                                                 Grid.ColumnSpan="2"
-                                                Width="330"
-                                                MaxWidth="330"
                                                 Opacity="0.5"
-                                                Text="{Binding LinePreview}" />
+                                                Text="{Binding LinePreview}">
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem
+                                                            Click="MenuItem_Click"
+                                                            CommandParameter="{Binding LinePreview}"
+                                                            Header="Copy line" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
+                                            </TextBlock>
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
-                        </StackPanel>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-        </StackPanel>
+
+            <Grid Grid.Row="2" Margin="0,8,0,0">
+                <Viewbox Style="{StaticResource InformationViewBox}">
+                    <Path Data="M 14 3 C 12.7422 3 11.8477 3.89063 11.4063 5 L 4 5 L 4 25 L 24 25 L 24 5 L 16.5938 5 C 16.1523 3.89063 15.2578 3 14 3 Z M 14 5 C 14.5664 5 15 5.43359 15 6 L 15 7 L 18 7 L 18 9 L 10 9 L 10 7 L 13 7 L 13 6 C 13 5.43359 13.4336 5 14 5 Z M 6 7 L 8 7 L 8 11 L 20 11 L 20 7 L 22 7 L 22 23 L 6 23 Z M 14 15 L 14 17 L 16 17 L 16 15 Z M 18 15 L 18 17 L 20 17 L 20 15 Z M 26 15 L 26 17 L 28 17 L 28 15 Z M 14 19 L 14 21 L 16 21 L 16 19 Z M 26 19 L 26 21 L 28 21 L 28 19 Z M 26 23 L 26 25 L 28 25 L 28 23 Z M 14 27 L 14 29 L 16 29 L 16 27 Z M 18 27 L 18 29 L 20 29 L 20 27 Z M 22 27 L 22 29 L 24 29 L 24 27 Z M 26 27 L 26 29 L 28 29 L 28 27 Z" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                </Viewbox>
+                <StackPanel Margin="32,0,0,0">
+                    <TextBlock Text="To copy one of the displayed values just right click on the desired value and click &quot;Copy&quot;." TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+        </Grid>
 
         <StackPanel
             Grid.Row="2"

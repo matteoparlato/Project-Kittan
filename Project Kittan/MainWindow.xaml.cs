@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using Project_Kittan.Helpers;
 
@@ -55,9 +54,9 @@ namespace Project_Kittan
         /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            using (System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
-                DialogResult result = dialog.ShowDialog();
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
                 if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
                 {
@@ -77,7 +76,7 @@ namespace Project_Kittan
 
             if (Files.Count == 0)
             {
-                if (System.Windows.MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                if (MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     SelectedFolderTextBlock.Text = "Pick a folder to continue";
                     TaggerExpander.IsEnabled = false;
@@ -159,11 +158,11 @@ namespace Project_Kittan
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void StackPanel_Drop(object sender, System.Windows.DragEventArgs e)
+        private void StackPanel_Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 files = files.Where(i => i.EndsWith(".txt")).ToArray();
                 foreach (string file in files)
                 {
@@ -188,6 +187,21 @@ namespace Project_Kittan
             FoundFilesListBox.ItemsSource = Files;
             Path = string.Empty;
             SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
+        }
+
+        /// <summary>
+        /// Method invoked when the user Copy value from ConflictsListView contex menu.
+        /// Copy the right-clicked value to the clipboard.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem mi = sender as MenuItem;
+            string clipboard = mi.CommandParameter.ToString().Trim();
+
+            Clipboard.SetText(clipboard);
+            StatusTextBlock.Text = clipboard + " copied to clipboard";
         }
     }
 }
