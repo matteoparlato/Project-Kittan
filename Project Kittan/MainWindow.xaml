@@ -24,6 +24,7 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer
+            x:Name="ActionsScrollViewer"
             Grid.Row="0"
             Grid.Column="0"
             VerticalScrollBarVisibility="Auto">

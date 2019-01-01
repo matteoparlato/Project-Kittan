@@ -31,24 +31,27 @@ namespace Project_Kittan.Helpers
 
             for (int i = 0; i < files.Length; i++)
             {
-                MainWindow.Current.StatusTextBlock.Text = "Searching conflicts in " + files[i].FileName + "..."; // Update status
-
-                using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                if(System.IO.File.Exists(files[i].FilePath))
                 {
-                    string lines = await reader.ReadToEndAsync();
-                    int lineNumber = 0;
+                    MainWindow.Current.StatusTextBlock.Text = "Searching conflicts in " + files[i].FileName + "..."; // Update status
 
-                    if (GetFileType(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
+                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
                     {
-                        var objects = lines.Split(new string[] { "OBJECT " }, StringSplitOptions.None);
+                        string lines = await reader.ReadToEndAsync();
+                        int lineNumber = 0;
 
-                        for (int j = 1; j < objects.Length; j++) { Find(objects[j], files[i].FileName, ref lineNumber); }
+                        if (GetFileType(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
+                        {
+                            var objects = lines.Split(new string[] { "OBJECT " }, StringSplitOptions.None);
+
+                            for (int j = 1; j < objects.Length; j++) { Find(objects[j], files[i].FileName, ref lineNumber); }
+                        }
+                        else { Find(lines, files[i].FileName, ref lineNumber); } // The file contains one object
                     }
-                    else { Find(lines, files[i].FileName, ref lineNumber); } // The file contains one object
-                }
 
-                MainWindow.Current.StatusProgressBar.Value += progressStep; // Update status
+                    MainWindow.Current.StatusProgressBar.Value += progressStep; // Update status
+                }
             }
 
             MainWindow.Current.StatusTextBlock.Text = Conflicts.Count != 0 ? "Found " + Conflicts.Count + " possible conflicts" : "No conflicts found"; // Update status
@@ -241,117 +244,120 @@ namespace Project_Kittan.Helpers
         {
             double step = (double)100 / files.Length;
 
-            foreach (Models.File file in files)
+            for (int i = 0; i < files.Length; i++)
             {
-                MainWindow.Current.StatusTextBlock.Text = "Updating " + file.FileName + " properties..."; // Update status
-
-                StringBuilder builder = new StringBuilder();
-
-                using (FileStream stream = new FileStream(file.FilePath, FileMode.Open, FileAccess.Read))
-                using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                if (System.IO.File.Exists(files[i].FilePath))
                 {
-                    string line;
+                    MainWindow.Current.StatusTextBlock.Text = "Updating " + files[i].FileName + " properties..."; // Update status
 
-                    while ((line = await reader.ReadLineAsync()) != null)
+                    StringBuilder builder = new StringBuilder();
+
+                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
                     {
-                        if (line.Equals("  OBJECT-PROPERTIES"))
+                        string line;
+
+                        while ((line = await reader.ReadLineAsync()) != null)
                         {
-                            builder.AppendLine(line); // Add "  OBJECT-PROPERTIES"
-                            builder.AppendLine(await reader.ReadLineAsync()); // Add "  {"
+                            if (line.Equals("  OBJECT-PROPERTIES"))
+                            {
+                                builder.AppendLine(line); // Add "  OBJECT-PROPERTIES"
+                                builder.AppendLine(await reader.ReadLineAsync()); // Add "  {"
 
-                            line = await reader.ReadLineAsync();
-                            if (line.Contains("Date") && !avoidUpdateDateTime)
-                            {
-                                builder.AppendLine(string.Format("    Date={0:dd.MM.yy};", DateTime.Today));
-                            }
-                            else
-                            {
-                                builder.AppendLine(line);
-                            }
-
-                            line = await reader.ReadLineAsync();
-                            if (line.Contains("Time") && !avoidUpdateDateTime)
-                            {
-                                builder.AppendLine(string.Format("    Time={0:HH:mm:ss};", DateTime.Now)); // Add "Time..."
-                            }
-                            else
-                            {
-                                builder.AppendLine(line);
-                            }
-
-                            line = await reader.ReadLineAsync();
-                            if (line.Contains("Modified"))
-                            {
-                                builder.AppendLine(line); // Add "Modified..."
                                 line = await reader.ReadLineAsync();
-                            }
+                                if (line.Contains("Date") && !avoidUpdateDateTime)
+                                {
+                                    builder.AppendLine(string.Format("    Date={0:dd.MM.yy};", DateTime.Today));
+                                }
+                                else
+                                {
+                                    builder.AppendLine(line);
+                                }
 
-                            if (line.Contains("Version List"))
+                                line = await reader.ReadLineAsync();
+                                if (line.Contains("Time") && !avoidUpdateDateTime)
+                                {
+                                    builder.AppendLine(string.Format("    Time={0:HH:mm:ss};", DateTime.Now)); // Add "Time..."
+                                }
+                                else
+                                {
+                                    builder.AppendLine(line);
+                                }
+
+                                line = await reader.ReadLineAsync();
+                                if (line.Contains("Modified"))
+                                {
+                                    builder.AppendLine(line); // Add "Modified..."
+                                    line = await reader.ReadLineAsync();
+                                }
+
+                                if (line.Contains("Version List"))
+                                {
+                                    // Check if the user defined tag is already in the "Version List"
+                                    if (!string.IsNullOrWhiteSpace(version) && line.IndexOf(version, StringComparison.OrdinalIgnoreCase) == -1)
+                                    {
+                                        line = line.Replace(";", ",");
+                                        line = line + version + ";";
+                                    }
+
+                                    string temp = line.Substring(17);
+                                    temp = temp.Substring(0, temp.Length - 1); // Remove "    Version List=...;"
+
+                                    bool avoidInsert = false;
+
+                                    switch (navVersion)
+                                    {
+                                        case 0: // NAV 2013 and below
+                                            {
+                                                if (temp.Length > 80)
+                                                {
+                                                    MainWindow.Current.StatusProgressBar.IsIndeterminate = true; // Update status
+
+                                                    RequestDialog dialog = new RequestDialog(temp, 80);
+                                                    if (dialog.ShowDialog() == true)
+                                                    {
+                                                        builder.AppendLine("    Version List=" + dialog.VersionList + ";");
+                                                        avoidInsert = true;
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        default: // NAV 2015 and above
+                                            {
+                                                if (temp.Length > 250)
+                                                {
+                                                    MainWindow.Current.StatusProgressBar.IsIndeterminate = true; // Update status
+
+                                                    RequestDialog dialog = new RequestDialog(temp, 250);
+                                                    if (dialog.ShowDialog() == true)
+                                                    {
+                                                        builder.AppendLine("    Version List=" + dialog.VersionList + ";");
+                                                        avoidInsert = true;
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                    }
+                                    MainWindow.Current.StatusProgressBar.IsIndeterminate = false; // Update status
+
+                                    if (!avoidInsert) { builder.AppendLine(line); }
+                                }
+                            }
+                            else
                             {
-                                // Check if the user defined tag is already in the "Version List"
-                                if (!string.IsNullOrWhiteSpace(version) && line.IndexOf(version, StringComparison.OrdinalIgnoreCase) == -1)
-                                {
-                                    line = line.Replace(";", ",");
-                                    line = line + version + ";";
-                                }
-
-                                string temp = line.Substring(17);
-                                temp = temp.Substring(0, temp.Length - 1); // Remove "    Version List=...;"
-
-                                bool avoidInsert = false;
-
-                                switch (navVersion)
-                                {
-                                    case 0: // NAV 2013 and below
-                                        {
-                                            if (temp.Length > 80)
-                                            {
-                                                MainWindow.Current.StatusProgressBar.IsIndeterminate = true; // Update status
-
-                                                RequestDialog dialog = new RequestDialog(temp, 80);
-                                                if (dialog.ShowDialog() == true)
-                                                {
-                                                    builder.AppendLine("    Version List=" + dialog.VersionList + ";");
-                                                    avoidInsert = true;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    default: // NAV 2015 and above
-                                        {
-                                            if (temp.Length > 250)
-                                            {
-                                                MainWindow.Current.StatusProgressBar.IsIndeterminate = true; // Update status
-
-                                                RequestDialog dialog = new RequestDialog(temp, 250);
-                                                if (dialog.ShowDialog() == true)
-                                                {
-                                                    builder.AppendLine("    Version List=" + dialog.VersionList + ";");
-                                                    avoidInsert = true;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                }
-                                MainWindow.Current.StatusProgressBar.IsIndeterminate = false; // Update status
-
-                                if (!avoidInsert) { builder.AppendLine(line); }
+                                builder.AppendLine(line);
                             }
                         }
-                        else
-                        {
-                            builder.AppendLine(line);
-                        }
+
+                        MainWindow.Current.StatusProgressBar.Value += step; // Update status
                     }
 
-                    MainWindow.Current.StatusProgressBar.Value += step; // Update status
-                }
-
-                using (FileStream stream = new FileStream(file.FilePath, FileMode.Truncate, FileAccess.Write))
-                using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
-                {
-                    MainWindow.Current.StatusTextBlock.Text = "Saving " + file.FileName + " changes..."; // Update status
-                    await writer.WriteAsync(builder.ToString());
+                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Truncate, FileAccess.Write))
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
+                    {
+                        MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].FileName + " changes..."; // Update status
+                        await writer.WriteAsync(builder.ToString());
+                    }
                 }
             }
         }

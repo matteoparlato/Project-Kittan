@@ -104,9 +104,11 @@ namespace Project_Kittan
             StatusProgressBar.Value = 0;
             StatusOverlayProgressBar.IsIndeterminate = true;
             System.Windows.Forms.Application.UseWaitCursor = true;
+            ActionsScrollViewer.IsEnabled = false;
 
             await ObjectExtensions.UpdateObjects(Files.ToArray(), (bool)DateTimeUpdateCheckBox.IsChecked, VersionTextTextBox.Text, NAVVersionComboBox.SelectedIndex);
 
+            ActionsScrollViewer.IsEnabled = true;
             StatusTextBlock.Text = "Done";
             StatusProgressBar.IsIndeterminate = false;
             StatusOverlayProgressBar.IsIndeterminate = false;
@@ -124,9 +126,11 @@ namespace Project_Kittan
             StatusProgressBar.Value = 0;
             StatusOverlayProgressBar.IsIndeterminate = true;
             System.Windows.Forms.Application.UseWaitCursor = true;
+            ActionsScrollViewer.IsEnabled = false;
 
             await ObjectExtensions.ConflictsFinder(Files.ToArray());
 
+            ActionsScrollViewer.IsEnabled = true;
             StatusProgressBar.IsIndeterminate = false;
             StatusOverlayProgressBar.IsIndeterminate = false;
             System.Windows.Forms.Application.UseWaitCursor = false;
