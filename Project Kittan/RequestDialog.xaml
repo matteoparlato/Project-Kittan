@@ -24,14 +24,20 @@
                 Margin="0,4,0,0"
                 TextChanged="TextBox_TextChanged"
                 TextWrapping="Wrap" />
-            <Button
-                x:Name="ContinueButton"
-                Width="120"
-                Margin="0,4,0,0"
-                HorizontalAlignment="Right"
-                Click="Button_Click"
-                Content="Save and continue"
-                IsEnabled="False" />
+
+            <Grid Margin="0,4,0,0">
+                <TextBlock
+                    Margin="0,2,0,0"
+                    Opacity="0.4"
+                    Text="Press CTRL + Z to undo changes" />
+                <Button
+                    x:Name="ContinueButton"
+                    Width="120"
+                    HorizontalAlignment="Right"
+                    Click="Button_Click"
+                    Content="Save and continue"
+                    IsEnabled="False" />
+            </Grid>
         </StackPanel>
     </ScrollViewer>
 </Window>
