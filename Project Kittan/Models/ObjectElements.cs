@@ -16,12 +16,12 @@ namespace Project_Kittan.Models
         public string FilePath { get; set; } = string.Empty;
 
         /// <summary>
-        /// 
+        /// Constructor which initializes a ObjectElements object with passed information.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="type"></param>
-        /// <param name="name"></param>
-        public ObjectElements(string id, string type, string name, string filePath)
+        /// <param name="id">The ID of the object</param>
+        /// <param name="type">The type of the object</param>
+        /// <param name="name">The name of the object</param>
+        public ObjectElements(string type, string id, string name, string filePath)
         {
             ID = id;
             Type = type;
@@ -30,9 +30,9 @@ namespace Project_Kittan.Models
         }
 
         /// <summary>
-        /// 
+        /// Constructor which initializes a ObjectElements object with passed information.
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">The path of the file</param>
         public ObjectElements(string filePath)
         {
             FilePath = filePath;

@@ -165,7 +165,7 @@
                     IsEnabled="False"
                     IsExpanded="False">
                     <StackPanel Margin="10">
-                        <TextBlock Text="Write the text you want to find in which object is written." TextWrapping="Wrap" />
+                        <TextBlock Text="Write the text you want to search in objects to find in which ones there is such text." TextWrapping="Wrap" />
                         <Grid Margin="0,8,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -229,7 +229,10 @@
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Text="Conflicts found:" />
+                    <TextBlock
+                        Grid.Row="0"
+                        Text="Conflicts found:"
+                        TextWrapping="Wrap" />
                     <ListView
                         x:Name="ConflictsListView"
                         Grid.Row="1"
@@ -322,7 +325,11 @@
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Text="Occurency found:" />
+                    <TextBlock
+                        x:Name="PatternFoundInTextBlock"
+                        Grid.Row="0"
+                        Text="Occurency found:"
+                        TextWrapping="Wrap" />
                     <ListView
                         x:Name="FoundListView"
                         Grid.Row="1"
@@ -345,7 +352,10 @@
                                                 </ContextMenu>
                                             </TextBlock.ContextMenu>
                                         </TextBlock>
-                                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap">
+                                        <TextBlock
+                                            Margin="4,0,0,0"
+                                            Text="{Binding Name}"
+                                            TextWrapping="Wrap">
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem
@@ -355,6 +365,7 @@
                                                 </ContextMenu>
                                             </TextBlock.ContextMenu>
                                         </TextBlock>
+                                        <TextBlock Text="@ " TextWrapping="Wrap" />
                                         <TextBlock Text="{Binding ID}" TextWrapping="Wrap">
                                             <TextBlock.ContextMenu>
                                                 <ContextMenu>

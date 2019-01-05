@@ -243,6 +243,7 @@ namespace Project_Kittan
         {
             if(!string.IsNullOrWhiteSpace(PatternTextBox.Text))
             {
+                PatternFoundInTextBlock.Text = PatternTextBox.Text + " found in:";
                 StatusProgressBar.Value = 0;
                 StatusOverlayProgressBar.IsIndeterminate = true;
                 System.Windows.Forms.Application.UseWaitCursor = true;

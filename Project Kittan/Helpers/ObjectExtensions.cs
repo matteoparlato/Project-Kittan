@@ -223,7 +223,7 @@ namespace Project_Kittan.Helpers
         {
             int count = 0, i = 0;
 
-            while ((i = text.IndexOf(pattern, i, StringComparison.OrdinalIgnoreCase)) != -1)
+            while ((i = text.IndexOf(pattern, i)) != -1)
             {
                 i += pattern.Length;
                 count++;
@@ -408,19 +408,19 @@ namespace Project_Kittan.Helpers
 
                             for (int j = 1; j < objects.Length; j++)
                             {
-                                if (GetFileType(objects[0], pattern) != 0)
+                                if (GetFileType(objects[j], pattern) != 0)
                                 {
-                                    var startingLine = objects[0].Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
+                                    var startingLine = objects[j].Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
 
                                     string objectName = string.Empty;
-                                    for (int k = 3; k < startingLine.Length; k++)
+                                    for (int k = 2; k < startingLine.Length; k++)
                                     {
-                                        objectName += ' ' + startingLine[k];
+                                        objectName += startingLine[k] + ' ';
                                     }
 
                                     //lock (listAccessLock)
                                     //{
-                                        Found.Add(new ObjectElements(startingLine[2], startingLine[1].Trim(), objectName, files[i].FileName));
+                                        Found.Add(new ObjectElements(startingLine[0], startingLine[1], objectName, files[i].FileName));
                                     //}
                                 }
                             }
@@ -434,12 +434,12 @@ namespace Project_Kittan.Helpers
                                 string objectName = string.Empty;
                                 for (int j = 3; j < startingLine.Length; j++)
                                 {
-                                    objectName += ' ' + startingLine[j];
+                                    objectName += startingLine[j] + ' ';
                                 }
 
                                 //lock (listAccessLock)
                                 //{
-                                    Found.Add(new ObjectElements(startingLine[2], startingLine[1].Trim(), objectName, files[i].FileName));
+                                    Found.Add(new ObjectElements(startingLine[1], startingLine[2], objectName, files[i].FileName));
                                 //}
                             }
                         }
