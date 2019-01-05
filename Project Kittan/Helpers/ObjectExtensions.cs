@@ -15,6 +15,10 @@ namespace Project_Kittan.Helpers
     {
         public static ObservableCollection<ObjectElements> Conflicts { get; private set; } = new ObservableCollection<ObjectElements>();
 
+        public static ObservableCollection<ObjectElements> Found { get; private set; } = new ObservableCollection<ObjectElements>();
+
+        // private static Object listAccessLock = new Object();
+
         #region Conflicts
 
         /// <summary>
@@ -67,7 +71,7 @@ namespace Project_Kittan.Helpers
         {
             var lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 
-            ObjectElements obj = new ObjectElements { FilePath = fileName + " - " + lines[0] };
+            ObjectElements obj = new ObjectElements(fileName + " - " + lines[0]);
 
             for (int i = 0; i < lines.Length; i++)
             {
@@ -219,7 +223,7 @@ namespace Project_Kittan.Helpers
         {
             int count = 0, i = 0;
 
-            while ((i = text.IndexOf(pattern, i)) != -1)
+            while ((i = text.IndexOf(pattern, i, StringComparison.OrdinalIgnoreCase)) != -1)
             {
                 i += pattern.Length;
                 count++;
@@ -360,6 +364,98 @@ namespace Project_Kittan.Helpers
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Finder
+
+        /// <summary>
+        /// Method which finds occurencies of the passed string in NAV objects in working directory.
+        /// </summary>
+        /// <param name="files">The files to check</param>
+        /// <param name="pattern">The string to search</param>
+        /// <returns></returns>
+        internal async static Task FindWhere(Models.File[] files, string pattern)
+        {
+            double progressStep = (double)100 / files.Length;
+
+            Found.Clear();
+
+            //ConcurrentBag<ObjectElements> concurrentFound = new ConcurrentBag<ObjectElements>();
+            
+            for (int i = 0; i < files.Length; i++)
+            { 
+                //Parallel.ForEach(files, async (file) =>
+                //{
+                if (System.IO.File.Exists(files[i].FilePath))
+                {
+                    //await System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    // {
+                    //     MainWindow.Current.StatusTextBlock.Text = "Searching occurencies in " + file.FileName + "..."; // Update status
+                    // }), DispatcherPriority.Background);
+
+                    MainWindow.Current.StatusTextBlock.Text = "Searching occurencies in " + files[i].FileName + "..."; // Update status
+
+                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                    {
+                        string lines = await reader.ReadToEndAsync();
+
+                        if (GetFileType(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
+                        {
+                            var objects = lines.Split(new string[] { "OBJECT " }, StringSplitOptions.None);
+
+                            for (int j = 1; j < objects.Length; j++)
+                            {
+                                if (GetFileType(objects[0], pattern) != 0)
+                                {
+                                    var startingLine = objects[0].Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
+
+                                    string objectName = string.Empty;
+                                    for (int k = 3; k < startingLine.Length; k++)
+                                    {
+                                        objectName += ' ' + startingLine[k];
+                                    }
+
+                                    //lock (listAccessLock)
+                                    //{
+                                        Found.Add(new ObjectElements(startingLine[2], startingLine[1].Trim(), objectName, files[i].FileName));
+                                    //}
+                                }
+                            }
+                        }
+                        else // The file contains one object
+                        {
+                            if (GetFileType(lines, pattern) != 0)
+                            {
+                                var startingLine = lines.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
+
+                                string objectName = string.Empty;
+                                for (int j = 3; j < startingLine.Length; j++)
+                                {
+                                    objectName += ' ' + startingLine[j];
+                                }
+
+                                //lock (listAccessLock)
+                                //{
+                                    Found.Add(new ObjectElements(startingLine[2], startingLine[1].Trim(), objectName, files[i].FileName));
+                                //}
+                            }
+                        }
+                    }
+
+                    //await System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    //{
+                    //    MainWindow.Current.StatusProgressBar.Value += progressStep; // Update status
+                    //}), DispatcherPriority.Background);
+
+                    MainWindow.Current.StatusProgressBar.Value += progressStep; // Update status
+                }
+                //});
+            }
+
+            MainWindow.Current.StatusTextBlock.Text = Found.Count != 0 ? "Found " + Found.Count + " occurencies in " + files.Length + " files" : "No occurencies found for the string " + pattern; // Update status
         }
 
         #endregion

@@ -92,6 +92,7 @@ namespace Project_Kittan
                     SelectedFolderTextBlock.Text = "Pick a folder to continue";
                     TaggerExpander.IsEnabled = false;
                     ConflictsExpander.IsEnabled = false;
+                    SearchExpander.IsEnabled = false;
                     return;
                 }
                 else
@@ -102,6 +103,7 @@ namespace Project_Kittan
 
             TaggerExpander.IsEnabled = true;
             ConflictsExpander.IsEnabled = true;
+            SearchExpander.IsEnabled = true;
         }
 
         /// <summary>
@@ -138,6 +140,7 @@ namespace Project_Kittan
             StatusOverlayProgressBar.IsIndeterminate = true;
             System.Windows.Forms.Application.UseWaitCursor = true;
             ActionsScrollViewer.IsEnabled = false;
+            OutputTabControl.SelectedIndex = 0;
 
             await ObjectExtensions.ConflictsFinder(Files.ToArray());
 
@@ -212,11 +215,47 @@ namespace Project_Kittan
         /// <param name="e"></param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            MenuItem mi = sender as MenuItem;
-            string clipboard = mi.CommandParameter.ToString().Trim();
+            MenuItem item = sender as MenuItem;
+            string clipboard = item.CommandParameter.ToString().Trim();
 
             Clipboard.SetText(clipboard);
             StatusTextBlock.Text = clipboard + " copied to clipboard";
+        }
+
+        /// <summary>
+        /// Method invoked when the user types in PatterTextBox.
+        /// Start the search after the Enter or the Return key has beeen pressed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Return) Button_Click_4(null, null);            
+        }
+
+        /// <summary>
+        /// Method invoked when the user clicks on Search for occurencies button.
+        /// Start occurencies search on all text files in working directory.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            if(!string.IsNullOrWhiteSpace(PatternTextBox.Text))
+            {
+                StatusProgressBar.Value = 0;
+                StatusOverlayProgressBar.IsIndeterminate = true;
+                System.Windows.Forms.Application.UseWaitCursor = true;
+                ActionsScrollViewer.IsEnabled = false;
+                OutputTabControl.SelectedIndex = 1;
+
+                await ObjectExtensions.FindWhere(Files.ToArray(), PatternTextBox.Text);
+
+                ActionsScrollViewer.IsEnabled = true;
+                StatusProgressBar.IsIndeterminate = false;
+                StatusOverlayProgressBar.IsIndeterminate = false;
+                System.Windows.Forms.Application.UseWaitCursor = false;
+            }
         }
     }
 }
