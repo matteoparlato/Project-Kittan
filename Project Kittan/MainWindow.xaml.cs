@@ -34,6 +34,17 @@ namespace Project_Kittan
         }
 
         /// <summary>
+        /// Method invoked the window is laid out, rendered, and ready for interaction.
+        /// Verify if there are new updates available for Project Kittan.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            await UpdateExtensions.Check();
+        }
+
+        /// <summary>
         /// Method invoked when the user clicks on Use current folder button.
         /// Set current Project Kittan.exe directory as working directory.
         /// </summary>

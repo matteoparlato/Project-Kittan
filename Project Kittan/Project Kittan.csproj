@@ -53,9 +53,12 @@
     <ApplicationIcon>Project_logo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Project_Kittan.App</StartupObject>
+    <StartupObject>Project_Kittan.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.8.11.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.8.11\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -79,9 +82,11 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ObjectExtensions.cs" />
     <Compile Include="Helpers\FilesExtensions.cs" />
+    <Compile Include="Helpers\UpdateExtensions.cs" />
     <Compile Include="Models\ElementProperties.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\ObjectElements.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="RequestDialog.xaml.cs">
       <DependentUpon>RequestDialog.xaml</DependentUpon>
     </Compile>
@@ -120,6 +125,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -149,5 +155,17 @@
   <ItemGroup>
     <None Include="Assets\Project_logo_color.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\packages\HtmlAgilityPack.1.8.11\lib\Net45\HtmlAgilityPack.dll">
+      <Link>HtmlAgilityPack.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterResolveReferences">
+    <ItemGroup>
+      <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll'">
+        <LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 </Project>

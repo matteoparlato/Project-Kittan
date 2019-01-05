@@ -9,6 +9,7 @@
     Title="Project Kittan"
     Width="800"
     Height="544"
+    Loaded="Window_Loaded"
     ResizeMode="NoResize"
     mc:Ignorable="d">
 
