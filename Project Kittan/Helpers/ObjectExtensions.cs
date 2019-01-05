@@ -223,7 +223,7 @@ namespace Project_Kittan.Helpers
         {
             int count = 0, i = 0;
 
-            while ((i = text.IndexOf(pattern, i)) != -1)
+            while ((i = text.IndexOf(pattern, i, StringComparison.OrdinalIgnoreCase)) != -1)
             {
                 i += pattern.Length;
                 count++;

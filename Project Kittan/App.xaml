@@ -13,6 +13,127 @@
                 <Setter Property="HorizontalAlignment" Value="Left" />
                 <Setter Property="VerticalAlignment" Value="Top" />
             </Style>
+
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Padding" Value="1" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Border
+                                    x:Name="Chrome"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    SnapsToDevicePixels="true">
+                                    <Border.BorderBrush>
+                                        <SolidColorBrush x:Name="BrBrush" Color="#ACACAC" />
+                                    </Border.BorderBrush>
+                                    <Border.Background>
+                                        <LinearGradientBrush x:Name="BgBrush" StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Offset="0" Color="#F0F0F0" />
+                                            <GradientStop Offset="1" Color="#E5E5E5" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <ContentPresenter
+                                        Margin="{TemplateBinding Padding}"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        RecognizesAccessKey="True"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Border>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <Storyboard>
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BgBrush"
+                                                    Storyboard.TargetProperty="(GradientBrush.GradientStops)[0].(GradientStop.Color)"
+                                                    To="#F0F0F0"
+                                                    Duration="0:0:0.07" />
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BgBrush"
+                                                    Storyboard.TargetProperty="(GradientBrush.GradientStops)[1].(GradientStop.Color)"
+                                                    To="#E5E5E5"
+                                                    Duration="0:0:0.07" />
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BrBrush"
+                                                    Storyboard.TargetProperty="Color"
+                                                    To="#ACACAC"
+                                                    Duration="0:0:0.07" />
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="MouseOver">
+                                            <Storyboard>
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BgBrush"
+                                                    Storyboard.TargetProperty="(GradientBrush.GradientStops)[0].(GradientStop.Color)"
+                                                    To="#F0F4F9"
+                                                    Duration="0:0:0.07" />
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BgBrush"
+                                                    Storyboard.TargetProperty="(GradientBrush.GradientStops)[1].(GradientStop.Color)"
+                                                    To="#E0ECF9"
+                                                    Duration="0:0:0.07" />
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BrBrush"
+                                                    Storyboard.TargetProperty="Color"
+                                                    To="#7EB4EA"
+                                                    Duration="0:0:0.07" />
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BgBrush"
+                                                    Storyboard.TargetProperty="(GradientBrush.GradientStops)[0].(GradientStop.Color)"
+                                                    To="#DBEDFD"
+                                                    Duration="0:0:0.05" />
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BgBrush"
+                                                    Storyboard.TargetProperty="(GradientBrush.GradientStops)[1].(GradientStop.Color)"
+                                                    To="#C4E0FC"
+                                                    Duration="0:0:0.05" />
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BrBrush"
+                                                    Storyboard.TargetProperty="Color"
+                                                    To="#569DE5"
+                                                    Duration="0:0:0.05" />
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <Storyboard>
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BgBrush"
+                                                    Storyboard.TargetProperty="(GradientBrush.GradientStops)[0].(GradientStop.Color)"
+                                                    To="#EFEFEF"
+                                                    Duration="0:0:0" />
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BgBrush"
+                                                    Storyboard.TargetProperty="(GradientBrush.GradientStops)[1].(GradientStop.Color)"
+                                                    To="#EFEFEF"
+                                                    Duration="0:0:0" />
+                                                <ColorAnimation
+                                                    Storyboard.TargetName="BrBrush"
+                                                    Storyboard.TargetProperty="Color"
+                                                    To="#D9D9D9"
+                                                    Duration="0:0:0" />
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Foreground" Value="#ADADAD" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
