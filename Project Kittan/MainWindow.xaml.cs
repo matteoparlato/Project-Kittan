@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Project_Kittan.Helpers;
 
 namespace Project_Kittan
 {
@@ -16,11 +14,11 @@ namespace Project_Kittan
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<string> _files = new List<string>();
+        public static MainWindow Current;
 
-        private string _path = string.Empty;
+        private HashSet<Models.File> Files { get; set; } = new HashSet<Models.File>();
 
-        private bool _avoidUpdateDateTime = false;
+        private string Path = string.Empty;
 
         /// <summary>
         /// Parameterless constructor of MainWindow class.
@@ -29,8 +27,21 @@ namespace Project_Kittan
         {
             InitializeComponent();
 
+            Current = this;
+
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Title = "Project Kittan - " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+
+        /// <summary>
+        /// Method invoked the window is laid out, rendered, and ready for interaction.
+        /// Verify if there are new updates available for Project Kittan.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            await UpdateExtensions.Check();
         }
 
         /// <summary>
@@ -43,35 +54,9 @@ namespace Project_Kittan
         {
             string executablePath = Process.GetCurrentProcess().MainModule.FileName;
 
-            SelectedFolderTextBlock.Text = _path = executablePath.Substring(0, executablePath.Length - Path.GetFileName(executablePath).Length);
-
-            FoundFilesListBox.ItemsSource = _files = FindFiles(_path);
-
-            if (_files.Count == 0)
-            {
-                if (System.Windows.MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-                {
-                    SelectedFolderTextBlock.Text = "Pick a folder to continue";
-                    NAVVersionComboBox.IsEnabled = false;
-                    //DateFormatComboBox.IsEnabled = false;
-                    DateTimeUpdateCheckBox.IsEnabled = false;
-                    VersionTextTextBox.IsEnabled = false;
-                    GoButton.IsEnabled = false;
-                    return;
-                }
-                else
-                {
-                    Button_Click(null, null);
-                }
-            }
-
-            NAVVersionComboBox.IsEnabled = true;
-            //DateFormatComboBox.IsEnabled = true;
-            DateTimeUpdateCheckBox.IsEnabled = true;
-            VersionTextTextBox.IsEnabled = true;
-            GoButton.IsEnabled = true;
+            OpenFolder(executablePath.Substring(0, executablePath.Length - System.IO.Path.GetFileName(executablePath).Length));
         }
-
+        
         /// <summary>
         /// Method invoked when the user clicks on Browse Folder button.
         /// Opens OpenFolderDialog for choosing the working directory.
@@ -80,183 +65,89 @@ namespace Project_Kittan
         /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            using (System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
-                DialogResult result = dialog.ShowDialog();
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
                 if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
                 {
-                    SelectedFolderTextBlock.Text = _path = dialog.SelectedPath;
-
-                    FoundFilesListBox.ItemsSource = _files = FindFiles(_path);
-
-                    if (_files.Count == 0)
-                    {
-                        if (System.Windows.MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-                        {
-                            SelectedFolderTextBlock.Text = "Pick a folder to continue";
-                            NAVVersionComboBox.IsEnabled = false;
-                            //DateFormatComboBox.IsEnabled = false;
-                            DateTimeUpdateCheckBox.IsEnabled = false;
-                            VersionTextTextBox.IsEnabled = false;
-                            GoButton.IsEnabled = false;
-                            return;
-                        }
-                        else
-                        {
-                            Button_Click(null, null);
-                        }
-                    }
-
-                    NAVVersionComboBox.IsEnabled = true;
-                    //DateFormatComboBox.IsEnabled = true;
-                    DateTimeUpdateCheckBox.IsEnabled = true;
-                    VersionTextTextBox.IsEnabled = true;
-                    GoButton.IsEnabled = true;
+                    OpenFolder(dialog.SelectedPath);
                 }
             }
         }
 
+        private void OpenFolder(string selectedPath)
+        {
+            SelectedFolderTextBlock.Text = Path = selectedPath;
+
+            Files.Clear();
+            FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
+
+            FoundFilesListBox.ItemsSource = Files = FilesExtensions.FindFiles(Path);
+
+            if (Files.Count == 0)
+            {
+                if (MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
+                    TaggerExpander.IsEnabled = false;
+                    ConflictsExpander.IsEnabled = false;
+                    SearchExpander.IsEnabled = false;
+                    return;
+                }
+                else
+                {
+                    Button_Click(null, null);
+                }
+            }
+
+            TaggerExpander.IsEnabled = true;
+            ConflictsExpander.IsEnabled = true;
+            SearchExpander.IsEnabled = true;
+        }
+
         /// <summary>
-        /// Method invoked when the user clicks on GO button.
-        /// Process all text files in the working folder.
+        /// Method invoked when the user clicks on Update OBJECT-PROPERTIES button.
+        /// Start OBJECT-PROPERTIES update on all text files in working directory.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            StatusTextBlock.Text = "Checking files availability...";
+            StatusProgressBar.Value = 0;
+            StatusOverlayProgressBar.IsIndeterminate = true;
+            System.Windows.Forms.Application.UseWaitCursor = true;
+            ActionsScrollViewer.IsEnabled = false;
 
-            FoundFilesListBox.ItemsSource = _files = FindFiles(_path);
-            //if (!_files.Equals(filesAvailable))
-            //{
-            //    if (System.Windows.MessageBox.Show("The number of files to modify has changed. Do you want to continue?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-            //    {
-            //        return;
-            //    }
-            //}
+            await ObjectExtensions.UpdateObjects(Files.ToArray(), (bool)DateTimeUpdateCheckBox.IsChecked, VersionTextTextBox.Text, NAVVersionComboBox.SelectedIndex);
 
-            foreach (string file in _files)
-            {
-                StatusTextBlock.Text = "Processing file \"" + file + "\"...";
-                StringBuilder builder = new StringBuilder();
+            ActionsScrollViewer.IsEnabled = true;
+            StatusTextBlock.Text = "Done";
+            StatusProgressBar.IsIndeterminate = false;
+            StatusOverlayProgressBar.IsIndeterminate = false;
+            System.Windows.Forms.Application.UseWaitCursor = false;
+        }
 
-                using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read))
-                using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
-                {
-                    string line;
+        /// <summary>
+        /// Method invoked when the user clicks on Search for conflicts button.
+        /// Start conflict search on all text files in working directory.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            StatusProgressBar.Value = 0;
+            StatusOverlayProgressBar.IsIndeterminate = true;
+            System.Windows.Forms.Application.UseWaitCursor = true;
+            ActionsScrollViewer.IsEnabled = false;
+            OutputTabControl.SelectedIndex = 0;
 
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        if (line.Equals("  OBJECT-PROPERTIES"))
-                        {
-                            builder.AppendLine(line); // Add "  OBJECT-PROPERTIES"
-                            builder.AppendLine(reader.ReadLine()); // Add "  {"
+            await ObjectExtensions.ConflictsFinder(Files.ToArray());
 
-                            line = reader.ReadLine();
-                            if (line.Contains("Date") && !_avoidUpdateDateTime)
-                            {
-                                switch (DateFormatComboBox.SelectedIndex)
-                                {
-                                    case 0:
-                                        {
-                                            builder.AppendLine(string.Format("    Date={0:MM.dd.yy};", DateTime.Today));
-                                            break;
-                                        }
-                                    default:
-                                        {
-                                            builder.AppendLine(string.Format("    Date={0:dd.MM.yy};", DateTime.Today));
-                                            break;
-                                        }
-                                }
-                            }
-                            else
-                            {
-                                builder.AppendLine(line);
-                            }
-
-                            line = reader.ReadLine();
-                            if (line.Contains("Time") && !_avoidUpdateDateTime)
-                            {
-                                builder.AppendLine(string.Format("    Time={0:HH:mm:ss};", DateTime.Now)); // Add "Time..."
-                            }
-                            else
-                            {
-                                builder.AppendLine(line);
-                            }
-
-                            line = reader.ReadLine();
-                            if (line.Contains("Modified"))
-                            {
-                                builder.AppendLine(line); // Add "Modified..."
-                                line = reader.ReadLine();
-                            }
-
-                            if (line.Contains("Version List"))
-                            {
-                                // Check if the user defined tag is already in the "Version List"
-                                if (!string.IsNullOrWhiteSpace(VersionTextTextBox.Text) && line.IndexOf(VersionTextTextBox.Text, StringComparison.OrdinalIgnoreCase) == -1)
-                                {
-                                    line = line.Replace(";", ",");
-                                    line = line + VersionTextTextBox.Text + ";";
-                                }
-
-                                string temp = line.Substring(17);
-                                temp = temp.Substring(0, temp.Length - 1); // Remove "    Version List=...;"
-
-                                bool avoidInsert = false;
-
-                                switch (NAVVersionComboBox.SelectedIndex)
-                                {
-                                    case 0: // NAV 2013 and below
-                                        {
-                                            if (temp.Length > 80)
-                                            {
-                                                RequestDialog dialog = new RequestDialog(temp, 80);
-                                                if (dialog.ShowDialog() == true)
-                                                {
-                                                    builder.AppendLine("    Version List=" + dialog.VersionList + ";");
-                                                    avoidInsert = true;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    default: // NAV 2015 and above
-                                        {
-                                            if (temp.Length > 250)
-                                            {
-                                                RequestDialog dialog = new RequestDialog(temp, 250);
-                                                if (dialog.ShowDialog() == true)
-                                                {
-                                                    builder.AppendLine("    Version List=" + dialog.VersionList + ";");
-                                                    avoidInsert = true;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                }
-
-                                if (!avoidInsert)
-                                {
-                                    builder.AppendLine(line);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            builder.AppendLine(line);
-                        }
-                    }
-                }
-
-                StatusTextBlock.Text = "Saving file \"" + file + "\"...";
-                using (FileStream stream = new FileStream(file, FileMode.Truncate, FileAccess.Write))
-                using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
-                {
-                    writer.Write(builder.ToString());
-                }
-            }
-            StatusTextBlock.Text = "Done!";
+            ActionsScrollViewer.IsEnabled = true;
+            StatusProgressBar.IsIndeterminate = false;
+            StatusOverlayProgressBar.IsIndeterminate = false;
+            System.Windows.Forms.Application.UseWaitCursor = false;
         }
 
         /// <summary>
@@ -270,40 +161,106 @@ namespace Project_Kittan
         }
 
         /// <summary>
-        /// Method which finds all *.txt files in specified folder and subfolders.
-        /// </summary>
-        /// <param name="Path">The path of the directory</param>
-        /// <returns>The list containing all the paths of the text files found in working directory</returns>
-        private List<string> FindFiles(string Path)
-        {
-            List<string> files = new List<string>();
-            try
-            {
-                foreach (string f in Directory.GetFiles(Path).Where(i => i.EndsWith(".txt")))
-                {
-                    files.Add(f);
-                }
-                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.EndsWith(".hg")))
-                {
-                    files.AddRange(FindFiles(d));
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.Message, "Project Kittan", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            return files;
-        }
-
-        /// <summary>
-        /// Method invoked when the user click on DateTimeUpdateCheckBox control.
+        /// Method invoked when the user clicks on Open issue on GitHub textblock.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        private void TextBlock_MouseDown_1(object sender, MouseButtonEventArgs e)
         {
-            _avoidUpdateDateTime = (bool)DateTimeUpdateCheckBox.IsChecked;
+            Process.Start("https://github.com/matteoparlato/Project-Kittan/issues");
+        }
+
+        /// <summary>
+        /// Method invoked when the user drag and drop a file on left pane.
+        /// Add dropped *.txt files to Files collection.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StackPanel_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                files = files.Where(i => i.EndsWith(".txt")).ToArray();
+                foreach (string file in files)
+                {
+                    Files.Add(new Models.File(file));
+                }
+            }
+
+            FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
+            FoundFilesListBox.ItemsSource = Files;
+        }
+
+        /// <summary>
+        /// Method invoked when the user clicks on Clear textblock.
+        /// Clear Files collection and FoundFilesListBox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBlock_MouseDown_2(object sender, MouseButtonEventArgs e)
+        {
+            TaggerExpander.IsEnabled = false;
+            ConflictsExpander.IsEnabled = false;
+            SearchExpander.IsEnabled = false;
+
+            Files.Clear();
+            FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
+            FoundFilesListBox.ItemsSource = Files;
+            Path = string.Empty;
+            SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
+        }
+
+        /// <summary>
+        /// Method invoked when the user Copy value from ConflictsListView contex menu.
+        /// Copy the right-clicked value to the clipboard.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            string clipboard = item.CommandParameter.ToString().Trim();
+
+            Clipboard.SetText(clipboard);
+            StatusTextBlock.Text = clipboard + " copied to clipboard";
+        }
+
+        /// <summary>
+        /// Method invoked when the user types in PatterTextBox.
+        /// Starts the search after Enter or Return is pressed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Return) Button_Click_4(null, null);            
+        }
+
+        /// <summary>
+        /// Method invoked when the user clicks on Search for occurencies button.
+        /// Start occurencies search on all text files in working directory.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            if(!string.IsNullOrWhiteSpace(PatternTextBox.Text))
+            {
+                PatternFoundInTextBlock.Text = PatternTextBox.Text + " found in:";
+                StatusProgressBar.Value = 0;
+                StatusOverlayProgressBar.IsIndeterminate = true;
+                System.Windows.Forms.Application.UseWaitCursor = true;
+                ActionsScrollViewer.IsEnabled = false;
+                OutputTabControl.SelectedIndex = 1;
+
+                await ObjectExtensions.FindWhere(Files.ToArray(), PatternTextBox.Text);
+
+                ActionsScrollViewer.IsEnabled = true;
+                StatusProgressBar.IsIndeterminate = false;
+                StatusOverlayProgressBar.IsIndeterminate = false;
+                System.Windows.Forms.Application.UseWaitCursor = false;
+            }
         }
     }
 }
