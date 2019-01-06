@@ -89,7 +89,7 @@ namespace Project_Kittan
             {
                 if (MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
-                    SelectedFolderTextBlock.Text = "Pick a folder to continue";
+                    SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
                     TaggerExpander.IsEnabled = false;
                     ConflictsExpander.IsEnabled = false;
                     SearchExpander.IsEnabled = false;
@@ -200,6 +200,10 @@ namespace Project_Kittan
         /// <param name="e"></param>
         private void TextBlock_MouseDown_2(object sender, MouseButtonEventArgs e)
         {
+            TaggerExpander.IsEnabled = false;
+            ConflictsExpander.IsEnabled = false;
+            SearchExpander.IsEnabled = false;
+
             Files.Clear();
             FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
             FoundFilesListBox.ItemsSource = Files;

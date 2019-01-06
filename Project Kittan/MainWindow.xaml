@@ -243,12 +243,15 @@
                         ScrollViewer.CanContentScroll="False">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Grid>
+                                <Grid HorizontalAlignment="Stretch">
                                     <TextBlock Text="{Binding FilePath}" TextWrapping="Wrap" />
                                     <ListView HorizontalAlignment="Stretch" ItemsSource="{Binding Conflicts}">
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid Margin="0,2,0,2" HorizontalAlignment="Stretch">
+                                                <Grid
+                                                    Width="340"
+                                                    Margin="0,2,0,2"
+                                                    HorizontalAlignment="Stretch">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="*" />
