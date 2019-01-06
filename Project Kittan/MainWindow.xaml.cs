@@ -238,8 +238,8 @@ namespace Project_Kittan
         }
 
         /// <summary>
-        /// Method invoked when the user clicks on Search for occurencies button.
-        /// Start occurencies search on all text files in working directory.
+        /// Method invoked when the user clicks on Search for occurrences button.
+        /// Start occurrences search on all text files in working directory.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

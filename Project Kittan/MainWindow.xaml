@@ -161,7 +161,7 @@
                 <Expander
                     x:Name="SearchExpander"
                     Margin="0,8,0,0"
-                    Header="Occurency finder"
+                    Header="Occurrences finder"
                     IsEnabled="False"
                     IsExpanded="False">
                     <StackPanel Margin="10">
@@ -319,7 +319,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Occurencies">
+            <TabItem Header="Occurrences">
                 <Grid Margin="8,8,8,8">
 
                     <Grid.RowDefinitions>
@@ -331,7 +331,7 @@
                     <TextBlock
                         x:Name="PatternFoundInTextBlock"
                         Grid.Row="0"
-                        Text="Occurency found:"
+                        Text="Occurrences found:"
                         TextWrapping="Wrap" />
                     <ListView
                         x:Name="FoundListView"

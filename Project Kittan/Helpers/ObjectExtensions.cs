@@ -217,7 +217,7 @@ namespace Project_Kittan.Helpers
         /// contains more than one object otherewise only one).
         /// </summary>
         /// <param name="text">The text of the file</param>
-        /// <param name="pattern">The text to search for occurency count</param>
+        /// <param name="pattern">The text to search for occurrences count</param>
         /// <returns>The type of file</returns>
         private static int GetFileType(string text, string pattern)
         {
@@ -373,7 +373,7 @@ namespace Project_Kittan.Helpers
         #region Finder
 
         /// <summary>
-        /// Method which finds occurencies of the passed string in NAV objects in working directory.
+        /// Method which finds occurrences of the passed string in NAV objects in working directory.
         /// </summary>
         /// <param name="files">The files to check</param>
         /// <param name="pattern">The string to search</param>
@@ -394,10 +394,10 @@ namespace Project_Kittan.Helpers
                 {
                     //await System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     // {
-                    //     MainWindow.Current.StatusTextBlock.Text = "Searching occurencies in " + file.FileName + "..."; // Update status
+                    //     MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + file.FileName + "..."; // Update status
                     // }), DispatcherPriority.Background);
 
-                    MainWindow.Current.StatusTextBlock.Text = "Searching occurencies in " + files[i].FileName + "..."; // Update status
+                    MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + files[i].FileName + "..."; // Update status
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
@@ -457,7 +457,7 @@ namespace Project_Kittan.Helpers
                 //});
             }
 
-            MainWindow.Current.StatusTextBlock.Text = Found.Count != 0 ? "Found " + Found.Count + " occurencies in " + files.Length + " files" : "No occurencies found for the string " + pattern; // Update status
+            MainWindow.Current.StatusTextBlock.Text = Found.Count != 0 ? "Found " + Found.Count + " occurrences in " + files.Length + " files" : "No occurencies found for the string " + pattern; // Update status
         }
 
         #endregion
