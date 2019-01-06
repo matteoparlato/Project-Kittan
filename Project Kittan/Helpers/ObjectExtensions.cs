@@ -170,7 +170,7 @@ namespace Project_Kittan.Helpers
         private static ElementProperties GetVarID(string line, int lineNumber)
         {
             var lineParts = line.Split('@');
-            if(line.Length >= 2)
+            if(lineParts.Length >= 2)
             {
                 lineParts = lineParts[1].Split(':');
                 if(lineParts.Length >= 1) return new ElementProperties(lineParts[0], lineNumber, line);
@@ -302,6 +302,13 @@ namespace Project_Kittan.Helpers
                                     {
                                         line = line.Replace(";", ",");
                                         line = line + version + ";";
+
+                                        if(line.Contains("=,"))
+                                        {
+                                            StringBuilder versionBuilder = new StringBuilder(line);
+                                            versionBuilder.Replace("=,", "=");
+                                            line = versionBuilder.ToString();
+                                        }
                                     }
 
                                     string temp = line.Substring(17);
@@ -315,8 +322,6 @@ namespace Project_Kittan.Helpers
                                             {
                                                 if (temp.Length > 80)
                                                 {
-                                                    MainWindow.Current.StatusProgressBar.IsIndeterminate = true; // Update status
-
                                                     RequestDialog dialog = new RequestDialog(temp, 80);
                                                     if (dialog.ShowDialog() == true)
                                                     {
@@ -330,8 +335,6 @@ namespace Project_Kittan.Helpers
                                             {
                                                 if (temp.Length > 250)
                                                 {
-                                                    MainWindow.Current.StatusProgressBar.IsIndeterminate = true; // Update status
-
                                                     RequestDialog dialog = new RequestDialog(temp, 250);
                                                     if (dialog.ShowDialog() == true)
                                                     {
@@ -342,7 +345,6 @@ namespace Project_Kittan.Helpers
                                                 break;
                                             }
                                     }
-                                    MainWindow.Current.StatusProgressBar.IsIndeterminate = false; // Update status
 
                                     if (!avoidInsert) { builder.AppendLine(line); }
                                 }
