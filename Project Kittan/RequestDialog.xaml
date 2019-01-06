@@ -22,6 +22,7 @@
                 Height="48"
                 MaxHeight="48"
                 Margin="0,4,0,0"
+                KeyDown="TextBox_KeyDown"
                 TextChanged="TextBox_TextChanged"
                 TextWrapping="Wrap" />
 

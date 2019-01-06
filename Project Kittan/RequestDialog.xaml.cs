@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Project_Kittan
 {
@@ -71,6 +72,17 @@ namespace Project_Kittan
 			ContinueButton.IsEnabled = true;
 			_closable = true;
 		}
+
+        /// <summary>
+        /// Method invoked when the user types in VersionListTextBox.
+        /// Saves and continue after Enter or Return key is pressed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.Key == Key.Enter || e.Key == Key.Return) && !(string.IsNullOrWhiteSpace(VersionListTextBox.Text) || VersionListTextBox.Text.Length > _maxLength)) Button_Click(null, null);
+        }
 
         /// <summary>
         /// Method invoked when closing the window.

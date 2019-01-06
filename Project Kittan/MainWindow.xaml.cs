@@ -224,7 +224,7 @@ namespace Project_Kittan
 
         /// <summary>
         /// Method invoked when the user types in PatterTextBox.
-        /// Start the search after the Enter or the Return key has beeen pressed.
+        /// Starts the search after Enter or Return is pressed.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
