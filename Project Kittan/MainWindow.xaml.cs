@@ -188,6 +188,13 @@ namespace Project_Kittan
                 }
             }
 
+            if(Files.Count > 0)
+            {
+                TaggerExpander.IsEnabled = true;
+                ConflictsExpander.IsEnabled = true;
+                SearchExpander.IsEnabled = true;
+            }
+
             FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
             FoundFilesListBox.ItemsSource = Files;
         }

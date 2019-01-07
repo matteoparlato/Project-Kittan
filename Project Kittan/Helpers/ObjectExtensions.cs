@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Project_Kittan.Helpers
@@ -16,6 +17,8 @@ namespace Project_Kittan.Helpers
         public static ObservableCollection<ObjectElements> Conflicts { get; private set; } = new ObservableCollection<ObjectElements>();
 
         public static ObservableCollection<ObjectElements> Found { get; private set; } = new ObservableCollection<ObjectElements>();
+
+        private static readonly string ObjectSplitterPattern = @"/(OBJECT [Table,Form,Page,Report,Dataport,XMLPort,Codeunit,Menusuite,Query])\w+/g";
 
         // private static Object listAccessLock = new Object();
 
@@ -47,7 +50,7 @@ namespace Project_Kittan.Helpers
 
                         if (GetFileType(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            var objects = lines.Split(new string[] { "OBJECT " }, StringSplitOptions.None);
+                            var objects = Regex.Split(lines, ObjectSplitterPattern);
 
                             for (int j = 1; j < objects.Length; j++) { Find(objects[j], files[i].FileName, ref lineNumber); }
                         }
@@ -406,7 +409,7 @@ namespace Project_Kittan.Helpers
 
                         if (GetFileType(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            var objects = lines.Split(new string[] { "OBJECT " }, StringSplitOptions.None);
+                            var objects = Regex.Split(lines, ObjectSplitterPattern);
 
                             for (int j = 1; j < objects.Length; j++)
                             {
