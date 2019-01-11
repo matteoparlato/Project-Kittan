@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace Project_Kittan.Helpers
 
         public static ObservableCollection<ObjectElements> Found { get; private set; } = new ObservableCollection<ObjectElements>();
 
-        private static readonly string ObjectSplitterPattern = @"/(OBJECT [Table,Form,Page,Report,Dataport,XMLPort,Codeunit,Menusuite,Query])\w+/g";
+        private static readonly string ObjectSplitterPattern = @"(^OBJECT )";
 
         // private static Object listAccessLock = new Object();
 
@@ -48,11 +49,11 @@ namespace Project_Kittan.Helpers
                         string lines = await reader.ReadToEndAsync();
                         int lineNumber = 0;
 
-                        if (GetFileType(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
+                        if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            var objects = Regex.Split(lines, ObjectSplitterPattern);
+                            var objects = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Multiline);
 
-                            for (int j = 1; j < objects.Length; j++) { Find(objects[j], files[i].FileName, ref lineNumber); }
+                            for (int j = 1; j < objects.Length; j++) { Find(objects[j++] + objects[j], files[i].FileName, ref lineNumber); }
                         }
                         else { Find(lines, files[i].FileName, ref lineNumber); } // The file contains one object
                     }
@@ -222,7 +223,7 @@ namespace Project_Kittan.Helpers
         /// <param name="text">The text of the file</param>
         /// <param name="pattern">The text to search for occurrences count</param>
         /// <returns>The type of file</returns>
-        private static int GetFileType(string text, string pattern)
+        private static int GetStringOccurrences(string text, string pattern)
         {
             int count = 0, i = 0;
 
@@ -407,15 +408,16 @@ namespace Project_Kittan.Helpers
                     {
                         string lines = await reader.ReadToEndAsync();
 
-                        if (GetFileType(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
+                        if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            var objects = Regex.Split(lines, ObjectSplitterPattern);
+                            var objects = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Multiline);
 
                             for (int j = 1; j < objects.Length; j++)
                             {
-                                if (GetFileType(objects[j], pattern) != 0)
+                                string objText = objects[j++] + objects[j];
+                                if (GetStringOccurrences(objText, pattern) != 0)
                                 {
-                                    var startingLine = objects[j].Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
+                                    var startingLine = objText.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
 
                                     string objectName = string.Empty;
                                     for (int k = 2; k < startingLine.Length; k++)
@@ -432,7 +434,7 @@ namespace Project_Kittan.Helpers
                         }
                         else // The file contains one object
                         {
-                            if (GetFileType(lines, pattern) != 0)
+                            if (GetStringOccurrences(lines, pattern) != 0)
                             {
                                 var startingLine = lines.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
 
