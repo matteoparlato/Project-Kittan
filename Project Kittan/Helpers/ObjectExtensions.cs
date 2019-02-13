@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Project_Kittan.Helpers
@@ -23,6 +24,172 @@ namespace Project_Kittan.Helpers
 
         // private static Object listAccessLock = new Object();
 
+        #region Objects Splitter
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file">The file to split</param>
+        internal static void SplitFile(Models.File file)
+        {
+            SplitFile(file.FilePath);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath">The path of the file to split</param>
+        internal static void SplitFile(string filePath)
+        {
+            string basePath = string.Empty;
+            List<string> temp = new List<string>();
+
+            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+            {
+                Console.Write("Write the name of the output folder: ");
+                string folderName = Console.ReadLine();
+
+                Path.GetInvalidFileNameChars().Aggregate(folderName, (current, c) => current.Replace(c.ToString(), string.Empty));
+
+                basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + @"\" + folderName;
+                if (!Directory.Exists(basePath))
+                {
+                    Directory.CreateDirectory(basePath);
+                }
+                else
+                {
+                    basePath = basePath.Substring(0, basePath.Length - folderName.Length);
+                    folderName += "_" + DateTime.Now.Ticks;
+                    basePath += folderName;
+
+                    Directory.CreateDirectory(basePath);
+
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.Write("\nAttention");
+                    Console.ResetColor();
+                    Console.Write("\nThe specified folder alredy exist. Folder " + folderName + " used instead.\n");
+                    Thread.Sleep(1000);
+                }
+
+                Console.Write("\n");
+
+                ConsoleExtensions.Start("Reading the file");
+                string lines = reader.ReadToEnd();
+                ConsoleExtensions.Stop();
+
+                Console.Write("\n\nSplitting the file");
+
+                if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
+                {
+                    var objects = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Multiline);
+
+                    ConsoleExtensions.Start("Splitting the file");
+
+                    for (int i = 1; i < objects.Length; i++) temp.Add(objects[i++] + objects[i]);
+
+                    Parallel.ForEach(temp, i =>
+                    {
+                        WriteSplittedFile(i, basePath);
+                    });
+
+                    ConsoleExtensions.Stop();
+                }
+                else
+                {
+                    WriteSplittedFile(lines, basePath); // The file contains one object
+                }
+            }
+
+            Console.WriteLine("\n\nObjects exported to " + basePath);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objectLines">The lines of the object</param>
+        /// <param name="folderPath">The base path where to store the splitted file</param>
+        private static void WriteSplittedFile(string objectLines, string folderPath)
+        {
+            string[] startingLine = objectLines.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
+
+            string fileName = string.Empty;
+            for (int i = 1; i < startingLine.Length; i++) fileName += " " + startingLine[i];
+
+            fileName = Path.GetInvalidFileNameChars().Aggregate(fileName.Trim(), (current, c) => current.Replace(c.ToString(), string.Empty));
+
+            switch (startingLine[1])
+            {
+                case "Table":
+                    {
+                        if (!Directory.Exists(folderPath + @"\Table")) Directory.CreateDirectory(folderPath + @"\Table");
+                        folderPath = folderPath + @"\Table\";
+                        break;
+                    }
+                case "Form":
+                    {
+                        if (!Directory.Exists(folderPath + @"\Form")) Directory.CreateDirectory(folderPath + @"\Form");
+                        folderPath = folderPath + @"\Form\";
+                        break;
+                    }
+                case "Page":
+                    {
+                        if (!Directory.Exists(folderPath + @"\Page")) Directory.CreateDirectory(folderPath + @"\Page");
+                        folderPath = folderPath + @"\Page\";
+                        break;
+                    }
+                case "Report":
+                    {
+                        if (!Directory.Exists(folderPath + @"\Report")) Directory.CreateDirectory(folderPath + @"\Report");
+                        folderPath = folderPath + @"\Report\";
+                        break;
+                    }
+                case "Dataport":
+                    {
+                        if (!Directory.Exists(folderPath + @"\Dataport")) Directory.CreateDirectory(folderPath + @"\Dataport");
+                        folderPath = folderPath + @"\Dataport\";
+                        break;
+                    }
+                case "XMLport":
+                    {
+                        if (!Directory.Exists(folderPath + @"\XMLPort")) Directory.CreateDirectory(folderPath + @"\XMLPort");
+                        folderPath = folderPath + @"\XMLPort\";
+                        break;
+                    }
+                case "Codeunit":
+                    {
+                        if (!Directory.Exists(folderPath + @"\Codeunit")) Directory.CreateDirectory(folderPath + @"\Codeunit");
+                        folderPath = folderPath + @"\Codeunit\";
+                        break;
+                    }
+                case "MenuSuite":
+                    {
+                        if (!Directory.Exists(folderPath + @"\Menusuite")) Directory.CreateDirectory(folderPath + @"\Menusuite");
+                        folderPath = folderPath + @"\Menusuite\";
+                        break;
+                    }
+                case "Query":
+                    {
+                        if (!Directory.Exists(folderPath + @"\Query")) Directory.CreateDirectory(folderPath + @"\Query");
+                        folderPath = folderPath + @"\Query\";
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+
+            using (FileStream stream = new FileStream(folderPath + fileName + ".txt", FileMode.Create, FileAccess.Write))
+            using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
+            {
+                writer.Write(objectLines);
+            }
+        }
+
+        #endregion
+
         #region Conflicts
 
         /// <summary>
@@ -39,7 +206,7 @@ namespace Project_Kittan.Helpers
 
             for (int i = 0; i < files.Length; i++)
             {
-                if(System.IO.File.Exists(files[i].FilePath))
+                if (System.IO.File.Exists(files[i].FilePath))
                 {
                     MainWindow.Current.StatusTextBlock.Text = "Searching conflicts in " + files[i].FileName + "..."; // Update status
 
@@ -53,9 +220,12 @@ namespace Project_Kittan.Helpers
                         {
                             var objects = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Multiline);
 
-                            for (int j = 1; j < objects.Length; j++) { Find(objects[j++] + objects[j], files[i].FileName, ref lineNumber); }
+                            for (int j = 1; j < objects.Length; j++) Find(objects[j++] + objects[j], files[i].FileName, ref lineNumber);
                         }
-                        else { Find(lines, files[i].FileName, ref lineNumber); } // The file contains one object
+                        else
+                        {
+                            Find(lines, files[i].FileName, ref lineNumber); // The file contains one object
+                        }
                     }
 
                     MainWindow.Current.StatusProgressBar.Value += progressStep; // Update status
@@ -83,7 +253,7 @@ namespace Project_Kittan.Helpers
                 {
                     while (!lines[i].Equals("  }")) // End of CONTROLs and FIELDs object part
                     {
-                        if (lines[i].StartsWith("    {")) { obj.Controls.Add(GetControlID(lines[i], lineNumber)); }
+                        if (lines[i].StartsWith("    {")) obj.Controls.Add(GetControlID(lines[i], lineNumber));
 
                         i++;
                         lineNumber++;
@@ -139,15 +309,15 @@ namespace Project_Kittan.Helpers
                 lineNumber++;
             }
 
-            foreach (ElementProperties control in obj.Controls) { Search(control, obj.Controls, ref obj); }
+            foreach (ElementProperties control in obj.Controls) Search(control, obj.Controls, ref obj);
 
             foreach (ElementProperties procedure in obj.Procedures)
             {
                 Search(procedure, obj.Procedures, ref obj);
-                foreach (ElementProperties @var in procedure.Vars) { Search(@var, procedure.Vars, ref obj); }
+                foreach (ElementProperties @var in procedure.Vars) Search(@var, procedure.Vars, ref obj);
             }
 
-            if (obj.Conflicts.Count > 0) { Conflicts.Add(obj); }
+            if (obj.Conflicts.Count > 0) Conflicts.Add(obj);
         }
 
         /// <summary>
@@ -161,7 +331,7 @@ namespace Project_Kittan.Helpers
         {
             foreach (ElementProperties other in collection)
             {
-                if (control.ID.Equals(other.ID) && !control.LineNumber.Equals(other.LineNumber)) { obj.Conflicts.Add(other); }
+                if (control.ID.Equals(other.ID) && !control.LineNumber.Equals(other.LineNumber)) obj.Conflicts.Add(other);
             }
         }
 
@@ -174,12 +344,12 @@ namespace Project_Kittan.Helpers
         private static ElementProperties GetVarID(string line, int lineNumber)
         {
             var lineParts = line.Split('@');
-            if(lineParts.Length >= 2)
+            if (lineParts.Length >= 2)
             {
                 lineParts = lineParts[1].Split(':');
-                if(lineParts.Length >= 1) return new ElementProperties(lineParts[0], lineNumber, line);
+                if (lineParts.Length >= 1) return new ElementProperties(lineParts[0], lineNumber, line);
             }
-            return new ElementProperties();            
+            return new ElementProperties();
         }
 
         /// <summary>
@@ -208,10 +378,10 @@ namespace Project_Kittan.Helpers
         private static ElementProperties GetProcedureID(string line, int lineNumber)
         {
             var lineParts = line.Split('@');
-            if(lineParts.Length >= 2)
+            if (lineParts.Length >= 2)
             {
                 lineParts = line.Split('(');
-                if(lineParts.Length > 0) return new ElementProperties(lineParts[0], lineNumber, line);
+                if (lineParts.Length > 0) return new ElementProperties(lineParts[0], lineNumber, line);
             }
             return new ElementProperties();
         }
@@ -307,7 +477,7 @@ namespace Project_Kittan.Helpers
                                         line = line.Replace(";", ",");
                                         line = line + version + ";";
 
-                                        if(line.Contains("=,"))
+                                        if (line.Contains("=,"))
                                         {
                                             StringBuilder versionBuilder = new StringBuilder(line);
                                             versionBuilder.Replace("=,", "=");
@@ -350,7 +520,7 @@ namespace Project_Kittan.Helpers
                                             }
                                     }
 
-                                    if (!avoidInsert) { builder.AppendLine(line); }
+                                    if (!avoidInsert) builder.AppendLine(line);
                                 }
                             }
                             else
@@ -389,9 +559,9 @@ namespace Project_Kittan.Helpers
             Found.Clear();
 
             //ConcurrentBag<ObjectElements> concurrentFound = new ConcurrentBag<ObjectElements>();
-            
+
             for (int i = 0; i < files.Length; i++)
-            { 
+            {
                 //Parallel.ForEach(files, async (file) =>
                 //{
                 if (System.IO.File.Exists(files[i].FilePath))
@@ -420,14 +590,11 @@ namespace Project_Kittan.Helpers
                                     var startingLine = objText.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
 
                                     string objectName = string.Empty;
-                                    for (int k = 2; k < startingLine.Length; k++)
-                                    {
-                                        objectName += startingLine[k] + ' ';
-                                    }
+                                    for (int k = 2; k < startingLine.Length; k++) objectName += startingLine[k] + ' ';
 
                                     //lock (listAccessLock)
                                     //{
-                                        Found.Add(new ObjectElements(startingLine[0], startingLine[1], objectName, files[i].FileName));
+                                    Found.Add(new ObjectElements(startingLine[0], startingLine[1], objectName, files[i].FileName));
                                     //}
                                 }
                             }
@@ -439,14 +606,11 @@ namespace Project_Kittan.Helpers
                                 var startingLine = lines.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
 
                                 string objectName = string.Empty;
-                                for (int j = 3; j < startingLine.Length; j++)
-                                {
-                                    objectName += startingLine[j] + ' ';
-                                }
+                                for (int j = 3; j < startingLine.Length; j++) objectName += startingLine[j] + ' ';
 
                                 //lock (listAccessLock)
                                 //{
-                                    Found.Add(new ObjectElements(startingLine[1], startingLine[2], objectName, files[i].FileName));
+                                Found.Add(new ObjectElements(startingLine[1], startingLine[2], objectName, files[i].FileName));
                                 //}
                             }
                         }

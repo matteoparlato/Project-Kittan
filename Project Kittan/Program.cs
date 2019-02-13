@@ -1,20 +1,64 @@
-﻿using System;
+﻿using Project_Kittan.Helpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Project_Kittan
 {
     class Program
     {
+        [DllImport("kernel32.dll")]
+        static extern bool FreeConsole();
+
         private static Dictionary<string, Assembly> loadedLibs = new Dictionary<string, Assembly>();
 
         [STAThread]
-        public static void Main()
+        public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.AssemblyResolve += Resolve;
 
-            App.Main();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("Project Kittan");
+            Console.ResetColor();
+            Console.WriteLine(" - version " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\n");
+
+            switch (args.Length)
+            {
+                case 0:
+                    {
+                        FreeConsole();
+                        App.Main();
+                        break;
+                    }
+                case 1:
+                    {
+                        foreach (string arg in args)
+                        {
+                            ObjectExtensions.SplitFile(arg);
+                        }
+
+                        Console.Write("\nPress any key to continue");
+                        while (Console.KeyAvailable)
+                            Console.ReadKey(true);
+                        Console.ReadKey();
+                        break;
+                    }
+                default:
+                    {
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.Yellow;
+                        Console.Write("Attention");
+                        Console.ResetColor();
+                        Console.WriteLine("\nWrong number of parameters.");
+                        Console.Write("\nPress any key to continue");
+                        while (Console.KeyAvailable)
+                            Console.ReadKey(true);
+                        Console.ReadKey();
+                        break;
+                    }
+            }
         }
 
         private static Assembly Resolve(object sender, ResolveEventArgs e)
