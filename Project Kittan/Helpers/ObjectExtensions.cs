@@ -48,9 +48,7 @@ namespace Project_Kittan.Helpers
             using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
             {
                 Console.Write("Write the name of the output folder: ");
-                string folderName = Console.ReadLine();
-
-                Path.GetInvalidFileNameChars().Aggregate(folderName, (current, c) => current.Replace(c.ToString(), string.Empty));
+                string folderName = Path.GetInvalidFileNameChars().Aggregate(Console.ReadLine(), (current, c) => current.Replace(c.ToString(), string.Empty));
 
                 basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + @"\" + folderName;
                 if (!Directory.Exists(basePath))
