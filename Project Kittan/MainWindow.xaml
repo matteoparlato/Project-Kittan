@@ -138,10 +138,7 @@
                     IsEnabled="False"
                     IsExpanded="False">
                     <StackPanel Margin="10">
-                        <TextBlock
-                            Margin="0,8,0,0"
-                            Text="Write the tag you want to remove from the &quot;Version List&quot;."
-                            TextWrapping="Wrap" />
+                        <TextBlock Text="Write the tag you want to remove from the &quot;Version List&quot;." TextWrapping="Wrap" />
                         <TextBox x:Name="TagTextTextBox" Margin="0,4,0,0" />
 
                         <TextBlock
