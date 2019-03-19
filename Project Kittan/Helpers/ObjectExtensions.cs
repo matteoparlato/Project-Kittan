@@ -24,7 +24,7 @@ namespace Project_Kittan.Helpers
 
         // private static Object listAccessLock = new Object();
 
-        #region Objects Splitter
+        #region Splitter
 
         /// <summary>
         /// 
@@ -544,6 +544,89 @@ namespace Project_Kittan.Helpers
 
         #endregion
 
+        #region Tag remover
+
+        /// <summary>
+        /// Method which removes a tag from a Version List.
+        /// </summary>
+        /// <param name="files">The collection of files to update</param>
+        /// <param name="tag">The version tag to remove</param>
+        internal async static Task RemoveTag(Models.File[] files, string tag, bool ignoreCase)
+        {
+            double step = (double)100 / files.Length;
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                if (System.IO.File.Exists(files[i].FilePath))
+                {
+                    MainWindow.Current.StatusTextBlock.Text = "Removing " + tag + " from file " + files[i].FileName + "..."; // Update status
+
+                    StringBuilder builder = new StringBuilder();
+
+                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                    {
+                        string line;
+
+                        while ((line = await reader.ReadLineAsync()) != null)
+                        {
+                            if (line.Equals("  OBJECT-PROPERTIES"))
+                            {
+                                builder.AppendLine(line); // Add "  OBJECT-PROPERTIES"
+                                builder.AppendLine(await reader.ReadLineAsync()); // Add "  {"
+
+                                builder.AppendLine(await reader.ReadLineAsync());
+                                builder.AppendLine(await reader.ReadLineAsync());
+
+                                line = await reader.ReadLineAsync();
+                                if (line.Contains("Modified"))
+                                {
+                                    builder.AppendLine(line); // Add "Modified..."
+                                    line = await reader.ReadLineAsync();
+                                }
+
+                                if (line.Contains("Version List"))
+                                {
+                                    string temp = line.Substring(17);
+                                    temp = temp.Substring(0, temp.Length - 1); // Remove "    Version List=...;"
+
+                                    if (ignoreCase)
+                                    {
+                                        line = Regex.Replace(temp, tag, string.Empty, RegexOptions.IgnoreCase);
+                                    }
+                                    else
+                                    {
+                                        line = temp.Replace(tag, string.Empty);
+                                    }
+
+                                    line = "    Version List=" + line + ";";
+                                    line = line.Replace(",,", ",");
+                                    line = line.Replace(",;", ";");
+                                }
+
+                                builder.AppendLine(line);
+                            }
+                            else
+                            {
+                                builder.AppendLine(line);
+                            }
+                        }
+
+                        MainWindow.Current.StatusProgressBar.Value += step; // Update status
+                    }
+
+                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Truncate, FileAccess.Write))
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
+                    {
+                        MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].FileName + " changes..."; // Update status
+                        await writer.WriteAsync(builder.ToString());
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         #region Finder
 
         /// <summary>
@@ -626,7 +709,7 @@ namespace Project_Kittan.Helpers
                 //});
             }
 
-            MainWindow.Current.StatusTextBlock.Text = Found.Count != 0 ? "Found " + Found.Count + " occurrences in " + files.Length + " files" : "No occurencies found for the string " + pattern; // Update status
+            MainWindow.Current.StatusTextBlock.Text = Found.Count != 0 ? "Found " + Found.Count + " occurrences in " + files.Length + " files" : "No occurences found for the string " + pattern; // Update status
         }
 
         #endregion
