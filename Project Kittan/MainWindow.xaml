@@ -176,7 +176,7 @@
                             Content="Search for conflicts" />
                         <TextBlock
                             Margin="0,8,0,0"
-                            Text="This feature is currently under developement. If you find something strange in the output please open an issue on GitHub."
+                            Text="This feature is currently under development. If you find something strange in the output please open an issue on GitHub."
                             TextWrapping="Wrap" />
                         <TextBlock
                             Margin="0,8,0,0"
