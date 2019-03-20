@@ -91,6 +91,7 @@ namespace Project_Kittan
                 {
                     SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
                     TaggerExpander.IsEnabled = false;
+                    TaggerRemoverExpander.IsEnabled = false;
                     ConflictsExpander.IsEnabled = false;
                     SearchExpander.IsEnabled = false;
                     return;
@@ -102,6 +103,7 @@ namespace Project_Kittan
             }
 
             TaggerExpander.IsEnabled = true;
+            TaggerRemoverExpander.IsEnabled = true;
             ConflictsExpander.IsEnabled = true;
             SearchExpander.IsEnabled = true;
         }
@@ -126,6 +128,31 @@ namespace Project_Kittan
             StatusProgressBar.IsIndeterminate = false;
             StatusOverlayProgressBar.IsIndeterminate = false;
             System.Windows.Forms.Application.UseWaitCursor = false;
+        }
+
+        /// <summary>
+        /// Method invoked when the user clicks on Update Remove tag button.
+        /// Start tag removal from all text files in working directory.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(TagTextTextBox.Text))
+            {
+                StatusProgressBar.Value = 0;
+                StatusOverlayProgressBar.IsIndeterminate = true;
+                System.Windows.Forms.Application.UseWaitCursor = true;
+                ActionsScrollViewer.IsEnabled = false;
+
+                await ObjectExtensions.RemoveTag(Files.ToArray(), TagTextTextBox.Text, (bool)CaseSensitiveCheckBox.IsChecked);
+
+                ActionsScrollViewer.IsEnabled = true;
+                StatusTextBlock.Text = "Done";
+                StatusProgressBar.IsIndeterminate = false;
+                StatusOverlayProgressBar.IsIndeterminate = false;
+                System.Windows.Forms.Application.UseWaitCursor = false;
+            }
         }
 
         /// <summary>
@@ -191,6 +218,7 @@ namespace Project_Kittan
             if(Files.Count > 0)
             {
                 TaggerExpander.IsEnabled = true;
+                TaggerRemoverExpander.IsEnabled = true;
                 ConflictsExpander.IsEnabled = true;
                 SearchExpander.IsEnabled = true;
             }
@@ -208,6 +236,7 @@ namespace Project_Kittan
         private void TextBlock_MouseDown_2(object sender, MouseButtonEventArgs e)
         {
             TaggerExpander.IsEnabled = false;
+            TaggerRemoverExpander.IsEnabled = false;
             ConflictsExpander.IsEnabled = false;
             SearchExpander.IsEnabled = false;
 

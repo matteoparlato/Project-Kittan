@@ -101,8 +101,8 @@
                             x:Name="NAVVersionComboBox"
                             Margin="0,4,0,0"
                             SelectedIndex="0">
-                            <ComboBoxItem Content="NAV 2013 and below (max. 80 chars for &quot;Version List&quot; field)" />
-                            <ComboBoxItem Content="NAV 2015 and above (max. 250 chars for &quot;Version List&quot; field)" />
+                            <ComboBoxItem Content="NAV 2009 R2 and below (max. 80 chars for &quot;Version List&quot; field)" />
+                            <ComboBoxItem Content="NAV 2013 and above (max. 250 chars for &quot;Version List&quot; field)" />
                         </ComboBox>
 
                         <TextBlock
@@ -132,6 +132,37 @@
                 </Expander>
 
                 <Expander
+                    x:Name="TaggerRemoverExpander"
+                    Margin="0,8,0,0"
+                    Header="Tag remover"
+                    IsEnabled="False"
+                    IsExpanded="False">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Write the tag you want to remove from the &quot;Version List&quot;." TextWrapping="Wrap" />
+                        <TextBox x:Name="TagTextTextBox" Margin="0,4,0,0" />
+
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            Text="Select the date format you want to use."
+                            TextWrapping="Wrap"
+                            Visibility="Collapsed" />
+
+                        <CheckBox
+                            x:Name="CaseSensitiveCheckBox"
+                            Margin="0,8,0,0"
+                            Content="Ignore case removal "
+                            IsChecked="True" />
+
+                        <Button
+                            Width="80"
+                            Margin="0,18,0,0"
+                            HorizontalAlignment="Left"
+                            Click="Button_Click_5"
+                            Content="Remove tag" />
+                    </StackPanel>
+                </Expander>
+
+                <Expander
                     x:Name="ConflictsExpander"
                     Margin="0,8,0,0"
                     Header="Conflicts finder"
@@ -145,7 +176,7 @@
                             Content="Search for conflicts" />
                         <TextBlock
                             Margin="0,8,0,0"
-                            Text="This feature is currently under developement. If you find something strange in the output please open an issue on GitHub."
+                            Text="This feature is currently under development. If you find something strange in the output please open an issue on GitHub."
                             TextWrapping="Wrap" />
                         <TextBlock
                             Margin="0,8,0,0"
