@@ -41,7 +41,7 @@ namespace Project_Kittan.Helpers
                     MainWindow.Current.StatusTextBlock.Text = "Searching conflicts in " + files[i].FileName + "..."; // Update status
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
                     {
                         string lines = await reader.ReadToEndAsync();
                         int lineNumber = 0;
@@ -261,7 +261,7 @@ namespace Project_Kittan.Helpers
                     StringBuilder builder = new StringBuilder();
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
                     {
                         string line;
 
@@ -363,7 +363,7 @@ namespace Project_Kittan.Helpers
                     }
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Truncate, FileAccess.Write))
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
                     {
                         MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].FileName + " changes..."; // Update status
                         await writer.WriteAsync(builder.ToString());
@@ -394,7 +394,7 @@ namespace Project_Kittan.Helpers
                     StringBuilder builder = new StringBuilder();
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
                     {
                         string line;
 
@@ -446,7 +446,7 @@ namespace Project_Kittan.Helpers
                     }
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Truncate, FileAccess.Write))
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
                     {
                         MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].FileName + " changes..."; // Update status
                         await writer.WriteAsync(builder.ToString());
@@ -487,7 +487,7 @@ namespace Project_Kittan.Helpers
                     MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + files[i].FileName + "..."; // Update status
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
                     {
                         string lines = await reader.ReadToEndAsync();
 

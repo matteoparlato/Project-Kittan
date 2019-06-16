@@ -46,7 +46,7 @@ namespace Project_Kittan.Helpers
             }
 
             using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252)))
+            using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
             {
                 objectCode = SplitObjects(await reader.ReadToEndAsync());
 
@@ -184,7 +184,7 @@ namespace Project_Kittan.Helpers
             }
 
             using (FileStream stream = new FileStream(folderPath + fileName + ".txt", FileMode.Create, FileAccess.Write))
-            using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
+            using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
             {
                 writer.Write(objectLines);
             }

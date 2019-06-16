@@ -56,7 +56,7 @@ namespace Project_Kittan
 
             OpenFolder(executablePath.Substring(0, executablePath.Length - System.IO.Path.GetFileName(executablePath).Length));
         }
-        
+
         /// <summary>
         /// Method invoked when the user clicks on Browse Folder button.
         /// Opens OpenFolderDialog for choosing the working directory.
@@ -178,11 +178,11 @@ namespace Project_Kittan
         }
 
         /// <summary>
-        /// Method invoked when the user clicks on Find more about Project Kittan on GitHub textblock.
+        /// Method invoked when the user clicks on About menu item.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
             Process.Start("https://github.com/matteoparlato/Project-Kittan");
         }
@@ -270,7 +270,7 @@ namespace Project_Kittan
         /// <param name="e"></param>
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter || e.Key == Key.Return) Button_Click_4(null, null);            
+            if (e.Key == Key.Enter || e.Key == Key.Return) Button_Click_4(null, null);
         }
 
         /// <summary>
@@ -297,6 +297,11 @@ namespace Project_Kittan
                 StatusOverlayProgressBar.IsIndeterminate = false;
                 System.Windows.Forms.Application.UseWaitCursor = false;
             }
+        }
+
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            new SettingsWindow().ShowDialog();
         }
     }
 }
