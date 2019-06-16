@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4FA643CE-918B-42A0-8E2B-B1D9F53740D8}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>Project_Kittan</RootNamespace>
     <AssemblyName>Project Kittan</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -83,14 +83,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Helpers\ConsoleExtensions.cs" />
     <Compile Include="Helpers\ObjectExtensions.cs" />
     <Compile Include="Helpers\FilesExtensions.cs" />
+    <Compile Include="Helpers\ObjectFileExtensions.cs" />
     <Compile Include="Helpers\UpdateExtensions.cs" />
     <Compile Include="Models\ElementProperties.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\ObjectElements.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="SplitDialog.xaml.cs">
+      <DependentUpon>SplitDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RequestDialog.xaml.cs">
       <DependentUpon>RequestDialog.xaml</DependentUpon>
     </Compile>
@@ -106,6 +109,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SplitDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="RequestDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

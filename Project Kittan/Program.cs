@@ -1,17 +1,13 @@
-﻿using Project_Kittan.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace Project_Kittan
 {
     class Program
     {
-        [DllImport("kernel32.dll")]
-        static extern bool FreeConsole();
-
         private static Dictionary<string, Assembly> loadedLibs = new Dictionary<string, Assembly>();
 
         [STAThread]
@@ -19,43 +15,25 @@ namespace Project_Kittan
         {
             AppDomain.CurrentDomain.AssemblyResolve += Resolve;
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("Project Kittan");
-            Console.ResetColor();
-            Console.WriteLine(" - version " + Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\n");
-
             switch (args.Length)
             {
                 case 0:
                     {
-                        FreeConsole();
                         App.Main();
                         break;
                     }
                 case 1:
                     {
-                        foreach (string arg in args)
+                        if (Path.GetFileName(args[0]).EndsWith(".txt"))
                         {
-                            ObjectExtensions.SplitFile(arg);
+                            new SplitDialog(args[0]).ShowDialog();
                         }
 
-                        Console.Write("\nPress any key to continue");
-                        while (Console.KeyAvailable)
-                            Console.ReadKey(true);
-                        Console.ReadKey();
                         break;
                     }
                 default:
                     {
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.BackgroundColor = ConsoleColor.Yellow;
-                        Console.Write("Attention");
-                        Console.ResetColor();
-                        Console.WriteLine("\nWrong number of parameters.");
-                        Console.Write("\nPress any key to continue");
-                        while (Console.KeyAvailable)
-                            Console.ReadKey(true);
-                        Console.ReadKey();
+                        MessageBox.Show("Project Kittan accepts only one parameter:\n[filePath] : the path of the file to split");
                         break;
                     }
             }

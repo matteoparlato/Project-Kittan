@@ -3,10 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Project_Kittan.Helpers
@@ -20,173 +18,7 @@ namespace Project_Kittan.Helpers
 
         public static ObservableCollection<ObjectElements> Found { get; private set; } = new ObservableCollection<ObjectElements>();
 
-        private static readonly string ObjectSplitterPattern = @"(^OBJECT )";
-
         // private static Object listAccessLock = new Object();
-
-        #region Splitter
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="file">The file to split</param>
-        internal static void SplitFile(Models.File file)
-        {
-            SplitFile(file.FilePath);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filePath">The path of the file to split</param>
-        internal static void SplitFile(string filePath)
-        {
-            string basePath = string.Empty;
-            List<string> temp = new List<string>();
-
-            using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-            using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(1252))) // Encoding 1252 is the same used by NAV (Windows-1252)
-            {
-                Console.Write("Write the name of the output folder: ");
-                string folderName = Path.GetInvalidFileNameChars().Aggregate(Console.ReadLine(), (current, c) => current.Replace(c.ToString(), string.Empty));
-
-                basePath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + @"\" + folderName;
-                if (!Directory.Exists(basePath))
-                {
-                    Directory.CreateDirectory(basePath);
-                }
-                else
-                {
-                    basePath = basePath.Substring(0, basePath.Length - folderName.Length);
-                    folderName += "_" + DateTime.Now.Ticks;
-                    basePath += folderName;
-
-                    Directory.CreateDirectory(basePath);
-
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.BackgroundColor = ConsoleColor.Yellow;
-                    Console.Write("\nAttention");
-                    Console.ResetColor();
-                    Console.Write("\nThe specified folder alredy exist. Folder " + folderName + " used instead.\n");
-                    Thread.Sleep(1000);
-                }
-
-                Console.Write("\n");
-
-                ConsoleExtensions.Start("Reading the file");
-                string lines = reader.ReadToEnd();
-                ConsoleExtensions.Stop();
-
-                Console.Write("\n\nSplitting the file");
-
-                if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
-                {
-                    var objects = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Multiline);
-
-                    ConsoleExtensions.Start("Splitting the file");
-
-                    for (int i = 1; i < objects.Length; i++) temp.Add(objects[i++] + objects[i]);
-
-                    Parallel.ForEach(temp, i =>
-                    {
-                        WriteSplittedFile(i, basePath);
-                    });
-
-                    ConsoleExtensions.Stop();
-                }
-                else
-                {
-                    WriteSplittedFile(lines, basePath); // The file contains one object
-                }
-            }
-
-            Console.WriteLine("\n\nObjects exported to " + basePath);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="objectLines">The lines of the object</param>
-        /// <param name="folderPath">The base path where to store the splitted file</param>
-        private static void WriteSplittedFile(string objectLines, string folderPath)
-        {
-            string[] startingLine = objectLines.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
-
-            string fileName = string.Empty;
-            for (int i = 1; i < startingLine.Length; i++) fileName += " " + startingLine[i];
-
-            fileName = Path.GetInvalidFileNameChars().Aggregate(fileName.Trim(), (current, c) => current.Replace(c.ToString(), string.Empty));
-
-            switch (startingLine[1])
-            {
-                case "Table":
-                    {
-                        if (!Directory.Exists(folderPath + @"\Table")) Directory.CreateDirectory(folderPath + @"\Table");
-                        folderPath = folderPath + @"\Table\";
-                        break;
-                    }
-                case "Form":
-                    {
-                        if (!Directory.Exists(folderPath + @"\Form")) Directory.CreateDirectory(folderPath + @"\Form");
-                        folderPath = folderPath + @"\Form\";
-                        break;
-                    }
-                case "Page":
-                    {
-                        if (!Directory.Exists(folderPath + @"\Page")) Directory.CreateDirectory(folderPath + @"\Page");
-                        folderPath = folderPath + @"\Page\";
-                        break;
-                    }
-                case "Report":
-                    {
-                        if (!Directory.Exists(folderPath + @"\Report")) Directory.CreateDirectory(folderPath + @"\Report");
-                        folderPath = folderPath + @"\Report\";
-                        break;
-                    }
-                case "Dataport":
-                    {
-                        if (!Directory.Exists(folderPath + @"\Dataport")) Directory.CreateDirectory(folderPath + @"\Dataport");
-                        folderPath = folderPath + @"\Dataport\";
-                        break;
-                    }
-                case "XMLport":
-                    {
-                        if (!Directory.Exists(folderPath + @"\XMLPort")) Directory.CreateDirectory(folderPath + @"\XMLPort");
-                        folderPath = folderPath + @"\XMLPort\";
-                        break;
-                    }
-                case "Codeunit":
-                    {
-                        if (!Directory.Exists(folderPath + @"\Codeunit")) Directory.CreateDirectory(folderPath + @"\Codeunit");
-                        folderPath = folderPath + @"\Codeunit\";
-                        break;
-                    }
-                case "MenuSuite":
-                    {
-                        if (!Directory.Exists(folderPath + @"\Menusuite")) Directory.CreateDirectory(folderPath + @"\Menusuite");
-                        folderPath = folderPath + @"\Menusuite\";
-                        break;
-                    }
-                case "Query":
-                    {
-                        if (!Directory.Exists(folderPath + @"\Query")) Directory.CreateDirectory(folderPath + @"\Query");
-                        folderPath = folderPath + @"\Query\";
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
-            }
-
-            using (FileStream stream = new FileStream(folderPath + fileName + ".txt", FileMode.Create, FileAccess.Write))
-            using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(1252)))
-            {
-                writer.Write(objectLines);
-            }
-        }
-
-        #endregion
 
         #region Conflicts
 
@@ -216,9 +48,9 @@ namespace Project_Kittan.Helpers
 
                         if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            var objects = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Multiline);
+                            string[] objects = ObjectFileExtensions.SplitObjects(lines);
 
-                            for (int j = 1; j < objects.Length; j++) Find(objects[j++] + objects[j], files[i].FileName, ref lineNumber);
+                            for (int j = 1; j < objects.Length; j++) Find(objects[j], files[i].FileName, ref lineNumber);
                         }
                         else
                         {
@@ -661,14 +493,13 @@ namespace Project_Kittan.Helpers
 
                         if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            var objects = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Multiline);
+                            string[] objects = ObjectFileExtensions.SplitObjects(lines);
 
                             for (int j = 1; j < objects.Length; j++)
                             {
-                                string objText = objects[j++] + objects[j];
-                                if (GetStringOccurrences(objText, pattern) != 0)
+                                if (GetStringOccurrences(objects[j], pattern) != 0)
                                 {
-                                    var startingLine = objText.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
+                                    var startingLine = objects[j].Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
 
                                     string objectName = string.Empty;
                                     for (int k = 2; k < startingLine.Length; k++) objectName += startingLine[k] + ' ';

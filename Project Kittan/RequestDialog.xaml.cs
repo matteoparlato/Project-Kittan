@@ -56,7 +56,7 @@ namespace Project_Kittan
         /// <param name="sender"></param>
         /// <param name="e"></param>
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{            
+		{
 			if (string.IsNullOrWhiteSpace(VersionListTextBox.Text) || VersionListTextBox.Text.Length > _maxLength)
 			{
                 CharactersLeftTextBlock.Text = string.Format("The current \"Version List\" exceeds the maximum length by {0} characters.", VersionListTextBox.Text.Length - _maxLength);
@@ -86,7 +86,7 @@ namespace Project_Kittan
 
         /// <summary>
         /// Method invoked when closing the window.
-        /// If _closable = true the window is closed, otherwise not.
+        /// If _closable = true the window closes, otherwise not.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
