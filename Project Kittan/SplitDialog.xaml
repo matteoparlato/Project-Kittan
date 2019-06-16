@@ -14,10 +14,10 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
+            <TextBlock x:Name="UsedEncodingTextBlock" Margin="0,2,0,0" Opacity="0.4" />
             <Button x:Name="OpenFolderButton" Grid.Column="1" Width="80" Click="OpenFolderButton_Click" Content="Open folder" IsEnabled="False" />
             <Button x:Name="CloseButton" Grid.Column="2" Width="80" Margin="5,0,0,0" Click="CloseButton_Click" Content="Close" IsEnabled="False" />
         </Grid>
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" />
         <ProgressBar x:Name="StatusProgressBar" Grid.Row="2" Height="3" Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" IsIndeterminate="True" />
     </Grid>
 </Window>

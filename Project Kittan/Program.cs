@@ -29,10 +29,7 @@ namespace Project_Kittan
                         {
                             new SplitDialog(args[0]).ShowDialog();
                         }
-                        break;
-                    }
-                case 3:
-                    {
+
                         if (args[0].Equals("/enableSplitFileShellIntegration"))
                         {
                             try

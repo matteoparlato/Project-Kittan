@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
@@ -25,6 +26,8 @@ namespace Project_Kittan
 			InitializeComponent();
 
             _filePath = filePath;
+
+            UsedEncodingTextBlock.Text = "Encoding " + Encoding.GetEncoding(Properties.Settings.Default.RWEncoding).BodyName + " used";
 
 			WindowStartupLocation = WindowStartupLocation.CenterScreen;
 		}
