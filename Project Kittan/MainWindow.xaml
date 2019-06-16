@@ -14,7 +14,7 @@
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,5" IsMainMenu="True">
             <MenuItem Header="File">
                 <MenuItem Click="MenuItem_Click_2" Header="Options" />
-                <MenuItem Header="Exit" />
+                <MenuItem Click="MenuItem_Click_3" Header="Exit" />
             </MenuItem>
             <MenuItem Header="?">
                 <MenuItem Click="MenuItem_Click_1" Header="About" />

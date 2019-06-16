@@ -303,5 +303,10 @@ namespace Project_Kittan
         {
             new SettingsWindow().ShowDialog();
         }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
+        {
+            App.Current.Shutdown();
+        }
     }
 }

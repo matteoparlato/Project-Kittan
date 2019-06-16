@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace Project_Kittan.Helpers
 
             string folderName = InvalidFileNameChars.Aggregate("SPLIT_" + DateTime.Now, (current, c) => current.Replace(c.ToString(), string.Empty));
 
-            extractionFolderPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\" + folderName;
+            extractionFolderPath = Path.GetDirectoryName(filePath) + @"\" + folderName;
             if (!Directory.Exists(extractionFolderPath))
             {
                 Directory.CreateDirectory(extractionFolderPath);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -27,6 +28,35 @@ namespace Project_Kittan
                         if (Path.GetFileName(args[0]).EndsWith(".txt"))
                         {
                             new SplitDialog(args[0]).ShowDialog();
+                        }
+                        break;
+                    }
+                case 3:
+                    {
+                        if (args[0].Equals("/enableSplitFileShellIntegration"))
+                        {
+                            try
+                            {
+                                RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey("txtfile", true).CreateSubKey("shell", true).CreateSubKey("Split with Project Kittan", true).CreateSubKey("command");
+                                registryKey.SetValue("", Assembly.GetEntryAssembly().Location + " %1");
+                                registryKey.Close();
+                            }
+                            catch (Exception)
+                            {
+                                //
+                            }
+                        }
+
+                        if (args[0].Equals("/disableSplitFileShellIntegration"))
+                        {
+                            try
+                            {
+                                Registry.ClassesRoot.OpenSubKey("txtfile", true).CreateSubKey("shell", true).DeleteSubKeyTree("Split with Project Kittan");
+                            }
+                            catch (Exception)
+                            {
+                                //
+                            }
                         }
 
                         break;

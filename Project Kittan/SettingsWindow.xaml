@@ -56,6 +56,40 @@
                     </Viewbox>
                 </Grid>
             </TabItem>
+            <TabItem Header="Shell">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0" Grid.RowSpan="2" Padding="8" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock FontSize="20" FontWeight="Light" Text="Shell settings" />
+                            <StackPanel Margin="8,8,0,0">
+                                <TextBlock FontSize="16" FontWeight="Light" Text="Add &quot;Split this file&quot; to right click context menu" />
+                                <TextBlock Text="If you want to split a file in a faster way than dragging and dropping files over Project Kittan you can also add a quick link to the right click context menu." TextWrapping="Wrap" />
+                                <StackPanel x:Name="SplitFileOptionsStackPanel" Margin="8,5,0,0" Orientation="Horizontal">
+                                    <TextBlock x:Name="EnableSplitShellTextBlock" MouseDown="EnableSplitShellTextBlock_MouseDown" Cursor="Hand" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Text="Enable split file shell integration" TextDecorations="Underline" TextWrapping="Wrap" />
+                                    <TextBlock x:Name="DisableSplitShellTextBlock" MouseDown="DisableSplitShellTextBlock_MouseDown" Margin="16,0,0,0" Cursor="Hand" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Text="Disable split file shell integration" TextDecorations="Underline" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Viewbox Grid.Row="1" HorizontalAlignment="Right" Panel.ZIndex="-1" RenderTransformOrigin="0.5,0.5" Style="{StaticResource SettingsViewBox}">
+                        <Viewbox.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform Angle="15" />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Viewbox.RenderTransform>
+                        <Path Data="m 53.65,57 c 2.11,0 4.23,0 6.35,0 0,2 0,4 0,6 -2.12,0 -4.24,0 -6.35,0 0,-2 0,-4 0,-6 z M 24,36 c 5,0 10,0 15,0 0,2 0,4 0,6 -5,0 -10,0 -15,0 0,-2 0,-4 0,-6 z m 0,-12 c 5,0 10,0 15,0 0,2 0,4 0,6 -5,0 -10,0 -15,0 0,-2 0,-4 0,-6 z M 12,12 c 19,0 38,0 57,0 0.01,18 -0.01,36 0,54 5.04,0.01 10.08,-0.01 15.11,0.01 0.01,6.01 0.01,12.03 0,18.05 -24.03,0.01 -48.07,0.01 -72.1,0 C 11.99,60.04 12,36.02 12,12 m 6,6 c 0,16 0,32 0,48 9,0 18,0 27,0 0,-16 0,-32 0,-48 -9,0 -18,0 -27,0 m 33,0 c 0,16 0,32 0,48 4,0 8,0 12,0 0,-16 0,-32 0,-48 -4,0 -8,0 -12,0 M 18,72 c 0,2.02 0,4.04 0,6.06 20.04,0.01 40.08,0.01 60.11,0 0,-2.02 0.01,-4.04 0.01,-6.05 C 58.08,71.99 38.04,72 18,72 Z" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                    </Viewbox>
+                </Grid>
+            </TabItem>
             <TabItem Header="Reset">
                 <Grid>
                     <Grid.RowDefinitions>

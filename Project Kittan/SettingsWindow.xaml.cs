@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -174,5 +175,44 @@ namespace Project_Kittan
         }
 
         #endregion Reset
+
+        #region Shell
+
+        /// <summary>
+        /// Method invoked when the usre clicks on Enable split file shell integration textblock.
+        /// Runs Project Kittan with administrator prileges with /enableSplitFileShellIntegration parameter.
+        /// A registry key is added to HKEY_CLASSES_ROOT\textfile\shell in order to add a context menu item
+        /// which is capable of running Project Kittan with split file parameter.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EnableSplitShellTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Process elevatedProcess = new Process();
+            elevatedProcess.StartInfo.FileName = Assembly.GetEntryAssembly().Location;
+            elevatedProcess.StartInfo.Arguments = "/enableSplitFileShellIntegration";
+            elevatedProcess.StartInfo.UseShellExecute = true;
+            elevatedProcess.StartInfo.Verb = "runas";
+            elevatedProcess.Start();
+        }
+
+        /// <summary>
+        /// Method invoked when the usre clicks on Disable split file shell integration textblock.
+        /// Removes the previously inserted registry key from HKEY_CLASSES_ROOT\textfile\shell in order to
+        /// disable Project Kittan shell integration.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DisableSplitShellTextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Process elevatedProcess = new Process();
+            elevatedProcess.StartInfo.FileName = Assembly.GetEntryAssembly().Location;
+            elevatedProcess.StartInfo.Arguments = "/disableSplitFileShellIntegration";
+            elevatedProcess.StartInfo.UseShellExecute = true;
+            elevatedProcess.StartInfo.Verb = "runas";
+            elevatedProcess.Start();
+        }
+
+        #endregion Shell
     }
 }
