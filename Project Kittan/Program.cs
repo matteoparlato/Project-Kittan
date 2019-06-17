@@ -34,9 +34,8 @@ namespace Project_Kittan
                         {
                             try
                             {
-                                RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey("txtfile", true).CreateSubKey("shell", true).CreateSubKey("Split with Project Kittan", true).CreateSubKey("command");
+                                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true).OpenSubKey("Classes", true).CreateSubKey("txtfile", true).CreateSubKey("shell", true).CreateSubKey("Split with Project Kittan", true).CreateSubKey("command");
                                 registryKey.SetValue("", Assembly.GetEntryAssembly().Location + " %1");
-                                registryKey.Close();
                             }
                             catch (Exception)
                             {
@@ -48,7 +47,7 @@ namespace Project_Kittan
                         {
                             try
                             {
-                                Registry.ClassesRoot.OpenSubKey("txtfile", true).CreateSubKey("shell", true).DeleteSubKeyTree("Split with Project Kittan");
+                                Registry.CurrentUser.OpenSubKey("SOFTWARE", true).OpenSubKey("Classes", true).CreateSubKey("txtfile", true).CreateSubKey("shell", true).DeleteSubKeyTree("Split with Project Kittan");
                             }
                             catch (Exception)
                             {
