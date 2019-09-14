@@ -11,16 +11,6 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,5" IsMainMenu="True">
-            <MenuItem Header="File">
-                <MenuItem Click="MenuItem_Click_2" Header="Options" />
-                <MenuItem Click="MenuItem_Click_3" Header="Exit" />
-            </MenuItem>
-            <MenuItem Header="?">
-                <MenuItem Click="MenuItem_Click_1" Header="About" />
-            </MenuItem>
-        </Menu>
-
         <ScrollViewer x:Name="ActionsScrollViewer" Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="8" AllowDrop="True" Drop="StackPanel_Drop">
                 <TextBlock Text="Select the folder containing all the text files of the objects exported from NAV IDE." TextWrapping="Wrap" />
@@ -240,14 +230,17 @@
             </TabItem>
         </TabControl>
 
-        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-            <Grid>
-                <ProgressBar x:Name="StatusProgressBar" Height="3" Panel.ZIndex="1" Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                <ProgressBar x:Name="StatusOverlayProgressBar" Height="3" Background="Transparent" BorderBrush="Transparent" Foreground="Gainsboro" />
-            </Grid>
-            <StatusBar>
-                <TextBlock x:Name="StatusTextBlock" Text="Ready" />
-            </StatusBar>
-        </StackPanel>
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="StatusTextBlock" Grid.Column="0" Margin="8,0,0,0" VerticalAlignment="Center" FontStyle="Italic" Foreground="White" />
+            <Button Grid.Column="1" Padding="4" HorizontalAlignment="Stretch" Background="Transparent" BorderThickness="0" Click="MenuItem_Click_2" Content="SETTINGS" Foreground="White" Style="{DynamicResource AppBarButton}" />
+            <Button Grid.Column="2" Padding="4" HorizontalAlignment="Stretch" Background="Transparent" BorderThickness="0" Click="MenuItem_Click_1" Content="GITHUB" Foreground="White" Style="{DynamicResource AppBarButton}" />
+            <ProgressBar x:Name="StatusProgressBar" Grid.Column="0" Grid.ColumnSpan="3" Height="2" VerticalAlignment="Bottom" Background="Transparent" BorderBrush="Transparent" Foreground="White" />
+            <ProgressBar x:Name="ResponsiveStatusProgressBar" Grid.Column="0" Grid.ColumnSpan="3" Height="2" VerticalAlignment="Bottom" Background="Transparent" BorderBrush="Transparent" Foreground="White" Opacity="0.5" />
+        </Grid>
     </Grid>
 </Window>

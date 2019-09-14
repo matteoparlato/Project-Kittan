@@ -117,7 +117,7 @@ namespace Project_Kittan
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             StatusProgressBar.Value = 0;
-            StatusOverlayProgressBar.IsIndeterminate = true;
+            ResponsiveStatusProgressBar.IsIndeterminate = true;
             System.Windows.Forms.Application.UseWaitCursor = true;
             ActionsScrollViewer.IsEnabled = false;
 
@@ -126,7 +126,7 @@ namespace Project_Kittan
             ActionsScrollViewer.IsEnabled = true;
             StatusTextBlock.Text = "Done";
             StatusProgressBar.IsIndeterminate = false;
-            StatusOverlayProgressBar.IsIndeterminate = false;
+            ResponsiveStatusProgressBar.IsIndeterminate = false;
             System.Windows.Forms.Application.UseWaitCursor = false;
         }
 
@@ -141,7 +141,7 @@ namespace Project_Kittan
             if (!string.IsNullOrWhiteSpace(TagTextTextBox.Text))
             {
                 StatusProgressBar.Value = 0;
-                StatusOverlayProgressBar.IsIndeterminate = true;
+                ResponsiveStatusProgressBar.IsIndeterminate = true;
                 System.Windows.Forms.Application.UseWaitCursor = true;
                 ActionsScrollViewer.IsEnabled = false;
 
@@ -150,7 +150,7 @@ namespace Project_Kittan
                 ActionsScrollViewer.IsEnabled = true;
                 StatusTextBlock.Text = "Done";
                 StatusProgressBar.IsIndeterminate = false;
-                StatusOverlayProgressBar.IsIndeterminate = false;
+                ResponsiveStatusProgressBar.IsIndeterminate = false;
                 System.Windows.Forms.Application.UseWaitCursor = false;
             }
         }
@@ -164,7 +164,7 @@ namespace Project_Kittan
         private async void Button_Click_3(object sender, RoutedEventArgs e)
         {
             StatusProgressBar.Value = 0;
-            StatusOverlayProgressBar.IsIndeterminate = true;
+            ResponsiveStatusProgressBar.IsIndeterminate = true;
             System.Windows.Forms.Application.UseWaitCursor = true;
             ActionsScrollViewer.IsEnabled = false;
             OutputTabControl.SelectedIndex = 0;
@@ -173,7 +173,7 @@ namespace Project_Kittan
 
             ActionsScrollViewer.IsEnabled = true;
             StatusProgressBar.IsIndeterminate = false;
-            StatusOverlayProgressBar.IsIndeterminate = false;
+            ResponsiveStatusProgressBar.IsIndeterminate = false;
             System.Windows.Forms.Application.UseWaitCursor = false;
         }
 
@@ -285,7 +285,7 @@ namespace Project_Kittan
             {
                 PatternFoundInTextBlock.Text = PatternTextBox.Text + " found in:";
                 StatusProgressBar.Value = 0;
-                StatusOverlayProgressBar.IsIndeterminate = true;
+                ResponsiveStatusProgressBar.IsIndeterminate = true;
                 System.Windows.Forms.Application.UseWaitCursor = true;
                 ActionsScrollViewer.IsEnabled = false;
                 OutputTabControl.SelectedIndex = 1;
@@ -294,7 +294,7 @@ namespace Project_Kittan
 
                 ActionsScrollViewer.IsEnabled = true;
                 StatusProgressBar.IsIndeterminate = false;
-                StatusOverlayProgressBar.IsIndeterminate = false;
+                ResponsiveStatusProgressBar.IsIndeterminate = false;
                 System.Windows.Forms.Application.UseWaitCursor = false;
             }
         }
