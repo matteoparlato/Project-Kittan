@@ -60,6 +60,7 @@ namespace Project_Kittan
                 default:
                     {
                         MessageBox.Show("Project Kittan accepts only one parameter:\n[filePath] : the path of the file to split");
+                        App.Main();
                         break;
                     }
             }

@@ -26,7 +26,7 @@ namespace Project_Kittan
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             //// Encoding settings
-            if(Properties.Settings.Default.RWEncoding == 0)
+            if(Properties.Settings.Default.DefaultEncoding == 0)
             {
                 AutomaticEncodingRadioButton.IsChecked = AutomaticEncodingOptionsStackPanel.IsEnabled = true;
                 ManualEncodingRadioButton.IsChecked = ManualEncodingOptionsStackPanel.IsEnabled = false;
@@ -36,7 +36,7 @@ namespace Project_Kittan
                 AutomaticEncodingRadioButton.IsChecked = AutomaticEncodingOptionsStackPanel.IsEnabled = false;
                 ManualEncodingRadioButton.IsChecked = ManualEncodingOptionsStackPanel.IsEnabled =  true;
 
-                Encoding encoding = Encoding.GetEncoding(Properties.Settings.Default.RWEncoding);
+                Encoding encoding = Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding);
                 BrowseFileEncodingTextBlock.Text = UserDefindedEncodingTextBlock.Text = "Using " + encoding.BodyName + " encoding";
             }
         }
@@ -68,7 +68,7 @@ namespace Project_Kittan
 
                         BrowseFileEncodingTextBlock.Text = UserDefindedEncodingTextBlock.Text = reader.CurrentEncoding.BodyName + " saved";
 
-                        Properties.Settings.Default.RWEncoding = reader.CurrentEncoding.CodePage;
+                        Properties.Settings.Default.DefaultEncoding = reader.CurrentEncoding.CodePage;
                         Properties.Settings.Default.Save();
                     }
                 }
@@ -91,7 +91,7 @@ namespace Project_Kittan
                     Encoding encoding = Encoding.GetEncoding(code);
                     UserDefindedEncodingTextBlock.Text = BrowseFileEncodingTextBlock.Text = encoding.BodyName + " saved";
 
-                    Properties.Settings.Default.RWEncoding = encoding.CodePage;
+                    Properties.Settings.Default.DefaultEncoding = encoding.CodePage;
                     Properties.Settings.Default.Save();
                 }
                 catch(Exception)
@@ -107,13 +107,13 @@ namespace Project_Kittan
 
         /// <summary>
         /// Method invoked when the user clicks on AutomaticEncodingRadioButton radio button.
-        /// Set RWEncondig to 0 (Encoding.Default) and updates the UI.
+        /// Set DefaultEncoding to 0 (Encoding.Default) and updates the UI.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void AutomaticEncodingRadioButton_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.RWEncoding = 0; // Zero refers to Encoding.Default
+            Properties.Settings.Default.DefaultEncoding = 0; // Zero refers to Encoding.Default
             Properties.Settings.Default.Save();
 
             ManualEncodingRadioButton.IsChecked = ManualEncodingOptionsStackPanel.IsEnabled = false;

@@ -41,14 +41,14 @@ namespace Project_Kittan.Helpers
                     MainWindow.Current.StatusTextBlock.Text = "Searching conflicts in " + files[i].FileName + "..."; // Update status
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string lines = await reader.ReadToEndAsync();
                         int lineNumber = 0;
 
                         if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            string[] objects = ObjectFileExtensions.SplitObjects(lines);
+                            string[] objects = ObjectSplitterExtensions.Split(lines);
 
                             for (int j = 1; j < objects.Length; j++) Find(objects[j], files[i].FileName, ref lineNumber);
                         }
@@ -261,7 +261,7 @@ namespace Project_Kittan.Helpers
                     StringBuilder builder = new StringBuilder();
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string line;
 
@@ -363,7 +363,7 @@ namespace Project_Kittan.Helpers
                     }
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Truncate, FileAccess.Write))
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].FileName + " changes..."; // Update status
                         await writer.WriteAsync(builder.ToString());
@@ -394,7 +394,7 @@ namespace Project_Kittan.Helpers
                     StringBuilder builder = new StringBuilder();
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string line;
 
@@ -446,7 +446,7 @@ namespace Project_Kittan.Helpers
                     }
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Truncate, FileAccess.Write))
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
+                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].FileName + " changes..."; // Update status
                         await writer.WriteAsync(builder.ToString());
@@ -487,13 +487,13 @@ namespace Project_Kittan.Helpers
                     MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + files[i].FileName + "..."; // Update status
 
                     using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
-                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.RWEncoding)))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string lines = await reader.ReadToEndAsync();
 
                         if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            string[] objects = ObjectFileExtensions.SplitObjects(lines);
+                            string[] objects = ObjectSplitterExtensions.Split(lines);
 
                             for (int j = 1; j < objects.Length; j++)
                             {

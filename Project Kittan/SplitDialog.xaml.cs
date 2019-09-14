@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Media;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Shell;
 
 namespace Project_Kittan
 {
@@ -27,7 +29,7 @@ namespace Project_Kittan
 
             _filePath = filePath;
 
-            UsedEncodingTextBlock.Text = "Encoding " + Encoding.GetEncoding(Properties.Settings.Default.RWEncoding).BodyName + " used";
+            UsedEncodingTextBlock.Text = "Encoding " + Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding).BodyName + " used";
 
 			WindowStartupLocation = WindowStartupLocation.CenterScreen;
 		}
@@ -41,13 +43,17 @@ namespace Project_Kittan
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             StatusTextBlock.Text = "Splitting " + Path.GetFileName(_filePath) + "...";
+            UsedEncodingTextBlock.Text = "Encoding " + Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding).BodyName + " used";
 
-            KeyValuePair<int, string> returnValue = await ObjectFileExtensions.SplitAndStoreObjects(_filePath);
+            KeyValuePair<int, string> returnValue = await ObjectSplitterExtensions.SplitAndStore(_filePath, Properties.Settings.Default.DefaultEncoding);
             _filePath = returnValue.Value;
 
             StatusTextBlock.Text = returnValue.Key + " files extracted in:\n" + returnValue.Value;
             StatusProgressBar.IsIndeterminate = false;
+            TaskBarProgress.ProgressState = TaskbarItemProgressState.None;
             OpenFolderButton.IsEnabled = CloseButton.IsEnabled = true;
+
+            SystemSounds.Asterisk.Play();
 
             _closable = true;
         }

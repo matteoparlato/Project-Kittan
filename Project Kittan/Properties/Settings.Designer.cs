@@ -26,12 +26,12 @@ namespace Project_Kittan.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int RWEncoding {
+        public int DefaultEncoding {
             get {
-                return ((int)(this["RWEncoding"]));
+                return ((int)(this["DefaultEncoding"]));
             }
             set {
-                this["RWEncoding"] = value;
+                this["DefaultEncoding"] = value;
             }
         }
     }

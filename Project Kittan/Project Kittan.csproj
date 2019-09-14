@@ -86,7 +86,7 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ObjectExtensions.cs" />
     <Compile Include="Helpers\FilesExtensions.cs" />
-    <Compile Include="Helpers\ObjectFileExtensions.cs" />
+    <Compile Include="Helpers\ObjectSplitterExtensions.cs" />
     <Compile Include="Helpers\UpdateExtensions.cs" />
     <Compile Include="Models\ElementProperties.cs" />
     <Compile Include="Models\File.cs" />
