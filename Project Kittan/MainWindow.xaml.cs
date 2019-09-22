@@ -16,7 +16,7 @@ namespace Project_Kittan
     {
         public static MainWindow Current;
 
-        private HashSet<Models.File> Files { get; set; } = new HashSet<Models.File>();
+        private List<Models.File> Files { get; set; } = new List<Models.File>();
 
         private string Path = string.Empty;
 
@@ -83,7 +83,7 @@ namespace Project_Kittan
             Files.Clear();
             FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
 
-            FoundFilesListBox.ItemsSource = Files = FilesExtensions.FindFiles(Path);
+            FoundFilesListBox.ItemsSource = Files = FolderExtensions.GetFiles(Path);
 
             if (Files.Count == 0)
             {
