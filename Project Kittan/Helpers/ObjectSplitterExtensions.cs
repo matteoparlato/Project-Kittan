@@ -37,7 +37,7 @@ namespace Project_Kittan.Helpers
         /// <param name="encoding">The encoding to use when reading/writing files</param>
         public async static Task<KeyValuePair<int, string>> SplitAndStore(string filePath, string destinationFolder, int encoding)
         {
-            string folderName = InvalidFileNameChars.Aggregate(Path.GetFileNameWithoutExtension(filePath) + "_" + DateTime.Now, (name, invalidChars) => name.Replace(invalidChars.ToString(), "_"));
+            string folderName = Path.GetFileNameWithoutExtension(filePath) + "_" + string.Format("{0:yyyyMMdd}", DateTime.Now);
 
             string extractionFolderPath = Path.Combine(Path.Combine(destinationFolder, folderName));
             if (!Directory.Exists(extractionFolderPath))
@@ -86,12 +86,10 @@ namespace Project_Kittan.Helpers
         /// <param name="folderPath">The path where to save splitted files</param>
         private static void WriteFile(string objectLines, string folderPath, int encoding)
         {
-            string startingLine = objectLines.Substring(7, objectLines.IndexOf("\r\n"));
+            string firstLine = objectLines.Substring(0, objectLines.IndexOf(Environment.NewLine));
+            string fileName = string.Join("_", firstLine.Trim().Split(InvalidFileNameChars)).Substring(7);
 
-            string fileName = InvalidFileNameChars.Aggregate(startingLine.Trim(), (name, invalidChars) => name.Replace(invalidChars.ToString(), "_"));
-            fileName = fileName.Substring(0, fileName.Length - 1);
-
-            folderPath = Path.Combine(folderPath, startingLine.Split(' ')[0]);
+            folderPath = Path.Combine(folderPath, firstLine.Split(' ')[1]);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
