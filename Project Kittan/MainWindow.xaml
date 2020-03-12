@@ -68,13 +68,6 @@
                     </StackPanel>
                 </Expander>
 
-                <Expander x:Name="ConflictsExpander" Margin="0,8,0,0" Header="Conflicts finder" IsEnabled="False" IsExpanded="False">
-                    <StackPanel Margin="10">
-                        <Button Width="110" HorizontalAlignment="Left" Click="Button_Click_3" Content="Search for conflicts" />
-                        <TextBlock Margin="0,8,0,0" Text="This feature is currently under development. If you find something strange in the output please open an issue on GitHub." TextWrapping="Wrap" />
-                        <TextBlock Margin="0,8,0,0" HorizontalAlignment="Right" Cursor="Hand" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" MouseDown="TextBlock_MouseDown_1" Text="Open issue on GitHub→" TextDecorations="Underline" TextWrapping="Wrap" />
-                    </StackPanel>
-                </Expander>
                 <Expander x:Name="SearchExpander" Margin="0,8,0,0" Header="Occurrences finder" IsEnabled="False" IsExpanded="False">
                     <StackPanel Margin="10">
                         <TextBlock Text="Write the text you want to search in objects to find in which ones there is such text." TextWrapping="Wrap" />

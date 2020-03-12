@@ -92,7 +92,6 @@ namespace Project_Kittan
                     SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
                     TaggerExpander.IsEnabled = false;
                     TaggerRemoverExpander.IsEnabled = false;
-                    ConflictsExpander.IsEnabled = false;
                     SearchExpander.IsEnabled = false;
                     return;
                 }
@@ -104,7 +103,6 @@ namespace Project_Kittan
 
             TaggerExpander.IsEnabled = true;
             TaggerRemoverExpander.IsEnabled = true;
-            ConflictsExpander.IsEnabled = true;
             SearchExpander.IsEnabled = true;
         }
 
@@ -156,28 +154,6 @@ namespace Project_Kittan
         }
 
         /// <summary>
-        /// Method invoked when the user clicks on Search for conflicts button.
-        /// Start conflict search on all text files in working directory.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-            StatusProgressBar.Value = 0;
-            ResponsiveStatusProgressBar.IsIndeterminate = true;
-            System.Windows.Forms.Application.UseWaitCursor = true;
-            ActionsScrollViewer.IsEnabled = false;
-            OutputTabControl.SelectedIndex = 0;
-
-            await ObjectExtensions.ConflictsFinder(Files.ToArray());
-
-            ActionsScrollViewer.IsEnabled = true;
-            StatusProgressBar.IsIndeterminate = false;
-            ResponsiveStatusProgressBar.IsIndeterminate = false;
-            System.Windows.Forms.Application.UseWaitCursor = false;
-        }
-
-        /// <summary>
         /// Method invoked when the user clicks on About menu item.
         /// </summary>
         /// <param name="sender"></param>
@@ -219,7 +195,6 @@ namespace Project_Kittan
             {
                 TaggerExpander.IsEnabled = true;
                 TaggerRemoverExpander.IsEnabled = true;
-                ConflictsExpander.IsEnabled = true;
                 SearchExpander.IsEnabled = true;
             }
 
@@ -237,7 +212,6 @@ namespace Project_Kittan
         {
             TaggerExpander.IsEnabled = false;
             TaggerRemoverExpander.IsEnabled = false;
-            ConflictsExpander.IsEnabled = false;
             SearchExpander.IsEnabled = false;
 
             Files.Clear();
