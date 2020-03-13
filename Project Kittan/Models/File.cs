@@ -1,32 +1,34 @@
-﻿using System.IO;
+﻿using System;
 
 namespace Project_Kittan.Models
 {
     /// <summary>
     /// File class
     /// </summary>
-    internal class File
+    public class File : BindableBase
     {
-        public string FileName { get; private set; } = string.Empty;
-
-        public string _filePath;
-        public string FilePath
+        private string _name;
+        public string Name
         {
-            get { return _filePath; }
-            set
-            {
-                _filePath = value;
-                FileName = Path.GetFileName(value);
-            }
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+
+        private string _path;
+        public string Path
+        {
+            get => _path;
+            set => SetProperty(ref _path, value);
         }
 
         /// <summary>
         /// Constructor which initializes a File object with passed information.
         /// </summary>
-        /// <param name="filePath">The path of the file</param>
-        public File(string filePath)
+        /// <param name="path">The path of the file</param>
+        public File(string path)
         {
-            FilePath = filePath;
+            Name = System.IO.Path.GetFileNameWithoutExtension(path);
+            Path = path;
         }
     }
 }

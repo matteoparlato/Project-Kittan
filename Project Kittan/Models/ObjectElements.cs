@@ -5,7 +5,7 @@ namespace Project_Kittan.Models
     /// <summary>
     /// ObjectElements class
     /// </summary>
-    internal class ObjectElements
+    public class ObjectElements
     {
         public string ID { get; set; } = string.Empty;
 

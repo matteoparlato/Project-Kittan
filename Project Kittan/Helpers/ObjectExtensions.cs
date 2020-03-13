@@ -56,13 +56,13 @@ namespace Project_Kittan.Helpers
 
             for (int i = 0; i < files.Length; i++)
             {
-                if (System.IO.File.Exists(files[i].FilePath))
+                if (System.IO.File.Exists(files[i].Path))
                 {
-                    MainWindow.Current.StatusTextBlock.Text = "Updating " + files[i].FileName + " properties..."; // Update status
+                    MainWindow.Current.StatusTextBlock.Text = "Updating " + files[i].Name + " properties..."; // Update status
 
                     StringBuilder builder = new StringBuilder();
 
-                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
+                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string line;
@@ -164,10 +164,10 @@ namespace Project_Kittan.Helpers
                         MainWindow.Current.StatusProgressBar.Value += step; // Update status
                     }
 
-                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Truncate, FileAccess.Write))
+                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Truncate, FileAccess.Write))
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].FileName + " changes..."; // Update status
+                        MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].Name + " changes..."; // Update status
                         await writer.WriteAsync(builder.ToString());
                     }
                 }
@@ -189,13 +189,13 @@ namespace Project_Kittan.Helpers
 
             for (int i = 0; i < files.Length; i++)
             {
-                if (System.IO.File.Exists(files[i].FilePath))
+                if (System.IO.File.Exists(files[i].Path))
                 {
-                    MainWindow.Current.StatusTextBlock.Text = "Removing " + tag + " from file " + files[i].FileName + "..."; // Update status
+                    MainWindow.Current.StatusTextBlock.Text = "Removing " + tag + " from file " + files[i].Name + "..."; // Update status
 
                     StringBuilder builder = new StringBuilder();
 
-                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
+                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string line;
@@ -247,10 +247,10 @@ namespace Project_Kittan.Helpers
                         MainWindow.Current.StatusProgressBar.Value += step; // Update status
                     }
 
-                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Truncate, FileAccess.Write))
+                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Truncate, FileAccess.Write))
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].FileName + " changes..."; // Update status
+                        MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].Name + " changes..."; // Update status
                         await writer.WriteAsync(builder.ToString());
                     }
                 }
@@ -279,16 +279,16 @@ namespace Project_Kittan.Helpers
             {
                 //Parallel.ForEach(files, async (file) =>
                 //{
-                if (System.IO.File.Exists(files[i].FilePath))
+                if (System.IO.File.Exists(files[i].Path))
                 {
                     //await System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     // {
                     //     MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + file.FileName + "..."; // Update status
                     // }), DispatcherPriority.Background);
 
-                    MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + files[i].FileName + "..."; // Update status
+                    MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + files[i].Name + "..."; // Update status
 
-                    using (FileStream stream = new FileStream(files[i].FilePath, FileMode.Open, FileAccess.Read))
+                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string lines = await reader.ReadToEndAsync();
@@ -308,7 +308,7 @@ namespace Project_Kittan.Helpers
 
                                     //lock (listAccessLock)
                                     //{
-                                    Found.Add(new ObjectElements(startingLine[0], startingLine[1], objectName, files[i].FileName));
+                                    Found.Add(new ObjectElements(startingLine[0], startingLine[1], objectName, files[i].Name));
                                     //}
                                 }
                             }
@@ -324,7 +324,7 @@ namespace Project_Kittan.Helpers
 
                                 //lock (listAccessLock)
                                 //{
-                                Found.Add(new ObjectElements(startingLine[1], startingLine[2], objectName, files[i].FileName));
+                                Found.Add(new ObjectElements(startingLine[1], startingLine[2], objectName, files[i].Name));
                                 //}
                             }
                         }

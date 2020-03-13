@@ -94,6 +94,8 @@
     <Compile Include="Helpers\ObjectExtensions.cs" />
     <Compile Include="Helpers\ObjectSplitterExtensions.cs" />
     <Compile Include="Helpers\UpdateExtensions.cs" />
+    <Compile Include="Models\BindableBase.cs" />
+    <Compile Include="Models\DelegateCommand.cs" />
     <Compile Include="Models\ElementProperties.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\ObjectElements.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="RequestDialog.xaml.cs">
       <DependentUpon>RequestDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\Workspace.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

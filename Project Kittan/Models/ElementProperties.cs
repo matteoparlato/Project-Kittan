@@ -6,7 +6,7 @@ namespace Project_Kittan.Models
     /// <summary>
     /// ElementProperties class
     /// </summary>
-    internal class ElementProperties : IComparable<ElementProperties>
+    public class ElementProperties : IComparable<ElementProperties>
     {
         public string ID { get; set; } = string.Empty;
 
