@@ -87,12 +87,13 @@ namespace Project_Kittan
 
             if (Files.Count == 0)
             {
+                SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
+                TaggerExpander.IsEnabled = false;
+                TaggerRemoverExpander.IsEnabled = false;
+                SearchExpander.IsEnabled = false;
+
                 if (MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
-                    SelectedFolderTextBlock.Text = "Pick a folder and/or drag and drop files to continue";
-                    TaggerExpander.IsEnabled = false;
-                    TaggerRemoverExpander.IsEnabled = false;
-                    SearchExpander.IsEnabled = false;
                     return;
                 }
                 else
@@ -161,16 +162,6 @@ namespace Project_Kittan
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
             Process.Start("https://github.com/matteoparlato/Project-Kittan");
-        }
-
-        /// <summary>
-        /// Method invoked when the user clicks on Open issue on GitHub textblock.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TextBlock_MouseDown_1(object sender, MouseButtonEventArgs e)
-        {
-            Process.Start("https://github.com/matteoparlato/Project-Kittan/issues");
         }
 
         /// <summary>
