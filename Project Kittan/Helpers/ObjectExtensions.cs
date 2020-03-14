@@ -50,7 +50,7 @@ namespace Project_Kittan.Helpers
         /// <param name="avoidUpdateDateTime"></param>
         /// <param name="version">The version tag to add</param>
         /// <param name="navVersion">The version of NAV used</param>
-        internal async static Task UpdateObjects(Models.File[] files, bool avoidUpdateDateTime, string version, int navVersion)
+        internal async static Task UpdateObjects(Models.File[] files, int navVersion, string version, bool avoidUpdateDateTime)
         {
             double step = (double)100 / files.Length;
 

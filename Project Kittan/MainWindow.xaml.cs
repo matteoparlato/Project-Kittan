@@ -41,24 +41,6 @@ namespace Project_Kittan
         }
 
         /// <summary>
-        /// Method invoked when the user clicks on Update OBJECT-PROPERTIES button.
-        /// Start OBJECT-PROPERTIES update on all text files in working directory.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            StatusProgressBar.Value = 0;
-            ResponsiveStatusProgressBar.IsIndeterminate = true;
-
-            await ObjectExtensions.UpdateObjects(Files.ToArray(), (bool)DateTimeUpdateCheckBox.IsChecked, VersionTextTextBox.Text, NAVVersionComboBox.SelectedIndex);
-
-            StatusTextBlock.Text = "Done";
-            StatusProgressBar.IsIndeterminate = false;
-            ResponsiveStatusProgressBar.IsIndeterminate = false;
-        }
-
-        /// <summary>
         /// Method invoked when the user clicks on Update Remove tag button.
         /// Start tag removal from all text files in working directory.
         /// </summary>
@@ -71,7 +53,7 @@ namespace Project_Kittan
                 StatusProgressBar.Value = 0;
                 ResponsiveStatusProgressBar.IsIndeterminate = true;
 
-                await ObjectExtensions.RemoveTag(Files.ToArray(), TagTextTextBox.Text, (bool)CaseSensitiveCheckBox.IsChecked);
+                //await ObjectExtensions.RemoveTag(Files.ToArray(), TagTextTextBox.Text, (bool)CaseSensitiveCheckBox.IsChecked);
 
                 StatusTextBlock.Text = "Done";
                 StatusProgressBar.IsIndeterminate = false;
@@ -117,39 +99,6 @@ namespace Project_Kittan
 
             Clipboard.SetText(clipboard);
             StatusTextBlock.Text = clipboard + " copied to clipboard";
-        }
-
-        /// <summary>
-        /// Method invoked when the user types in PatterTextBox.
-        /// Starts the search after Enter or Return is pressed.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter || e.Key == Key.Return) Button_Click_4(null, null);
-        }
-
-        /// <summary>
-        /// Method invoked when the user clicks on Search for occurrences button.
-        /// Start occurrences search on all text files in working directory.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void Button_Click_4(object sender, RoutedEventArgs e)
-        {
-            if(!string.IsNullOrWhiteSpace(PatternTextBox.Text))
-            {
-                PatternFoundInTextBlock.Text = PatternTextBox.Text + " found in:";
-                StatusProgressBar.Value = 0;
-                ResponsiveStatusProgressBar.IsIndeterminate = true;
-                OutputTabControl.SelectedIndex = 1;
-
-                await ObjectExtensions.FindWhere(Files.ToArray(), PatternTextBox.Text);
-
-                StatusProgressBar.IsIndeterminate = false;
-                ResponsiveStatusProgressBar.IsIndeterminate = false;
-            }
         }
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)

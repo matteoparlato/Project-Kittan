@@ -21,6 +21,8 @@
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+        <helpers:ArrayMultiValueConverter x:Key="CommandParametersConverter" />
+        <helpers:StringToBooleanConverter x:Key="StringToVisibleConverter" />
     </Window.Resources>
 
     <Grid>
@@ -89,7 +91,15 @@
 
                         <CheckBox x:Name="DateTimeUpdateCheckBox" Margin="0,8,0,0" Content="Avoid date and time update" />
 
-                        <Button Width="160" Margin="0,18,0,0" HorizontalAlignment="Left" Click="Button_Click_1" Content="Update OBJECT-PROPERTIES" />
+                        <Button Width="160" Margin="0,18,0,0" HorizontalAlignment="Left" Command="{Binding UpdateObjectProperties}" Content="Update OBJECT-PROPERTIES" IsEnabled="{Binding ElementName=VersionTextTextBox, Path=Text, Converter={StaticResource StringToVisibleConverter}}">
+                            <Button.CommandParameter>
+                                <MultiBinding Converter="{StaticResource CommandParametersConverter}">
+                                    <Binding ElementName="NAVVersionComboBox" Path="SelectedIndex" />
+                                    <Binding ElementName="VersionTextTextBox" Path="Text" />
+                                    <Binding ElementName="DateTimeUpdateCheckBox" Path="IsChecked" />
+                                </MultiBinding>
+                            </Button.CommandParameter>
+                        </Button>
                     </StackPanel>
                 </Expander>
 
@@ -115,8 +125,12 @@
                                 <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBox x:Name="PatternTextBox" Grid.Column="0" HorizontalAlignment="Stretch" KeyDown="TextBox_KeyDown" />
-                            <Button Grid.Column="1" Width="18" Height="18" Background="#FFF4F4F4" BorderBrush="{Binding BorderBrush, ElementName=PatternTextBox}" BorderThickness="0,1,1,1" Click="Button_Click_4">
+                            <TextBox x:Name="PatternTextBox" Grid.Column="0" HorizontalAlignment="Stretch">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding SearchOccurences}" CommandParameter="{Binding ElementName=PatternTextBox, Path=Text}" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Button Grid.Column="1" Width="18" Height="18" Background="#FFF4F4F4" BorderBrush="{Binding BorderBrush, ElementName=PatternTextBox}" BorderThickness="0,1,1,1" Command="{Binding SearchOccurences}" CommandParameter="{Binding ElementName=PatternTextBox, Path=Text}">
                                 <StackPanel>
                                     <Viewbox Width="14" Height="14" Margin="0,0,1,0" Style="{StaticResource InformationViewBox}">
                                         <Path Data="M 19 3 C 13.4883 3 9 7.48828 9 13 C 9 15.3945 9.83984 17.5898 11.25 19.3125 L 3.28125 27.2813 L 4.71875 28.7188 L 12.6875 20.75 C 14.4102 22.1602 16.6055 23 19 23 C 24.5117 23 29 18.5117 29 13 C 29 7.48828 24.5117 3 19 3 Z M 19 5 C 23.4297 5 27 8.57031 27 13 C 27 17.4297 23.4297 21 19 21 C 14.5703 21 11 17.4297 11 13 C 11 8.57031 14.5703 5 19 5 Z" Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />

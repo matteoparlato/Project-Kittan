@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows;
-using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
 
@@ -85,6 +84,20 @@ namespace Project_Kittan.ViewModels
             set { _dropFile = value; }
         }
 
+        private ICommand _searchOccurences;
+        public ICommand SearchOccurences
+        {
+            get { return _searchOccurences; }
+            set { _searchOccurences = value; }
+        }
+
+        private ICommand _updateObjectProperties;
+        public ICommand UpdateObjectProperties
+        {
+            get { return _updateObjectProperties; }
+            set { _updateObjectProperties = value; }
+        }
+
         public Workspace()
         {
             RemoveFile = new DelegateCommand(new Action<object>(RemoveFile_Action));
@@ -94,6 +107,8 @@ namespace Project_Kittan.ViewModels
             OpenFile = new DelegateCommand(new Action<object>(OpenFile_Action));
             OpenFileLocation = new DelegateCommand(new Action<object>(OpenFileLocation_Action));
             DropFile = new DelegateCommand(new Action<object>(DropFile_Action));
+            SearchOccurences = new DelegateCommand(new Action<object>(SearchOccurences_Action));
+            UpdateObjectProperties = new DelegateCommand(new Action<object>(UpdateObjectProperties_Action));
 
             WorkspaceFiles = new ObservableCollection<WorkspaceFile>();
             WorkspaceFiles.CollectionChanged += Files_CollectionChanged;
@@ -220,6 +235,50 @@ namespace Project_Kittan.ViewModels
                     WorkspaceFiles.Add(new WorkspaceFile(file));
                 }
             }
+        }
+
+        /// <summary>
+        /// Method invoked when the user clicks on Search for occurrences button.
+        /// Start occurrences search on all text files in working directory.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void SearchOccurences_Action(object obj)
+        {
+            string searchPattern = (string)obj;
+
+            if (!string.IsNullOrWhiteSpace(searchPattern))
+            {
+                //PatternFoundInTextBlock.Text = PatternTextBox.Text + " found in:";
+                //StatusProgressBar.Value = 0;
+                //ResponsiveStatusProgressBar.IsIndeterminate = true;
+                //OutputTabControl.SelectedIndex = 1;
+
+                await ObjectExtensions.FindWhere(WorkspaceFiles.ToArray(), searchPattern);
+
+                //StatusProgressBar.IsIndeterminate = false;
+                //ResponsiveStatusProgressBar.IsIndeterminate = false;
+            }
+        }
+
+        /// <summary>
+        /// Method invoked when the user clicks on Update OBJECT-PROPERTIES button.
+        /// Start OBJECT-PROPERTIES update on all text files in working directory.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void UpdateObjectProperties_Action(object obj)
+        {
+            //StatusProgressBar.Value = 0;
+            //ResponsiveStatusProgressBar.IsIndeterminate = true;
+
+            var parameters = (object[])obj;
+
+            await ObjectExtensions.UpdateObjects(WorkspaceFiles.ToArray(), (int)parameters[0], (string)parameters[1], (bool)parameters[2]);
+
+            //StatusTextBlock.Text = "Done";
+            //StatusProgressBar.IsIndeterminate = false;
+            //ResponsiveStatusProgressBar.IsIndeterminate = false;
         }
     }
 }
