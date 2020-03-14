@@ -110,6 +110,7 @@
       <DependentUpon>RequestDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\Workspace.cs" />
+    <Compile Include="ViewModels\WorkspaceFile.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

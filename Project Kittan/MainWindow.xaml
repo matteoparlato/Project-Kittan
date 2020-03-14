@@ -19,6 +19,10 @@
         <viewmodel:Workspace x:Name="ViewModel" />
     </Window.DataContext>
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="370" />
@@ -51,10 +55,21 @@
                     </TextBlock>
                 </Grid>
 
-                <ListView Height="120" ItemsSource="{Binding Files}">
+                <ListView Height="120" ItemsSource="{Binding WorkspaceFiles}" SelectedItem="{Binding SelectedWorkspaceFile, Mode=TwoWay}">
+                    <ListView.ContextMenu>
+                        <ContextMenu Visibility="{Binding Ready, Converter={StaticResource TrueToVisibleConverter}}">
+                            <MenuItem Command="{Binding OpenFile}" Header="Open file" />
+                            <MenuItem Command="{Binding OpenFileLocation}" Header="Open file location" />
+                            <MenuItem Command="{Binding RemoveFile}" Header="Remove file" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Name}">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding Command="{Binding OpenFile}" MouseAction="LeftDoubleClick" />
+                                </TextBlock.InputBindings>
+                            </TextBlock>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

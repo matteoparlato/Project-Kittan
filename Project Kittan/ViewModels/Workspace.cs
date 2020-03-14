@@ -7,15 +7,20 @@ using System.Windows.Input;
 using System.Windows;
 using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 
 namespace Project_Kittan.ViewModels
 {
     public class Workspace : BindableBase
     {
-        public ObservableCollection<Models.File> Files { get; set; }
+        public ObservableCollection<WorkspaceFile> WorkspaceFiles { get; set; }
 
-        public Models.File File { get; set; }
-
+        private WorkspaceFile _selectedWorkspaceFile;
+        public WorkspaceFile SelectedWorkspaceFile
+        {
+            get => _selectedWorkspaceFile;
+            set => SetProperty(ref _selectedWorkspaceFile, value);
+        }
 
         private string _path;
         public string Path
@@ -31,11 +36,11 @@ namespace Project_Kittan.ViewModels
             set => SetProperty(ref _ready, value);
         }
 
-        private ICommand _deleteFileCommand;
-        public ICommand DeleteFileCommand
+        private ICommand _removeFile;
+        public ICommand RemoveFile
         {
-            get { return _deleteFileCommand; }
-            set { _deleteFileCommand = value; }
+            get { return _removeFile; }
+            set { _removeFile = value; }
         }
 
         private ICommand _addFilesFromExecutableFolder;
@@ -59,19 +64,76 @@ namespace Project_Kittan.ViewModels
             set { _clearWorkspace = value; }
         }
 
+        private ICommand _openFile;
+        public ICommand OpenFile
+        {
+            get { return _openFile; }
+            set { _openFile = value; }
+        }
+
+        private ICommand _openFileLocation;
+        public ICommand OpenFileLocation
+        {
+            get { return _openFileLocation; }
+            set { _openFileLocation = value; }
+        }
+
+        private ICommand _dropFile;
+        public ICommand DropFile
+        {
+            get { return _dropFile; }
+            set { _dropFile = value; }
+        }
+
         public Workspace()
         {
-            DeleteFileCommand = new DelegateCommand(new Action<object>(RemoveSelectedFile_Action));
+            RemoveFile = new DelegateCommand(new Action<object>(RemoveFile_Action));
             AddFilesFromExecutableFolder = new DelegateCommand(new Action<object>(AddFilesFromExecutableFolder_Action));
             BrowseWorkspaceFolder = new DelegateCommand(new Action<object>(BrowseWorkspaceFolder_Action));
             ClearWorkspace = new DelegateCommand(new Action<object>(ClearWorkspace_Action));
+            OpenFile = new DelegateCommand(new Action<object>(OpenFile_Action));
+            OpenFileLocation = new DelegateCommand(new Action<object>(OpenFileLocation_Action));
+            DropFile = new DelegateCommand(new Action<object>(DropFile_Action));
 
-            Files = new ObservableCollection<Models.File>();
+            WorkspaceFiles = new ObservableCollection<WorkspaceFile>();
+            WorkspaceFiles.CollectionChanged += Files_CollectionChanged;
         }
 
-        public void RemoveSelectedFile_Action(object obj)
+        private void Files_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Files.Remove((Models.File)obj);
+            if (WorkspaceFiles.Count > 0)
+            {
+                Ready = true;
+            }
+            else
+            {
+                Ready = false;
+                Path = string.Empty;
+            }
+        }
+
+        public void RemoveFile_Action(object obj)
+        {
+            WorkspaceFiles.Remove(SelectedWorkspaceFile);
+        }
+
+        public void OpenFile_Action(object obj)
+        {
+            Process.Start(SelectedWorkspaceFile.Path);
+        }
+
+        public void OpenFileLocation_Action(object obj)
+        {
+            Process.Start("explorer.exe", "/select, " + SelectedWorkspaceFile.Path);
+        }
+
+        internal void AddFilesFromDrop(string[] files)
+        {
+            files = files.Where(i => i.EndsWith(".txt")).ToArray();
+            foreach (string file in files)
+            {
+                WorkspaceFiles.Add(new WorkspaceFile(file));
+            }
         }
 
         /// <summary>
@@ -92,13 +154,11 @@ namespace Project_Kittan.ViewModels
         {
             foreach(string filePath in Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories))
             {
-                Files.Add(new Models.File(filePath));
+                WorkspaceFiles.Add(new WorkspaceFile(filePath));
             }
 
-            if (Files.Count == 0)
+            if (WorkspaceFiles.Count == 0)
             {
-                _ready = false;
-
                 if (MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     return;
@@ -110,7 +170,6 @@ namespace Project_Kittan.ViewModels
             }
 
             Path = path;
-            Ready = true;
         }
 
         /// <summary>
@@ -140,9 +199,27 @@ namespace Project_Kittan.ViewModels
         /// <param name="e"></param>
         private void ClearWorkspace_Action(object obj)
         {
-            Files.Clear();
-            Ready = false;
-            Path = string.Empty;
+            WorkspaceFiles.Clear();
+        }
+
+        /// <summary>
+        /// Method invoked when the user drag and drop a file on left pane.
+        /// Add dropped *.txt files to Files collection.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DropFile_Action(object obj)
+        {
+            DragEventArgs args = (DragEventArgs)obj;
+            if (args.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])args.Data.GetData(DataFormats.FileDrop);
+                files = files.Where(i => i.EndsWith(".txt")).ToArray();
+                foreach (string file in files)
+                {
+                    WorkspaceFiles.Add(new WorkspaceFile(file));
+                }
+            }
         }
     }
 }

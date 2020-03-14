@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Project_Kittan.Helpers;
+using Project_Kittan.ViewModels;
 
 namespace Project_Kittan
 {
@@ -15,8 +16,6 @@ namespace Project_Kittan
     public partial class MainWindow : Window
     {
         public static MainWindow Current;
-
-        private List<Models.File> Files { get; set; } = new List<Models.File>();
 
         /// <summary>
         /// Parameterless constructor of MainWindow class.
@@ -101,32 +100,8 @@ namespace Project_Kittan
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                files = files.Where(i => i.EndsWith(".txt")).ToArray();
-                foreach (string file in files)
-                {
-                    Files.Add(new Models.File(file));
-                }
+                ((Workspace)this.DataContext).AddFilesFromDrop(files);
             }
-
-            if(Files.Count > 0)
-            {
-                //TaggerExpander.IsEnabled = true;
-                //TaggerRemoverExpander.IsEnabled = true;
-                //SearchExpander.IsEnabled = true;
-            }
-
-            //FoundFilesListBox.ClearValue(ItemsControl.ItemsSourceProperty);
-            //FoundFilesListBox.ItemsSource = Files;
-        }
-
-        /// <summary>
-        /// Method invoked when the user clicks on Clear textblock.
-        /// Clear Files collection and FoundFilesListBox.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TextBlock_MouseDown_2(object sender, MouseButtonEventArgs e)
-        {
         }
 
         /// <summary>
