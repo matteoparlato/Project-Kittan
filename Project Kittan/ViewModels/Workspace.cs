@@ -7,12 +7,17 @@ using System.Windows.Input;
 using System.Windows;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Project_Kittan.ViewModels
 {
     public class Workspace : BindableBase
     {
         public ObservableCollection<WorkspaceFile> WorkspaceFiles { get; set; }
+
+        public ObservableCollection<NAVObject> Result { get; set; }
 
         private WorkspaceFile _selectedWorkspaceFile;
         public WorkspaceFile SelectedWorkspaceFile
@@ -40,6 +45,34 @@ namespace Project_Kittan.ViewModels
         {
             get { return _removeFile; }
             set { _removeFile = value; }
+        }
+
+        private double _progressValue;
+        public double ProgressValue
+        {
+            get => _progressValue;
+            set => SetProperty(ref _progressValue, value);
+        }
+
+        private string _progressText;
+        public string ProgressText
+        {
+            get => _progressText;
+            set => SetProperty(ref _progressText, value);
+        }
+
+        private bool _backgroundActivity;
+        public bool BackgroundActivity
+        {
+            get => _backgroundActivity;
+            set => SetProperty(ref _backgroundActivity, value);
+        }
+
+        private bool _cancelableBackgroundActivity;
+        public bool CancelableBackgroundActivity
+        {
+            get => _cancelableBackgroundActivity;
+            set => SetProperty(ref _cancelableBackgroundActivity, value);
         }
 
         private ICommand _addFilesFromExecutableFolder;
@@ -91,26 +124,51 @@ namespace Project_Kittan.ViewModels
             set { _searchOccurences = value; }
         }
 
-        private ICommand _updateObjectProperties;
-        public ICommand UpdateObjectProperties
+        private ICommand _addTag;
+        public ICommand AddTag
         {
-            get { return _updateObjectProperties; }
-            set { _updateObjectProperties = value; }
+            get { return _addTag; }
+            set { _addTag = value; }
+        }
+
+        private ICommand _removeTag;
+        public ICommand RemoveTag
+        {
+            get { return _removeTag; }
+            set { _removeTag = value; }
+        }
+
+        private ICommand _copyValue;
+        public ICommand CopyValue
+        {
+            get { return _copyValue; }
+            set { _copyValue = value; }
+        }
+
+        private ICommand _throwCancellation;
+        public ICommand ThrowCancellation
+        {
+            get { return _throwCancellation; }
+            set { _throwCancellation = value; }
         }
 
         public Workspace()
         {
-            RemoveFile = new DelegateCommand(new Action<object>(RemoveFile_Action));
-            AddFilesFromExecutableFolder = new DelegateCommand(new Action<object>(AddFilesFromExecutableFolder_Action));
-            BrowseWorkspaceFolder = new DelegateCommand(new Action<object>(BrowseWorkspaceFolder_Action));
-            ClearWorkspace = new DelegateCommand(new Action<object>(ClearWorkspace_Action));
-            OpenFile = new DelegateCommand(new Action<object>(OpenFile_Action));
-            OpenFileLocation = new DelegateCommand(new Action<object>(OpenFileLocation_Action));
-            DropFile = new DelegateCommand(new Action<object>(DropFile_Action));
-            SearchOccurences = new DelegateCommand(new Action<object>(SearchOccurences_Action));
-            UpdateObjectProperties = new DelegateCommand(new Action<object>(UpdateObjectProperties_Action));
+            RemoveFile = new DelegateCommand(new Action<object>(RemoveFile_Action), new Predicate<object>(Command_CanExecute));
+            AddFilesFromExecutableFolder = new DelegateCommand(new Action<object>(AddFilesFromExecutableFolder_Action), new Predicate<object>(Command_CanExecute));
+            BrowseWorkspaceFolder = new DelegateCommand(new Action<object>(BrowseWorkspaceFolder_Action), new Predicate<object>(Command_CanExecute));
+            ClearWorkspace = new DelegateCommand(new Action<object>(ClearWorkspace_Action), new Predicate<object>(Command_CanExecute));
+            OpenFile = new DelegateCommand(new Action<object>(OpenFile_Action), new Predicate<object>(Command_CanExecute));
+            OpenFileLocation = new DelegateCommand(new Action<object>(OpenFileLocation_Action), new Predicate<object>(Command_CanExecute));
+            DropFile = new DelegateCommand(new Action<object>(DropFile_Action), new Predicate<object>(Command_CanExecute));
+            RemoveTag = new DelegateCommand(new Action<object>(RemoveTag_Action), new Predicate<object>(Command_CanExecute));
+            SearchOccurences = new DelegateCommand(new Action<object>(SearchOccurences_Action), new Predicate<object>(Command_CanExecute));
+            AddTag = new DelegateCommand(new Action<object>(AddTag_Action), new Predicate<object>(Command_CanExecute));
+            CopyValue = new DelegateCommand(new Action<object>(CopyValue_Action), new Predicate<object>(Command_CanExecute));
+            ThrowCancellation = new DelegateCommand(new Action<object>(Command_ThrowCancellation));
 
             WorkspaceFiles = new ObservableCollection<WorkspaceFile>();
+            Result = new ObservableCollection<NAVObject>();
             WorkspaceFiles.CollectionChanged += Files_CollectionChanged;
         }
 
@@ -167,6 +225,7 @@ namespace Project_Kittan.ViewModels
 
         private void OpenFolder(string path)
         {
+            WorkspaceFiles.Clear();
             foreach(string filePath in Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories))
             {
                 WorkspaceFiles.Add(new WorkspaceFile(filePath));
@@ -237,27 +296,63 @@ namespace Project_Kittan.ViewModels
             }
         }
 
+        private Task _runningTask;
+        private CancellationToken _token;
+        private CancellationTokenSource _tokenSource;
+
+        public bool Command_CanExecute(object obj)
+        {
+            if (_runningTask == null) return true;
+            
+            return !(_runningTask.Status == TaskStatus.Running);
+        }
+
+        public void Command_ThrowCancellation(object obj)
+        {
+            if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
+            {
+                if ((_token.IsCancellationRequested == false) && (_runningTask.Status != TaskStatus.Canceled))
+                {
+                    BackgroundActivity = false;
+                    _tokenSource.Cancel();
+                }
+            }
+        }
+
         /// <summary>
         /// Method invoked when the user clicks on Search for occurrences button.
         /// Start occurrences search on all text files in working directory.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void SearchOccurences_Action(object obj)
+        private void SearchOccurences_Action(object obj)
         {
-            string searchPattern = (string)obj;
+            string keyword = (string)obj;
 
-            if (!string.IsNullOrWhiteSpace(searchPattern))
+            if (!string.IsNullOrWhiteSpace(keyword))
             {
-                //PatternFoundInTextBlock.Text = PatternTextBox.Text + " found in:";
-                //StatusProgressBar.Value = 0;
-                //ResponsiveStatusProgressBar.IsIndeterminate = true;
-                //OutputTabControl.SelectedIndex = 1;
+                IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
+                {
+                    ProgressValue = status.Key;
+                    ProgressText = status.Value;
+                });
 
-                await ObjectExtensions.FindWhere(WorkspaceFiles.ToArray(), searchPattern);
+                _tokenSource = new CancellationTokenSource();
+                _token = _tokenSource.Token;
 
-                //StatusProgressBar.IsIndeterminate = false;
-                //ResponsiveStatusProgressBar.IsIndeterminate = false;
+                Result.Clear();
+                _runningTask = Task.Run(() =>
+                {
+                    BackgroundActivity = CancelableBackgroundActivity = true;
+                    foreach (NAVObject navObject in ObjectExtensions.FindWhere(WorkspaceFiles.ToArray(), keyword, progress, _token))
+                    {
+                        Application.Current.Dispatcher.Invoke(delegate
+                        {
+                            Result.Add(navObject);
+                        });
+                    }
+
+                    progress.Report(new KeyValuePair<double, string>(100, string.Format("{0} found  in {1} files of {2}", keyword, Result.Count, WorkspaceFiles.Count)));
+                    BackgroundActivity = CancelableBackgroundActivity = false;
+                }, _token);
             }
         }
 
@@ -267,18 +362,72 @@ namespace Project_Kittan.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void UpdateObjectProperties_Action(object obj)
+        private void AddTag_Action(object obj)
         {
-            //StatusProgressBar.Value = 0;
-            //ResponsiveStatusProgressBar.IsIndeterminate = true;
-
             var parameters = (object[])obj;
+            string tag = (string)parameters[1];
+            
+            if (!string.IsNullOrWhiteSpace(tag))
+            {
+                IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
+                {
+                    ProgressValue = status.Key;
+                    ProgressText = status.Value;
+                });
 
-            await ObjectExtensions.UpdateObjects(WorkspaceFiles.ToArray(), (int)parameters[0], (string)parameters[1], (bool)parameters[2]);
+                Result.Clear();
+                _runningTask = Task.Run(() =>
+                {
+                    BackgroundActivity = true;
+                    ObjectExtensions.AddTag(WorkspaceFiles.ToArray(), (int)parameters[0], (string)parameters[1], (bool)parameters[2], progress);
 
-            //StatusTextBlock.Text = "Done";
-            //StatusProgressBar.IsIndeterminate = false;
-            //ResponsiveStatusProgressBar.IsIndeterminate = false;
+                    progress.Report(new KeyValuePair<double, string>(0, string.Format("Tag {0} added to the version list of {1} files", (string)parameters[1], WorkspaceFiles.Count)));
+                    BackgroundActivity = false;
+                });
+            }
+        }
+
+        /// <summary>
+        /// Method invoked when the user clicks on Update Remove tag button.
+        /// Start tag removal from all text files in working directory.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RemoveTag_Action(object obj)
+        {
+            var parameters = (object[])obj;
+            string tag = (string)parameters[1];
+
+            if (!string.IsNullOrWhiteSpace(tag))
+            {
+                IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
+                {
+                    ProgressValue = status.Key;
+                    ProgressText = status.Value;
+                });
+
+                Result.Clear();
+                _runningTask = Task.Run(() =>
+                {
+                    BackgroundActivity = true;
+                    ObjectExtensions.RemoveTag(WorkspaceFiles.ToArray(), tag, (bool)parameters[0], progress);
+
+                    progress.Report(new KeyValuePair<double, string>(100, string.Format("Tag {0} removed from the version list of {1} files", (string)parameters[1], WorkspaceFiles.Count)));
+                    BackgroundActivity = false;
+                });
+            }
+        }
+
+
+        /// <summary>
+        /// Method invoked when the user Copy value from ConflictsListView contex menu.
+        /// Copy the right-clicked value to the clipboard.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CopyValue_Action(object obj)
+        {
+            Clipboard.SetText(((string)obj).Trim());
         }
     }
 }

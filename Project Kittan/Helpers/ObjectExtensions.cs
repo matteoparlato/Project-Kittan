@@ -5,7 +5,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Project_Kittan.Helpers
 {
@@ -14,9 +16,7 @@ namespace Project_Kittan.Helpers
     /// </summary>
     internal static class ObjectExtensions
     {
-        public static ObservableCollection<ObjectElements> Conflicts { get; private set; } = new ObservableCollection<ObjectElements>();
-
-        public static ObservableCollection<ObjectElements> Found { get; private set; } = new ObservableCollection<ObjectElements>();
+        public static ObservableCollection<NAVObject> Found { get; private set; } = new ObservableCollection<NAVObject>();
 
         // private static Object listAccessLock = new Object();
 
@@ -48,33 +48,35 @@ namespace Project_Kittan.Helpers
         /// </summary>
         /// <param name="files">The collection of files to update</param>
         /// <param name="avoidUpdateDateTime"></param>
-        /// <param name="version">The version tag to add</param>
-        /// <param name="navVersion">The version of NAV used</param>
-        internal async static Task UpdateObjects(Models.File[] files, int navVersion, string version, bool avoidUpdateDateTime)
+        /// <param name="tag">The version tag to add</param>
+        /// <param name="version">The version of NAV used</param>
+        internal static void AddTag(Models.File[] files, int version, string tag, bool avoidUpdateDateTime, IProgress<KeyValuePair<double, string>> progress)
         {
-            double step = (double)100 / files.Length;
+            double progressStep = (double)100 / files.Length;
+            double step = 0;
 
-            for (int i = 0; i < files.Length; i++)
+            foreach (Models.File file in files)
             {
-                if (System.IO.File.Exists(files[i].Path))
-                {
-                    MainWindow.Current.StatusTextBlock.Text = "Updating " + files[i].Name + " properties..."; // Update status
+                step += progressStep;
+                progress.Report(new KeyValuePair<double, string>(step, string.Format("Adding tag {0} to {1}", tag, file.Name)));
 
+                if (System.IO.File.Exists(file.Path))
+                {
                     StringBuilder builder = new StringBuilder();
 
-                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Open, FileAccess.Read))
+                    using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string line;
 
-                        while ((line = await reader.ReadLineAsync()) != null)
+                        while ((line = reader.ReadLine()) != null)
                         {
                             if (line.Equals("  OBJECT-PROPERTIES"))
                             {
                                 builder.AppendLine(line); // Add "  OBJECT-PROPERTIES"
-                                builder.AppendLine(await reader.ReadLineAsync()); // Add "  {"
+                                builder.AppendLine(reader.ReadLine()); // Add "  {"
 
-                                line = await reader.ReadLineAsync();
+                                line = reader.ReadLine();
                                 if (line.Contains("Date") && !avoidUpdateDateTime)
                                 {
                                     builder.AppendLine(string.Format("    Date={0:dd.MM.yy};", DateTime.Today));
@@ -84,7 +86,7 @@ namespace Project_Kittan.Helpers
                                     builder.AppendLine(line);
                                 }
 
-                                line = await reader.ReadLineAsync();
+                                line = reader.ReadLine();
                                 if (line.Contains("Time") && !avoidUpdateDateTime)
                                 {
                                     builder.AppendLine(string.Format("    Time={0:HH:mm:ss};", DateTime.Now)); // Add "Time..."
@@ -94,20 +96,20 @@ namespace Project_Kittan.Helpers
                                     builder.AppendLine(line);
                                 }
 
-                                line = await reader.ReadLineAsync();
+                                line = reader.ReadLine();
                                 if (line.Contains("Modified"))
                                 {
                                     builder.AppendLine(line); // Add "Modified..."
-                                    line = await reader.ReadLineAsync();
+                                    line = reader.ReadLine();
                                 }
 
                                 if (line.Contains("Version List"))
                                 {
                                     // Check if the user defined tag is already in the "Version List"
-                                    if (!string.IsNullOrWhiteSpace(version) && line.IndexOf(version, StringComparison.OrdinalIgnoreCase) == -1)
+                                    if (!string.IsNullOrWhiteSpace(tag) && line.IndexOf(tag, StringComparison.OrdinalIgnoreCase) == -1)
                                     {
                                         line = line.Replace(";", ",");
-                                        line = line + version + ";";
+                                        line = line + tag + ";";
 
                                         if (line.Contains("=,"))
                                         {
@@ -122,18 +124,21 @@ namespace Project_Kittan.Helpers
 
                                     bool avoidInsert = false;
 
-                                    switch (navVersion)
+                                    switch (version)
                                     {
                                         case 0: // NAV 2013 and below
                                             {
                                                 if (temp.Length > 80)
                                                 {
-                                                    RequestDialog dialog = new RequestDialog(temp, 80);
-                                                    if (dialog.ShowDialog() == true)
+                                                    Application.Current.Dispatcher.Invoke(delegate
                                                     {
-                                                        builder.AppendLine("    Version List=" + dialog.VersionList + ";");
-                                                        avoidInsert = true;
-                                                    }
+                                                        RequestDialog dialog = new RequestDialog(temp, 80);
+                                                        if ((bool)dialog.ShowDialog())
+                                                        {
+                                                            builder.AppendLine("    Version List=" + dialog.VersionList + ";");
+                                                            avoidInsert = true;
+                                                        }
+                                                    });
                                                 }
                                                 break;
                                             }
@@ -142,7 +147,7 @@ namespace Project_Kittan.Helpers
                                                 if (temp.Length > 250)
                                                 {
                                                     RequestDialog dialog = new RequestDialog(temp, 250);
-                                                    if (dialog.ShowDialog() == true)
+                                                    if ((bool)dialog.ShowDialog())
                                                     {
                                                         builder.AppendLine("    Version List=" + dialog.VersionList + ";");
                                                         avoidInsert = true;
@@ -160,15 +165,12 @@ namespace Project_Kittan.Helpers
                                 builder.AppendLine(line);
                             }
                         }
-
-                        MainWindow.Current.StatusProgressBar.Value += step; // Update status
                     }
 
-                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Truncate, FileAccess.Write))
+                    using (FileStream stream = new FileStream(file.Path, FileMode.Truncate, FileAccess.Write))
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].Name + " changes..."; // Update status
-                        await writer.WriteAsync(builder.ToString());
+                        writer.Write(builder.ToString());
                     }
                 }
             }
@@ -183,38 +185,40 @@ namespace Project_Kittan.Helpers
         /// </summary>
         /// <param name="files">The collection of files to update</param>
         /// <param name="tag">The version tag to remove</param>
-        internal async static Task RemoveTag(Models.File[] files, string tag, bool ignoreCase)
+        internal static void RemoveTag(Models.File[] files, string tag, bool ignoreCase, IProgress<KeyValuePair<double, string>> progress)
         {
-            double step = (double)100 / files.Length;
+            double progressStep = (double)100 / files.Length;
+            double step = 0;
 
-            for (int i = 0; i < files.Length; i++)
+            foreach (Models.File file in files)
             {
-                if (System.IO.File.Exists(files[i].Path))
-                {
-                    MainWindow.Current.StatusTextBlock.Text = "Removing " + tag + " from file " + files[i].Name + "..."; // Update status
+                step += progressStep;
+                progress.Report(new KeyValuePair<double, string>(step, string.Format("Removing tag {0} from {1}", tag, file.Name)));
 
+                if (System.IO.File.Exists(file.Path))
+                {
                     StringBuilder builder = new StringBuilder();
 
-                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Open, FileAccess.Read))
+                    using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
                         string line;
 
-                        while ((line = await reader.ReadLineAsync()) != null)
+                        while ((line = reader.ReadLine()) != null)
                         {
                             if (line.Equals("  OBJECT-PROPERTIES"))
                             {
                                 builder.AppendLine(line); // Add "  OBJECT-PROPERTIES"
-                                builder.AppendLine(await reader.ReadLineAsync()); // Add "  {"
+                                builder.AppendLine(reader.ReadLine()); // Add "  {"
 
-                                builder.AppendLine(await reader.ReadLineAsync());
-                                builder.AppendLine(await reader.ReadLineAsync());
+                                builder.AppendLine(reader.ReadLine());
+                                builder.AppendLine(reader.ReadLine());
 
-                                line = await reader.ReadLineAsync();
+                                line = reader.ReadLine();
                                 if (line.Contains("Modified"))
                                 {
                                     builder.AppendLine(line); // Add "Modified..."
-                                    line = await reader.ReadLineAsync();
+                                    line = reader.ReadLine();
                                 }
 
                                 if (line.Contains("Version List"))
@@ -244,14 +248,13 @@ namespace Project_Kittan.Helpers
                             }
                         }
 
-                        MainWindow.Current.StatusProgressBar.Value += step; // Update status
+                        //MainWindow.Current.StatusProgressBar.Value += step; // Update status
                     }
 
-                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Truncate, FileAccess.Write))
+                    using (FileStream stream = new FileStream(file.Path, FileMode.Truncate, FileAccess.Write))
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        MainWindow.Current.StatusTextBlock.Text = "Saving " + files[i].Name + " changes..."; // Update status
-                        await writer.WriteAsync(builder.ToString());
+                        writer.Write(builder.ToString());
                     }
                 }
             }
@@ -265,82 +268,82 @@ namespace Project_Kittan.Helpers
         /// Method which finds occurrences of the passed string in NAV objects in working directory.
         /// </summary>
         /// <param name="files">The files to check</param>
-        /// <param name="pattern">The string to search</param>
+        /// <param name="keyword">The string to search</param>
         /// <returns></returns>
-        internal async static Task FindWhere(Models.File[] files, string pattern)
+        internal static IEnumerable<NAVObject> FindWhere(Models.File[] files, string keyword, IProgress<KeyValuePair<double,string>> progress, CancellationToken token)
         {
             double progressStep = (double)100 / files.Length;
-
-            Found.Clear();
-
-            //ConcurrentBag<ObjectElements> concurrentFound = new ConcurrentBag<ObjectElements>();
-
-            for (int i = 0; i < files.Length; i++)
+            double step = 0;
+            
+            foreach (Models.File file in files)
             {
-                //Parallel.ForEach(files, async (file) =>
-                //{
-                if (System.IO.File.Exists(files[i].Path))
+                step += progressStep;
+                progress.Report(new KeyValuePair<double, string>(step, string.Format("Searching for {0} in {1}", keyword, file.Name)));
+
+                if (token.IsCancellationRequested)
                 {
-                    //await System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                    // {
-                    //     MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + file.FileName + "..."; // Update status
-                    // }), DispatcherPriority.Background);
+                    progress.Report(new KeyValuePair<double, string>(0, "Operation aborted"));
+                    token.ThrowIfCancellationRequested();
+                }
 
-                    MainWindow.Current.StatusTextBlock.Text = "Searching occurrences in " + files[i].Name + "..."; // Update status
-
-                    using (FileStream stream = new FileStream(files[i].Path, FileMode.Open, FileAccess.Read))
+                if (System.IO.File.Exists(file.Path))
+                {
+                    using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        string lines = await reader.ReadToEndAsync();
+                        string lines;
+                        try
+                        {
+                            lines = reader.ReadToEnd();
+                        }
+                        catch(OutOfMemoryException) // OutOfMemoryException thrown when reading large files
+                        {
+                            GC.Collect();
+                            lines = reader.ReadToEnd();
+                        }
 
                         if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
                         {
-                            string[] objects = ObjectSplitterExtensions.Split(lines);
+                            string[] navObjects = ObjectSplitterExtensions.Split(lines);
 
-                            for (int j = 1; j < objects.Length; j++)
+                            foreach (string navObject in navObjects)
                             {
-                                if (GetStringOccurrences(objects[j], pattern) != 0)
+                                if (GetStringOccurrences(navObject, keyword) != 0) // The file contains the keyword
                                 {
-                                    var startingLine = objects[j].Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
+                                    using (StringReader stringReader = new StringReader(navObject))
+                                    {
+                                        string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
 
-                                    string objectName = string.Empty;
-                                    for (int k = 2; k < startingLine.Length; k++) objectName += startingLine[k] + ' ';
-
-                                    //lock (listAccessLock)
-                                    //{
-                                    Found.Add(new ObjectElements(startingLine[0], startingLine[1], objectName, files[i].Name));
-                                    //}
+                                        yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
+                                    }
                                 }
                             }
                         }
-                        else // The file contains one object
+                        else // The file contains only one object
                         {
-                            if (GetStringOccurrences(lines, pattern) != 0)
+                            if (GetStringOccurrences(lines, keyword) != 0) // The file contains the keyword
                             {
-                                var startingLine = lines.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)[0].Split(' ');
+                                using (StringReader stringReader = new StringReader(lines))
+                                {
+                                    string[] startingLineWords = new StringReader(lines).ReadLine().Split(' '); // Get the first line of the file
 
-                                string objectName = string.Empty;
-                                for (int j = 3; j < startingLine.Length; j++) objectName += startingLine[j] + ' ';
-
-                                //lock (listAccessLock)
-                                //{
-                                Found.Add(new ObjectElements(startingLine[1], startingLine[2], objectName, files[i].Name));
-                                //}
+                                    yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
+                                }
                             }
                         }
                     }
-
-                    //await System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                    //{
-                    //    MainWindow.Current.StatusProgressBar.Value += progressStep; // Update status
-                    //}), DispatcherPriority.Background);
-
-                    MainWindow.Current.StatusProgressBar.Value += progressStep; // Update status
                 }
-                //});
             }
+        }
 
-            MainWindow.Current.StatusTextBlock.Text = Found.Count != 0 ? "Found " + Found.Count + " occurrences in " + files.Length + " files" : "No occurences found for the string " + pattern; // Update status
+        private static string GetObjectNameFromFirstLine(string[] words)
+        {
+            string objectName = string.Empty;
+            for (int i = 3; i < words.Length; i++)
+            {
+                objectName += words[i] + ' ';
+            }
+            return objectName.Trim();
         }
 
         #endregion

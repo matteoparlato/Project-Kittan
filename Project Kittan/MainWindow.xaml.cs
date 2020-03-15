@@ -15,16 +15,12 @@ namespace Project_Kittan
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static MainWindow Current;
-
         /// <summary>
         /// Parameterless constructor of MainWindow class.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
-
-            Current = this;
 
             Title = "Project Kittan - " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
@@ -38,27 +34,6 @@ namespace Project_Kittan
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await UpdateExtensions.Check();
-        }
-
-        /// <summary>
-        /// Method invoked when the user clicks on Update Remove tag button.
-        /// Start tag removal from all text files in working directory.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void Button_Click_5(object sender, RoutedEventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(TagTextTextBox.Text))
-            {
-                StatusProgressBar.Value = 0;
-                ResponsiveStatusProgressBar.IsIndeterminate = true;
-
-                //await ObjectExtensions.RemoveTag(Files.ToArray(), TagTextTextBox.Text, (bool)CaseSensitiveCheckBox.IsChecked);
-
-                StatusTextBlock.Text = "Done";
-                StatusProgressBar.IsIndeterminate = false;
-                ResponsiveStatusProgressBar.IsIndeterminate = false;
-            }
         }
 
         /// <summary>
@@ -84,21 +59,6 @@ namespace Project_Kittan
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 ((Workspace)this.DataContext).AddFilesFromDrop(files);
             }
-        }
-
-        /// <summary>
-        /// Method invoked when the user Copy value from ConflictsListView contex menu.
-        /// Copy the right-clicked value to the clipboard.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            MenuItem item = sender as MenuItem;
-            string clipboard = item.CommandParameter.ToString().Trim();
-
-            Clipboard.SetText(clipboard);
-            StatusTextBlock.Text = clipboard + " copied to clipboard";
         }
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)

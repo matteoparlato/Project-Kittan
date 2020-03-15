@@ -100,7 +100,7 @@
     <Compile Include="Models\DelegateCommand.cs" />
     <Compile Include="Models\ElementProperties.cs" />
     <Compile Include="Models\File.cs" />
-    <Compile Include="Models\ObjectElements.cs" />
+    <Compile Include="Models\NAVObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
