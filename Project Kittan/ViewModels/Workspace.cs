@@ -19,12 +19,81 @@ namespace Project_Kittan.ViewModels
 
         public ObservableCollection<NAVObject> Result { get; set; }
 
+        public ObservableCollection<NAVObject> Filters { get; set; }
+
         private WorkspaceFile _selectedWorkspaceFile;
         public WorkspaceFile SelectedWorkspaceFile
         {
             get => _selectedWorkspaceFile;
             set => SetProperty(ref _selectedWorkspaceFile, value);
         }
+
+        #region Filters
+
+        private string _workspaceTableFilter;
+        public string WorkspaceTableFilter
+        {
+            get => _workspaceTableFilter;
+            set => SetProperty(ref _workspaceTableFilter, value);
+        }
+
+        private string _workspacePageFilter;
+        public string WorkspacePageFilter
+        {
+            get => _workspacePageFilter;
+            set => SetProperty(ref _workspacePageFilter, value);
+        }
+
+        private string _workspaceFormFilter;
+        public string WorkspaceFormFilter
+        {
+            get => _workspaceFormFilter;
+            set => SetProperty(ref _workspaceFormFilter, value);
+        }
+
+        private string _workspaceReportFilter;
+        public string WorkspaceReportFilter
+        {
+            get => _workspaceReportFilter;
+            set => SetProperty(ref _workspaceReportFilter, value);
+        }
+
+        private string _workspaceCodeunitFilter;
+        public string WorkspaceCodeunitFilter
+        {
+            get => _workspaceCodeunitFilter;
+            set => SetProperty(ref _workspaceCodeunitFilter, value);
+        }
+
+        private string _workspaceQueryFilter;
+        public string WorkspaceQueryFilter
+        {
+            get => _workspaceQueryFilter;
+            set => SetProperty(ref _workspaceQueryFilter, value);
+        }
+
+        private string _workspaceXMLportFilter;
+        public string WorkspaceXMLportFilter
+        {
+            get => _workspaceXMLportFilter;
+            set => SetProperty(ref _workspaceXMLportFilter, value);
+        }
+
+        private string _workspaceDataportFilter;
+        public string WorkspaceDataportFilter
+        {
+            get => _workspaceDataportFilter;
+            set => SetProperty(ref _workspaceDataportFilter, value);
+        }
+
+        private string _workspaceMenuSuiteFilter;
+        public string WorkspaceMenuSuiteFilter
+        {
+            get => _workspaceMenuSuiteFilter;
+            set => SetProperty(ref _workspaceMenuSuiteFilter, value);
+        }
+
+        #endregion Filters
 
         private string _path;
         public string Path
@@ -138,19 +207,27 @@ namespace Project_Kittan.ViewModels
             set { _removeTag = value; }
         }
 
-        private ICommand _copyValue;
-        public ICommand CopyValue
-        {
-            get { return _copyValue; }
-            set { _copyValue = value; }
-        }
-
         private ICommand _throwCancellation;
         public ICommand ThrowCancellation
         {
             get { return _throwCancellation; }
             set { _throwCancellation = value; }
         }
+
+        private ICommand _openSettings;
+        public ICommand OpenSettings
+        {
+            get { return _openSettings; }
+            set { _openSettings = value; }
+        }
+
+        private ICommand _getFiltersFromFiles;
+        public ICommand GetFiltersFromFiles
+        {
+            get { return _getFiltersFromFiles; }
+            set { _getFiltersFromFiles = value; }
+        }
+
 
         public Workspace()
         {
@@ -164,11 +241,13 @@ namespace Project_Kittan.ViewModels
             RemoveTag = new DelegateCommand(new Action<object>(RemoveTag_Action), new Predicate<object>(Command_CanExecute));
             SearchOccurences = new DelegateCommand(new Action<object>(SearchOccurences_Action), new Predicate<object>(Command_CanExecute));
             AddTag = new DelegateCommand(new Action<object>(AddTag_Action), new Predicate<object>(Command_CanExecute));
-            CopyValue = new DelegateCommand(new Action<object>(CopyValue_Action), new Predicate<object>(Command_CanExecute));
             ThrowCancellation = new DelegateCommand(new Action<object>(Command_ThrowCancellation));
+            OpenSettings = new DelegateCommand(new Action<object>(OpenSettings_Action), new Predicate<object>(Command_CanExecute));
+            GetFiltersFromFiles = new DelegateCommand(new Action<object>(GetFiltersFromFiles_Action), new Predicate<object>(Command_CanExecute));
 
             WorkspaceFiles = new ObservableCollection<WorkspaceFile>();
             Result = new ObservableCollection<NAVObject>();
+            Filters = new ObservableCollection<NAVObject>();
             WorkspaceFiles.CollectionChanged += Files_CollectionChanged;
         }
 
@@ -185,9 +264,48 @@ namespace Project_Kittan.ViewModels
             }
         }
 
+        private void GetFiltersFromFiles_Action(object obj)
+        {
+            IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
+            {
+                ProgressValue = status.Key;
+                ProgressText = status.Value;
+            });
+
+            _tokenSource = new CancellationTokenSource();
+            _token = _tokenSource.Token;
+
+            Filters.Clear();
+            _runningTask = Task.Run(() =>
+            {
+                BackgroundActivity = CancelableBackgroundActivity = true;
+                foreach (NAVObject navObject in ObjectExtensions.PrepareData(WorkspaceFiles.ToArray(),  progress, _token))
+                {
+                    Application.Current.Dispatcher.Invoke(delegate
+                    {
+                        Filters.Add(navObject);
+                    });
+                }
+
+                progress.Report(new KeyValuePair<double, string>(100, string.Format("Succesfully calculated filters from loaded files", Result.Count, WorkspaceFiles.Count)));
+                BackgroundActivity = CancelableBackgroundActivity = false;
+
+                WorkspaceTableFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Table").Select(navObject => navObject.ID).ToArray());
+                WorkspacePageFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Page").Select(navObject => navObject.ID).ToArray());
+                WorkspaceFormFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Form").Select(navObject => navObject.ID).ToArray());
+                WorkspaceReportFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Report").Select(navObject => navObject.ID).ToArray());
+                WorkspaceCodeunitFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Codeunit").Select(navObject => navObject.ID).ToArray());
+                WorkspaceQueryFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Query").Select(navObject => navObject.ID).ToArray());
+                WorkspaceXMLportFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "XMLport").Select(navObject => navObject.ID).ToArray());
+                WorkspaceDataportFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Dataport").Select(navObject => navObject.ID).ToArray());
+                WorkspaceMenuSuiteFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "MenuSuite").Select(navObject => navObject.ID).ToArray());
+            }, _token);
+        }
+
         public void RemoveFile_Action(object obj)
         {
             WorkspaceFiles.Remove(SelectedWorkspaceFile);
+            // TODO: Filters.Remove(SelectedWorkspaceFile);
         }
 
         public void OpenFile_Action(object obj)
@@ -350,7 +468,7 @@ namespace Project_Kittan.ViewModels
                         });
                     }
 
-                    progress.Report(new KeyValuePair<double, string>(100, string.Format("{0} found  in {1} files of {2}", keyword, Result.Count, WorkspaceFiles.Count)));
+                    progress.Report(new KeyValuePair<double, string>(100, string.Format("{0} found in {1} files of {2}", keyword, Result.Count, WorkspaceFiles.Count)));
                     BackgroundActivity = CancelableBackgroundActivity = false;
                 }, _token);
             }
@@ -418,16 +536,9 @@ namespace Project_Kittan.ViewModels
             }
         }
 
-
-        /// <summary>
-        /// Method invoked when the user Copy value from ConflictsListView contex menu.
-        /// Copy the right-clicked value to the clipboard.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CopyValue_Action(object obj)
+        private void OpenSettings_Action(object obj)
         {
-            Clipboard.SetText(((string)obj).Trim());
+            new SettingsWindow().ShowDialog();
         }
     }
 }

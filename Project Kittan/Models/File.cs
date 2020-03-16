@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Project_Kittan.Models
+﻿namespace Project_Kittan.Models
 {
     /// <summary>
     /// File class

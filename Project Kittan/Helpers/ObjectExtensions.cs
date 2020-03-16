@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Project_Kittan.Helpers
@@ -41,7 +40,7 @@ namespace Project_Kittan.Helpers
             return count;
         }
 
-        #region Properties updater
+        #region Add tag
 
         /// <summary>
         /// Method which updates OBJECT-PROPERTIES with passed information.
@@ -170,7 +169,15 @@ namespace Project_Kittan.Helpers
                     using (FileStream stream = new FileStream(file.Path, FileMode.Truncate, FileAccess.Write))
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        writer.Write(builder.ToString());
+                        try
+                        {
+                            writer.Write(builder.ToString());
+                        }
+                        catch (OutOfMemoryException) // OutOfMemoryException thrown when reading large files
+                        {
+                            GC.Collect();
+                            writer.Write(builder.ToString());
+                        }
                     }
                 }
             }
@@ -178,7 +185,7 @@ namespace Project_Kittan.Helpers
 
         #endregion
 
-        #region Tag remover
+        #region Remove tag
 
         /// <summary>
         /// Method which removes a tag from a Version List.
@@ -302,7 +309,8 @@ namespace Project_Kittan.Helpers
                             lines = reader.ReadToEnd();
                         }
 
-                        if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 1) // The file contains multiple objects
+                        int multipleObjects = GetStringOccurrences(lines, "  OBJECT-PROPERTIES");
+                        if (multipleObjects > 1) // The file contains multiple objects
                         {
                             string[] navObjects = ObjectSplitterExtensions.Split(lines);
 
@@ -319,7 +327,7 @@ namespace Project_Kittan.Helpers
                                 }
                             }
                         }
-                        else // The file contains only one object
+                        else if (multipleObjects == 1) // The file contains only one object
                         {
                             if (GetStringOccurrences(lines, keyword) != 0) // The file contains the keyword
                             {
@@ -329,6 +337,73 @@ namespace Project_Kittan.Helpers
 
                                     yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method which finds occurrences of the passed string in NAV objects in working directory.
+        /// </summary>
+        /// <param name="files">The files to check</param>
+        /// <param name="keyword">The string to search</param>
+        /// <returns></returns>
+        internal static IEnumerable<NAVObject> PrepareData(Models.File[] files, IProgress<KeyValuePair<double, string>> progress, CancellationToken token)
+        {
+            double progressStep = (double)100 / files.Length;
+            double step = 0;
+
+            foreach (Models.File file in files)
+            {
+                step += progressStep;
+                progress.Report(new KeyValuePair<double, string>(step, string.Format("Preparing filters...", file.Name)));
+
+                if (token.IsCancellationRequested)
+                {
+                    progress.Report(new KeyValuePair<double, string>(0, "Operation aborted"));
+                    token.ThrowIfCancellationRequested();
+                }
+
+                if (System.IO.File.Exists(file.Path))
+                {
+                    using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
+                    using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
+                    {
+                        string lines;
+                        try
+                        {
+                            lines = reader.ReadToEnd();
+                        }
+                        catch (OutOfMemoryException) // OutOfMemoryException thrown when reading large files
+                        {
+                            GC.Collect();
+                            lines = reader.ReadToEnd();
+                        }
+
+                        int multipleObjects = GetStringOccurrences(lines, "  OBJECT-PROPERTIES");
+                        if (multipleObjects > 1) // The file contains multiple objects
+                        {
+                            string[] navObjects = ObjectSplitterExtensions.Split(lines);
+
+                            foreach (string navObject in navObjects)
+                            {
+                                using (StringReader stringReader = new StringReader(navObject))
+                                {
+                                    string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
+
+                                    yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
+                                }
+                            }
+                        }
+                        else if (multipleObjects == 1) // The file contains only one object
+                        {
+                            using (StringReader stringReader = new StringReader(lines))
+                            {
+                                string[] startingLineWords = new StringReader(lines).ReadLine().Split(' '); // Get the first line of the file
+
+                                yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                             }
                         }
                     }

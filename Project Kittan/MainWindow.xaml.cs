@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Project_Kittan.Helpers;
 using Project_Kittan.ViewModels;
 
@@ -61,9 +60,31 @@ namespace Project_Kittan
             }
         }
 
-        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        private void FilterTextBox_GotKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
         {
-            new SettingsWindow().ShowDialog();
+            FilterTextBox_MouseUp(sender, null);
+        }
+
+        private void FilterTextBox_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            TextBox textBox = ((TextBox)sender);
+            textBox.SelectAll();
+
+            try
+            {
+                Clipboard.SetText(textBox.Text);
+            }
+            catch(COMException ex)
+            {
+                var result = System.Windows.Forms.MessageBox.Show("An error occured during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, string.Empty, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
+                if (result == System.Windows.Forms.DialogResult.Retry)
+                {
+                    textBox.SelectAll();
+                    Clipboard.SetText(textBox.Text);
+                }
+            }
+
+            ((Workspace)this.DataContext).ProgressText = string.Format("{0} filter copied to clipboard", textBox.Tag);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Project_Kittan.Models
+﻿namespace Project_Kittan.Models
 {
     /// <summary>
     /// NAVObject class

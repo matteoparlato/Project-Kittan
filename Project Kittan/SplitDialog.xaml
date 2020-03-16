@@ -1,4 +1,18 @@
-﻿<Window x:Class="Project_Kittan.SplitDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:Project_Kittan" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Title="Project Kittan" Width="430" Height="140" Closing="Window_Closing" KeyDown="Window_KeyDown" Loaded="Window_Loaded" ResizeMode="NoResize" mc:Ignorable="d">
+﻿<Window
+    x:Class="Project_Kittan.SplitDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Project_Kittan"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Project Kittan"
+    Width="430"
+    Height="140"
+    Closing="Window_Closing"
+    KeyDown="Window_KeyDown"
+    Loaded="Window_Loaded"
+    ResizeMode="NoResize"
+    mc:Ignorable="d">
 
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="TaskBarProgress" ProgressState="Indeterminate" />
