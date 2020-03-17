@@ -21,6 +21,7 @@ namespace Project_Kittan.ViewModels
 
         public ObservableCollection<NAVObject> Filters { get; set; }
 
+
         private WorkspaceFile _selectedWorkspaceFile;
         public WorkspaceFile SelectedWorkspaceFile
         {
@@ -127,7 +128,10 @@ namespace Project_Kittan.ViewModels
         public string ProgressText
         {
             get => _progressText;
-            set => SetProperty(ref _progressText, value);
+            set
+            {
+                SetProperty(ref _progressText, value);
+            }
         }
 
         private bool _backgroundActivity;
@@ -228,6 +232,13 @@ namespace Project_Kittan.ViewModels
             set { _getFiltersFromFiles = value; }
         }
 
+        private ICommand _getFiltersFromClipboard;
+        public ICommand GetFiltersFromClipboard
+        {
+            get { return _getFiltersFromClipboard; }
+            set { _getFiltersFromClipboard = value; }
+        }
+
 
         public Workspace()
         {
@@ -244,11 +255,96 @@ namespace Project_Kittan.ViewModels
             ThrowCancellation = new DelegateCommand(new Action<object>(Command_ThrowCancellation));
             OpenSettings = new DelegateCommand(new Action<object>(OpenSettings_Action), new Predicate<object>(Command_CanExecute));
             GetFiltersFromFiles = new DelegateCommand(new Action<object>(GetFiltersFromFiles_Action), new Predicate<object>(Command_CanExecute));
+            GetFiltersFromClipboard = new DelegateCommand(new Action<object>(GetFiltersFromClipboard_Action), new Predicate<object>(Command_CanExecute));
 
             WorkspaceFiles = new ObservableCollection<WorkspaceFile>();
             Result = new ObservableCollection<NAVObject>();
             Filters = new ObservableCollection<NAVObject>();
+
             WorkspaceFiles.CollectionChanged += Files_CollectionChanged;
+        }
+
+        private void GetFiltersFromClipboard_Action(object obj)
+        {
+            string clipboardText = Clipboard.GetText();
+            if (!string.IsNullOrWhiteSpace(clipboardText))
+            {
+                using(StringReader reader = new StringReader(clipboardText))
+                {
+                    if (reader.ReadLine().StartsWith("Type"))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            string[] objectDetails = line.Split('\t');
+
+                            switch (objectDetails[0])
+                            {
+                                case "1":
+                                    {
+                                        _workspaceTableFilter += objectDetails[1] + '|';
+                                        break;
+                                    }
+                                case "2":
+                                    {
+                                        break;
+                                    }
+                                case "3":
+                                    {
+                                        _workspaceReportFilter += objectDetails[1] + '|';
+                                        break;
+                                    }
+                                case "4":
+                                    {
+                                        break;
+                                    }
+                                case "5":
+                                    {
+                                        _workspaceCodeunitFilter += objectDetails[1] + '|';
+                                        break;
+                                    }
+                                case "6":
+                                    {
+                                        _workspaceXMLportFilter += objectDetails[1] + '|';
+                                        break;
+                                    }
+                                case "7":
+                                    {
+                                        _workspaceMenuSuiteFilter += objectDetails[1] + '|';
+                                        break;
+                                    }
+                                case "8":
+                                    {
+                                        _workspacePageFilter += objectDetails[1] + '|';
+                                        break;
+                                    }
+                                case "9":
+                                    {
+                                        _workspaceQueryFilter += objectDetails[1] + '|';
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        break;
+                                    }
+                            }
+                        }
+
+                        WorkspaceTableFilter = !string.IsNullOrWhiteSpace(_workspaceTableFilter) ? _workspaceTableFilter.Substring(0, _workspaceTableFilter.Length - 1) : string.Empty;
+                        WorkspacePageFilter = !string.IsNullOrWhiteSpace(_workspacePageFilter) ? _workspacePageFilter.Substring(0, _workspacePageFilter.Length - 1) : string.Empty;
+                        WorkspaceFormFilter = !string.IsNullOrWhiteSpace(_workspaceFormFilter) ? _workspaceFormFilter.Substring(0, _workspaceFormFilter.Length - 1) : string.Empty;
+                        WorkspaceReportFilter = !string.IsNullOrWhiteSpace(_workspaceReportFilter) ? _workspaceReportFilter.Substring(0, _workspaceReportFilter.Length - 1) : string.Empty;
+                        WorkspaceCodeunitFilter = !string.IsNullOrWhiteSpace(_workspaceCodeunitFilter) ? _workspaceCodeunitFilter.Substring(0, _workspaceCodeunitFilter.Length - 1) : string.Empty;
+                        WorkspaceQueryFilter = !string.IsNullOrWhiteSpace(_workspaceQueryFilter) ? _workspaceQueryFilter.Substring(0, _workspaceQueryFilter.Length - 1) : string.Empty;
+                        WorkspaceXMLportFilter = !string.IsNullOrWhiteSpace(_workspaceXMLportFilter) ? _workspaceXMLportFilter.Substring(0, _workspaceXMLportFilter.Length - 1) : string.Empty;
+                        WorkspaceDataportFilter = !string.IsNullOrWhiteSpace(_workspaceDataportFilter) ? _workspaceDataportFilter.Substring(0, _workspaceDataportFilter.Length - 1) : string.Empty; ;
+                        WorkspaceMenuSuiteFilter = !string.IsNullOrWhiteSpace(_workspaceMenuSuiteFilter) ? _workspaceMenuSuiteFilter.Substring(0, _workspaceMenuSuiteFilter.Length - 1) : string.Empty;
+
+                        ProgressText = "Succesfully obtained filters from clipboard";
+                    }
+                    MessageBox.Show("The clipboard doesn't contain any NAV object data!", Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+            }
         }
 
         private void Files_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -287,9 +383,6 @@ namespace Project_Kittan.ViewModels
                     });
                 }
 
-                progress.Report(new KeyValuePair<double, string>(100, string.Format("Succesfully calculated filters from loaded files", Result.Count, WorkspaceFiles.Count)));
-                BackgroundActivity = CancelableBackgroundActivity = false;
-
                 WorkspaceTableFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Table").Select(navObject => navObject.ID).ToArray());
                 WorkspacePageFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Page").Select(navObject => navObject.ID).ToArray());
                 WorkspaceFormFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Form").Select(navObject => navObject.ID).ToArray());
@@ -299,6 +392,9 @@ namespace Project_Kittan.ViewModels
                 WorkspaceXMLportFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "XMLport").Select(navObject => navObject.ID).ToArray());
                 WorkspaceDataportFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "Dataport").Select(navObject => navObject.ID).ToArray());
                 WorkspaceMenuSuiteFilter = string.Join("|", Filters.Where(navObject => navObject.Type == "MenuSuite").Select(navObject => navObject.ID).ToArray());
+
+                progress.Report(new KeyValuePair<double, string>(100, string.Format("Succesfully obtained filters from loaded files", Result.Count, WorkspaceFiles.Count)));
+                BackgroundActivity = CancelableBackgroundActivity = false;
             }, _token);
         }
 
@@ -351,7 +447,7 @@ namespace Project_Kittan.ViewModels
 
             if (WorkspaceFiles.Count == 0)
             {
-                if (MessageBox.Show("No file found. Do you want to select another folder?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                if (MessageBox.Show("No file found. Do you want to select another folder?", Properties.Resources.AppName, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     return;
                 }

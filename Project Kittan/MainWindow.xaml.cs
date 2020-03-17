@@ -21,7 +21,7 @@ namespace Project_Kittan
         {
             InitializeComponent();
 
-            Title = "Project Kittan - " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Title = string.Format("{0} {1}", Properties.Resources.AppName, Assembly.GetExecutingAssembly().GetName().Version.ToString());
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Project_Kittan
             }
             catch(COMException ex)
             {
-                var result = System.Windows.Forms.MessageBox.Show("An error occured during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, string.Empty, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
+                var result = System.Windows.Forms.MessageBox.Show("An error occured during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
                 if (result == System.Windows.Forms.DialogResult.Retry)
                 {
                     textBox.SelectAll();

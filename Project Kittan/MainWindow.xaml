@@ -150,10 +150,11 @@
 
                 <Expander Margin="0,8,0,0" Header="Filters" IsExpanded="False">
                     <StackPanel Margin="10">
-                        <TextBlock Text="Calculate filters from files or clipboard (beta)." TextWrapping="Wrap" />
+                        <TextBlock Text="Obtain object filters from loaded files or clipboard data. In order to get filters from clipboard you must copy the objects from the Object Designer." TextWrapping="Wrap" />
+                        <Image Height="86" Margin="0,5,0,0" HorizontalAlignment="Right" Source="pack://application:,,,/Resources/ClipboardTooltip.png" />
                         <StackPanel Margin="0,18,0,0" Orientation="Horizontal">
                             <Button Width="150" HorizontalAlignment="Left" Command="{Binding GetFiltersFromFiles}" Content="Get filters from files" IsEnabled="{Binding Ready}" />
-                            <Button Width="150" Margin="8,0,0,0" HorizontalAlignment="Left" Command="{Binding GetFiltersFromFiles}" Content="Get filters from clipboard" />
+                            <Button Width="150" Margin="8,0,0,0" HorizontalAlignment="Left" Command="{Binding GetFiltersFromClipboard}" Content="Get filters from clipboard" />
                         </StackPanel>
                     </StackPanel>
                 </Expander>
@@ -190,45 +191,34 @@
                 </ListView>
             </TabItem>
             <TabItem Header="Filters">
-                <ScrollViewer Margin="8" VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <Expander Header="Filters from loaded files">
-                            <StackPanel>
-                                <TextBlock Margin="0,8,0,0" Text="Table filter:" Visibility="{Binding WorkspacePageFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Table" Text="{Binding WorkspaceTableFilter}" Visibility="{Binding WorkspaceTableFilter, Converter={StaticResource StringToVisibleConverter}}" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="8">
+                        <TextBlock Margin="0,8,0,0" Text="Table filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Table" Text="{Binding WorkspaceTableFilter}" />
 
-                                <TextBlock Margin="0,8,0,0" Text="Page filter:" Visibility="{Binding WorkspacePageFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Page" Text="{Binding WorkspacePageFilter}" Visibility="{Binding WorkspacePageFilter, Converter={StaticResource StringToVisibleConverter}}" />
+                        <TextBlock Margin="0,8,0,0" Text="Page filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Page" Text="{Binding WorkspacePageFilter}" />
 
-                                <TextBlock Margin="0,8,0,0" Text="Form filter:" Visibility="{Binding WorkspaceFormFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Form" Text="{Binding WorkspaceFormFilter}" Visibility="{Binding WorkspaceFormFilter, Converter={StaticResource StringToVisibleConverter}}" />
+                        <TextBlock Margin="0,8,0,0" Text="Form filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Form" Text="{Binding WorkspaceFormFilter}" />
 
-                                <TextBlock Margin="0,8,0,0" Text="Report filter:" Visibility="{Binding WorkspaceReportFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Report" Text="{Binding WorkspaceReportFilter}" Visibility="{Binding WorkspaceReportFilter, Converter={StaticResource StringToVisibleConverter}}" />
+                        <TextBlock Margin="0,8,0,0" Text="Report filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Report" Text="{Binding WorkspaceReportFilter}" />
 
-                                <TextBlock Margin="0,8,0,0" Text="Codeunit filter:" Visibility="{Binding WorkspaceCodeunitFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Codeunit" Text="{Binding WorkspaceCodeunitFilter}" Visibility="{Binding WorkspaceCodeunitFilter, Converter={StaticResource StringToVisibleConverter}}" />
+                        <TextBlock Margin="0,8,0,0" Text="Codeunit filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Codeunit" Text="{Binding WorkspaceCodeunitFilter}" />
 
-                                <TextBlock Margin="0,8,0,0" Text="Query filter:" Visibility="{Binding WorkspaceQueryFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Query" Text="{Binding WorkspaceQueryFilter}" Visibility="{Binding WorkspaceQueryFilter, Converter={StaticResource StringToVisibleConverter}}" />
+                        <TextBlock Margin="0,8,0,0" Text="Query filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Query" Text="{Binding WorkspaceQueryFilter}" />
 
-                                <TextBlock Margin="0,8,0,0" Text="XMLport filter:" Visibility="{Binding WorkspaceXMLportFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="XMLport" Text="{Binding WorkspaceXMLportFilter}" Visibility="{Binding WorkspaceXMLportFilter, Converter={StaticResource StringToVisibleConverter}}" />
+                        <TextBlock Margin="0,8,0,0" Text="XMLport filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="XMLport" Text="{Binding WorkspaceXMLportFilter}" />
 
-                                <TextBlock Margin="0,8,0,0" Text="Dataport filter:" Visibility="{Binding WorkspaceDataportFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Dataport" Text="{Binding WorkspaceDataportFilter}" Visibility="{Binding WorkspaceDataportFilter, Converter={StaticResource StringToVisibleConverter}}" />
+                        <TextBlock Margin="0,8,0,0" Text="Dataport filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Dataport" Text="{Binding WorkspaceDataportFilter}" />
 
-                                <TextBlock Margin="0,8,0,0" Text="MenuSuite filter:" Visibility="{Binding WorkspaceMenuSuiteFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                                <TextBox Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="MenuSuite" Text="{Binding WorkspaceMenuSuiteFilter}" Visibility="{Binding WorkspaceMenuSuiteFilter, Converter={StaticResource StringToVisibleConverter}}" />
-                            </StackPanel>
-
-                        </Expander>
-                        <Expander Margin="0,18,0,0" Header="Filters from loaded from clipboard">
-                            <StackPanel>
-                                <TextBlock Margin="0,8,0,0" Text="Tables" />
-                                <TextBox Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" ScrollViewer.HorizontalScrollBarVisibility="Visible" Text="{Binding WorkspaceTablesFilter}" />
-                            </StackPanel>
-                        </Expander>
+                        <TextBlock Margin="0,8,0,0" Text="MenuSuite filter:" />
+                        <TextBox Height="80" Margin="0,5,0,0" GotKeyboardFocus="FilterTextBox_GotKeyboardFocus" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="MenuSuite" Text="{Binding WorkspaceMenuSuiteFilter}" />
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
