@@ -118,7 +118,7 @@ namespace Project_Kittan
             ManualEncodingRadioButton.IsChecked = ManualEncodingOptionsStackPanel.IsEnabled = false;
             BrowseFileEncodingTextBlock.Text = "No file selected";
             UserDefindedEncodingTextBlock.Text = "Write the code of the encoding";
-            UserDefinedEncodingTextBox.Text = string.Empty;
+            UserDefinedEncodingTextBox.Text = "";
             AutomaticEncodingOptionsStackPanel.IsEnabled = true;
         }
 

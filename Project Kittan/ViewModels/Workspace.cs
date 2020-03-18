@@ -273,15 +273,15 @@ namespace Project_Kittan.ViewModels
                 {
                     if (reader.ReadLine().StartsWith("Type"))
                     {
-                        WorkspaceTableFilter = string.Empty;
-                        WorkspacePageFilter = string.Empty;
-                        WorkspaceFormFilter = string.Empty;
-                        WorkspaceReportFilter = string.Empty;
-                        WorkspaceCodeunitFilter = string.Empty;
-                        WorkspaceQueryFilter = string.Empty;
-                        WorkspaceXMLportFilter = string.Empty;
-                        WorkspaceDataportFilter = string.Empty;
-                        WorkspaceMenuSuiteFilter = string.Empty;
+                        WorkspaceTableFilter = "";
+                        WorkspacePageFilter = "";
+                        WorkspaceFormFilter = "";
+                        WorkspaceReportFilter = "";
+                        WorkspaceCodeunitFilter = "";
+                        WorkspaceQueryFilter = "";
+                        WorkspaceXMLportFilter = "";
+                        WorkspaceDataportFilter = "";
+                        WorkspaceMenuSuiteFilter = "";
 
                         string line;
                         while ((line = reader.ReadLine()) != null)
@@ -340,15 +340,15 @@ namespace Project_Kittan.ViewModels
                             }
                         }
 
-                        WorkspaceTableFilter = !string.IsNullOrWhiteSpace(_workspaceTableFilter) ? _workspaceTableFilter.Substring(0, _workspaceTableFilter.Length - 1) : string.Empty;
-                        WorkspacePageFilter = !string.IsNullOrWhiteSpace(_workspacePageFilter) ? _workspacePageFilter.Substring(0, _workspacePageFilter.Length - 1) : string.Empty;
-                        WorkspaceFormFilter = !string.IsNullOrWhiteSpace(_workspaceFormFilter) ? _workspaceFormFilter.Substring(0, _workspaceFormFilter.Length - 1) : string.Empty;
-                        WorkspaceReportFilter = !string.IsNullOrWhiteSpace(_workspaceReportFilter) ? _workspaceReportFilter.Substring(0, _workspaceReportFilter.Length - 1) : string.Empty;
-                        WorkspaceCodeunitFilter = !string.IsNullOrWhiteSpace(_workspaceCodeunitFilter) ? _workspaceCodeunitFilter.Substring(0, _workspaceCodeunitFilter.Length - 1) : string.Empty;
-                        WorkspaceQueryFilter = !string.IsNullOrWhiteSpace(_workspaceQueryFilter) ? _workspaceQueryFilter.Substring(0, _workspaceQueryFilter.Length - 1) : string.Empty;
-                        WorkspaceXMLportFilter = !string.IsNullOrWhiteSpace(_workspaceXMLportFilter) ? _workspaceXMLportFilter.Substring(0, _workspaceXMLportFilter.Length - 1) : string.Empty;
-                        WorkspaceDataportFilter = !string.IsNullOrWhiteSpace(_workspaceDataportFilter) ? _workspaceDataportFilter.Substring(0, _workspaceDataportFilter.Length - 1) : string.Empty; ;
-                        WorkspaceMenuSuiteFilter = !string.IsNullOrWhiteSpace(_workspaceMenuSuiteFilter) ? _workspaceMenuSuiteFilter.Substring(0, _workspaceMenuSuiteFilter.Length - 1) : string.Empty;
+                        WorkspaceTableFilter = !string.IsNullOrWhiteSpace(_workspaceTableFilter) ? _workspaceTableFilter.Substring(0, _workspaceTableFilter.Length - 1) : "";
+                        WorkspacePageFilter = !string.IsNullOrWhiteSpace(_workspacePageFilter) ? _workspacePageFilter.Substring(0, _workspacePageFilter.Length - 1) : "";
+                        WorkspaceFormFilter = !string.IsNullOrWhiteSpace(_workspaceFormFilter) ? _workspaceFormFilter.Substring(0, _workspaceFormFilter.Length - 1) : "";
+                        WorkspaceReportFilter = !string.IsNullOrWhiteSpace(_workspaceReportFilter) ? _workspaceReportFilter.Substring(0, _workspaceReportFilter.Length - 1) : "";
+                        WorkspaceCodeunitFilter = !string.IsNullOrWhiteSpace(_workspaceCodeunitFilter) ? _workspaceCodeunitFilter.Substring(0, _workspaceCodeunitFilter.Length - 1) : "";
+                        WorkspaceQueryFilter = !string.IsNullOrWhiteSpace(_workspaceQueryFilter) ? _workspaceQueryFilter.Substring(0, _workspaceQueryFilter.Length - 1) : "";
+                        WorkspaceXMLportFilter = !string.IsNullOrWhiteSpace(_workspaceXMLportFilter) ? _workspaceXMLportFilter.Substring(0, _workspaceXMLportFilter.Length - 1) : "";
+                        WorkspaceDataportFilter = !string.IsNullOrWhiteSpace(_workspaceDataportFilter) ? _workspaceDataportFilter.Substring(0, _workspaceDataportFilter.Length - 1) : ""; ;
+                        WorkspaceMenuSuiteFilter = !string.IsNullOrWhiteSpace(_workspaceMenuSuiteFilter) ? _workspaceMenuSuiteFilter.Substring(0, _workspaceMenuSuiteFilter.Length - 1) : "";
 
                         ProgressText = "Succesfully obtained filters from clipboard";
                     }
@@ -369,7 +369,7 @@ namespace Project_Kittan.ViewModels
             else
             {
                 Ready = false;
-                Path = string.Empty;
+                Path = "";
             }
         }
 

@@ -8,13 +8,13 @@ namespace Project_Kittan.Models
     /// </summary>
     public class ElementProperties : IComparable<ElementProperties>
     {
-        public string ID { get; set; } = string.Empty;
+        public string ID { get; set; } = "";
 
         public List<ElementProperties> Vars { get; set; } = new List<ElementProperties>();
 
         public int LineNumber { get; set; }
 
-        public string LinePreview { get; set; } = string.Empty;
+        public string LinePreview { get; set; } = "";
 
         /// <summary>
         /// Parameterless constructor of ElementProperties class.

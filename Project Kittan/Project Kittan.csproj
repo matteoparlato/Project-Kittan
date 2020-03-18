@@ -95,6 +95,7 @@
     <Compile Include="Helpers\FolderExtensions.cs" />
     <Compile Include="Helpers\ObjectExtensions.cs" />
     <Compile Include="Helpers\ObjectSplitterExtensions.cs" />
+    <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\StringToBooleanConverter.cs" />
     <Compile Include="Helpers\UpdateExtensions.cs" />
     <Compile Include="Models\BindableBase.cs" />

@@ -204,64 +204,48 @@ namespace Project_Kittan.Helpers
 
                 if (System.IO.File.Exists(file.Path))
                 {
-                    StringBuilder builder = new StringBuilder();
-
+                    string lines;
                     using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        string line;
+                        lines = reader.ReadToEnd();
+                    }
 
-                        while ((line = reader.ReadLine()) != null)
+                    if (!string.IsNullOrWhiteSpace(lines) && GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 0)
+                    {
+                        StringBuilder builder = new StringBuilder();
+                        using (StringReader reader = new StringReader(lines))
                         {
-                            if (line.Equals("  OBJECT-PROPERTIES"))
+                            string line;
+                            while (!((line = reader.ReadLine()) == null))
                             {
-                                builder.AppendLine(line); // Add "  OBJECT-PROPERTIES"
-                                builder.AppendLine(reader.ReadLine()); // Add "  {"
-
-                                builder.AppendLine(reader.ReadLine());
-                                builder.AppendLine(reader.ReadLine());
-
-                                line = reader.ReadLine();
-                                if (line.Contains("Modified"))
+                                if (line.StartsWith("    Version List="))
                                 {
-                                    builder.AppendLine(line); // Add "Modified..."
-                                    line = reader.ReadLine();
-                                }
+                                    line = line.Substring(17);  // Get version list tags
+                                    line = line.Substring(0, line.Length - 1);  // Remove leading ;
 
-                                if (line.Contains("Version List"))
-                                {
-                                    string temp = line.Substring(17);
-                                    temp = temp.Substring(0, temp.Length - 1); // Remove "    Version List=...;"
 
-                                    if (ignoreCase)
-                                    {
-                                        line = Regex.Replace(temp, tag, string.Empty, RegexOptions.IgnoreCase);
-                                    }
-                                    else
-                                    {
-                                        line = temp.Replace(tag, string.Empty);
-                                    }
+                                    line = ignoreCase ? line.Replace(tag, "", StringComparison.OrdinalIgnoreCase) : line.Replace(tag, "");
 
                                     line = "    Version List=" + line + ";";
                                     line = line.Replace(",,", ",");
                                     line = line.Replace(",;", ";");
-                                }
 
-                                builder.AppendLine(line);
+                                    builder.AppendLine(line);
+                                    builder.AppendLine(reader.ReadToEnd());
+                                }
+                                else
+                                {
+                                    builder.AppendLine(line);
+                                }
                             }
-                            else
+
+                            using (FileStream stream = new FileStream(file.Path, FileMode.Truncate, FileAccess.Write))
+                            using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                             {
-                                builder.AppendLine(line);
+                                writer.Write(builder.ToString());
                             }
                         }
-
-                        //MainWindow.Current.StatusProgressBar.Value += step; // Update status
-                    }
-
-                    using (FileStream stream = new FileStream(file.Path, FileMode.Truncate, FileAccess.Write))
-                    using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
-                    {
-                        writer.Write(builder.ToString());
                     }
                 }
             }
@@ -295,32 +279,24 @@ namespace Project_Kittan.Helpers
 
                 if (System.IO.File.Exists(file.Path))
                 {
+                    string lines;
                     using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        string lines;
-                        try
-                        {
-                            lines = reader.ReadToEnd();
-                        }
-                        catch(OutOfMemoryException) // OutOfMemoryException thrown when reading large files
-                        {
-                            GC.Collect();
-                            lines = reader.ReadToEnd();
-                        }
+                        lines = reader.ReadToEnd();
+                    }
 
-                        if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 0) // The file contains multiple objects
+                    if (!string.IsNullOrWhiteSpace(lines) &&  GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 0)
+                    {
+                        foreach (string navObject in ObjectSplitterExtensions.Split(lines))
                         {
-                            foreach (string navObject in ObjectSplitterExtensions.Split(lines))
+                            if (GetStringOccurrences(navObject, keyword) != 0) // The file contains the keyword
                             {
-                                if (GetStringOccurrences(navObject, keyword) != 0) // The file contains the keyword
+                                using (StringReader stringReader = new StringReader(navObject))
                                 {
-                                    using (StringReader stringReader = new StringReader(navObject))
-                                    {
-                                        string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
+                                    string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
 
-                                        yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
-                                    }
+                                    yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                                 }
                             }
                         }
@@ -353,30 +329,22 @@ namespace Project_Kittan.Helpers
 
                 if (System.IO.File.Exists(file.Path))
                 {
+                    string lines;
                     using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
                     using (StreamReader reader = new StreamReader(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        string lines;
-                        try
-                        {
-                            lines = reader.ReadToEnd();
-                        }
-                        catch (OutOfMemoryException) // OutOfMemoryException thrown when reading large files
-                        {
-                            GC.Collect();
-                            lines = reader.ReadToEnd();
-                        }
+                        lines = reader.ReadToEnd();
+                    }
 
-                        if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 0) // The file contains multiple objects
+                    if (!string.IsNullOrWhiteSpace(lines) && GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 0)
+                    {
+                        foreach (string navObject in ObjectSplitterExtensions.Split(lines))
                         {
-                            foreach (string navObject in ObjectSplitterExtensions.Split(lines))
+                            using (StringReader stringReader = new StringReader(navObject))
                             {
-                                using (StringReader stringReader = new StringReader(navObject))
-                                {
-                                    string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
+                                string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
 
-                                    yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
-                                }
+                                yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                             }
                         }
                     }
@@ -386,7 +354,7 @@ namespace Project_Kittan.Helpers
 
         private static string GetObjectNameFromFirstLine(string[] words)
         {
-            string objectName = string.Empty;
+            string objectName = "";
             for (int i = 3; i < words.Length; i++)
             {
                 objectName += words[i] + ' ';
@@ -395,5 +363,7 @@ namespace Project_Kittan.Helpers
         }
 
         #endregion
+
+
     }
 }
