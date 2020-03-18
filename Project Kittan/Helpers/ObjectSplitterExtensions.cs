@@ -45,20 +45,18 @@ namespace Project_Kittan.Helpers
                 Directory.CreateDirectory(extractionFolderPath);
             }
 
-            string[] objectCode = { };
             using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             using (BufferedStream buffer = new BufferedStream(stream))
             using (StreamReader reader = new StreamReader(buffer, Encoding.GetEncoding(encoding)))
             {
-                objectCode = Split(await reader.ReadToEndAsync());
-
-                Parallel.ForEach(objectCode, codeLines =>
+                Parallel.ForEach(Split(await reader.ReadToEndAsync()), codeLines =>
                 {
                     WriteFile(codeLines, extractionFolderPath, encoding);
                 });
             }
 
-            return new KeyValuePair<int, string>(objectCode.Length, extractionFolderPath);
+            // TODO: Implement count -> replace 0
+            return new KeyValuePair<int, string>(0, extractionFolderPath);
         }
 
         /// <summary>
@@ -66,17 +64,14 @@ namespace Project_Kittan.Helpers
         /// </summary>
         /// <param name="lines">The string containing multiple objects</param>
         /// <returns>The array containig splitted objects</returns>
-        public static string[] Split(string lines)
+        public static IEnumerable<string> Split(string lines)
         {
             string[] splittedParts = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Compiled).Skip(1).ToArray();
 
-            List<string> singleObjects = new List<string>();
             for (int i = 0; i < splittedParts.Length; i++)
             {
-                singleObjects.Add(splittedParts[i++] + splittedParts[i]);
+                yield return (splittedParts[i++] + splittedParts[i]);
             }
-
-            return singleObjects.ToArray();
         }
 
         /// <summary>

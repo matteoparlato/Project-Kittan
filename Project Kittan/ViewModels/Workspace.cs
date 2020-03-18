@@ -273,6 +273,16 @@ namespace Project_Kittan.ViewModels
                 {
                     if (reader.ReadLine().StartsWith("Type"))
                     {
+                        WorkspaceTableFilter = string.Empty;
+                        WorkspacePageFilter = string.Empty;
+                        WorkspaceFormFilter = string.Empty;
+                        WorkspaceReportFilter = string.Empty;
+                        WorkspaceCodeunitFilter = string.Empty;
+                        WorkspaceQueryFilter = string.Empty;
+                        WorkspaceXMLportFilter = string.Empty;
+                        WorkspaceDataportFilter = string.Empty;
+                        WorkspaceMenuSuiteFilter = string.Empty;
+
                         string line;
                         while ((line = reader.ReadLine()) != null)
                         {
@@ -342,7 +352,10 @@ namespace Project_Kittan.ViewModels
 
                         ProgressText = "Succesfully obtained filters from clipboard";
                     }
-                    MessageBox.Show("The clipboard doesn't contain any NAV object data!", Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    else
+                    {
+                        MessageBox.Show("The clipboard doesn't contain any NAV object data!", Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
                 }
             }
         }

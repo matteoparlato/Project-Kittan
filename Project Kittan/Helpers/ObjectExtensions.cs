@@ -309,12 +309,9 @@ namespace Project_Kittan.Helpers
                             lines = reader.ReadToEnd();
                         }
 
-                        int multipleObjects = GetStringOccurrences(lines, "  OBJECT-PROPERTIES");
-                        if (multipleObjects > 1) // The file contains multiple objects
+                        if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 0) // The file contains multiple objects
                         {
-                            string[] navObjects = ObjectSplitterExtensions.Split(lines);
-
-                            foreach (string navObject in navObjects)
+                            foreach (string navObject in ObjectSplitterExtensions.Split(lines))
                             {
                                 if (GetStringOccurrences(navObject, keyword) != 0) // The file contains the keyword
                                 {
@@ -324,18 +321,6 @@ namespace Project_Kittan.Helpers
 
                                         yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                                     }
-                                }
-                            }
-                        }
-                        else if (multipleObjects == 1) // The file contains only one object
-                        {
-                            if (GetStringOccurrences(lines, keyword) != 0) // The file contains the keyword
-                            {
-                                using (StringReader stringReader = new StringReader(lines))
-                                {
-                                    string[] startingLineWords = new StringReader(lines).ReadLine().Split(' '); // Get the first line of the file
-
-                                    yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                                 }
                             }
                         }
@@ -358,7 +343,7 @@ namespace Project_Kittan.Helpers
             foreach (Models.File file in files)
             {
                 step += progressStep;
-                progress.Report(new KeyValuePair<double, string>(step, string.Format("Preparing filters...", file.Name)));
+                progress.Report(new KeyValuePair<double, string>(step, string.Format("Obtaining filters...", file.Name)));
 
                 if (token.IsCancellationRequested)
                 {
@@ -382,12 +367,9 @@ namespace Project_Kittan.Helpers
                             lines = reader.ReadToEnd();
                         }
 
-                        int multipleObjects = GetStringOccurrences(lines, "  OBJECT-PROPERTIES");
-                        if (multipleObjects > 1) // The file contains multiple objects
+                        if (GetStringOccurrences(lines, "  OBJECT-PROPERTIES") > 0) // The file contains multiple objects
                         {
-                            string[] navObjects = ObjectSplitterExtensions.Split(lines);
-
-                            foreach (string navObject in navObjects)
+                            foreach (string navObject in ObjectSplitterExtensions.Split(lines))
                             {
                                 using (StringReader stringReader = new StringReader(navObject))
                                 {
@@ -395,15 +377,6 @@ namespace Project_Kittan.Helpers
 
                                     yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                                 }
-                            }
-                        }
-                        else if (multipleObjects == 1) // The file contains only one object
-                        {
-                            using (StringReader stringReader = new StringReader(lines))
-                            {
-                                string[] startingLineWords = new StringReader(lines).ReadLine().Split(' '); // Get the first line of the file
-
-                                yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                             }
                         }
                     }

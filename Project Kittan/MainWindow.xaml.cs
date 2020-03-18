@@ -60,11 +60,6 @@ namespace Project_Kittan
             }
         }
 
-        private void FilterTextBox_GotKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
-        {
-            FilterTextBox_MouseUp(sender, null);
-        }
-
         private void FilterTextBox_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             TextBox textBox = ((TextBox)sender);
