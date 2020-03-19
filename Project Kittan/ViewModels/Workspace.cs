@@ -552,7 +552,7 @@ namespace Project_Kittan.ViewModels
         /// </summary>
         private void SearchOccurences_Action(object obj)
         {
-            string keyword = (string)obj;
+            string keyword = obj as string;
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {

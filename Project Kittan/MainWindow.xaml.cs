@@ -60,7 +60,7 @@ namespace Project_Kittan
             }
         }
 
-        private void FilterTextBox_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void FilterTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = ((TextBox)sender);
             textBox.SelectAll();
@@ -69,7 +69,7 @@ namespace Project_Kittan
             {
                 Clipboard.SetText(textBox.Text);
             }
-            catch(COMException ex)
+            catch (COMException ex)
             {
                 var result = System.Windows.Forms.MessageBox.Show("An error occured during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
                 if (result == System.Windows.Forms.DialogResult.Retry)

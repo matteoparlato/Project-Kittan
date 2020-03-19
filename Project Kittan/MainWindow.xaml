@@ -80,18 +80,30 @@
                     <StackPanel Margin="10">
                         <TextBlock Text="Select the version of NAV where you'll import processed files." TextWrapping="Wrap" />
                         <ComboBox x:Name="NAVVersionComboBox" Margin="0,4,0,0" SelectedIndex="0">
-                            <ComboBoxItem Content="NAV 2009 R2 and below (max. 80 chars for &quot;Version List&quot; field)" />
-                            <ComboBoxItem Content="NAV 2013 and above (max. 250 chars for &quot;Version List&quot; field)" />
+                            <ComboBoxItem Content="NAV 2009 R2 and below (max. 80 chars for version list field)" />
+                            <ComboBoxItem Content="NAV 2013 and above (max. 250 chars for version list field)" />
                         </ComboBox>
 
-                        <TextBlock Margin="0,8,0,0" Text="Write the tag you want to add to &quot;Version List&quot;. (if empty updates only date and time and checks &quot;Version List&quot; length)" TextWrapping="Wrap" />
-                        <TextBox x:Name="VersionTextTextBox" Margin="0,4,0,0" />
+                        <TextBlock Margin="0,8,0,0" Text="Write the tag you want to add to version list. (if empty updates only date and time and checks version list length)" TextWrapping="Wrap" />
+                        <TextBox x:Name="VersionTextTextBox" Margin="0,4,0,0">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding AddTag}">
+                                    <KeyBinding.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParametersConverter}">
+                                            <Binding ElementName="NAVVersionComboBox" Path="SelectedIndex" />
+                                            <Binding ElementName="VersionTextTextBox" Path="Text" />
+                                            <Binding ElementName="DateTimeUpdateCheckBox" Path="IsChecked" />
+                                        </MultiBinding>
+                                    </KeyBinding.CommandParameter>
+                                </KeyBinding>
+                            </TextBox.InputBindings>
+                        </TextBox>
 
                         <TextBlock Margin="0,8,0,0" Text="Select the date format you want to use." TextWrapping="Wrap" Visibility="Collapsed" />
 
-                        <CheckBox x:Name="DateTimeUpdateCheckBox" Margin="0,8,0,0" Content="Avoid date and time update" />
+                        <CheckBox x:Name="DateTimeUpdateCheckBox" Margin="0,8,0,0" Content="Update date and time" IsChecked="True" />
 
-                        <Button Width="100" Margin="0,18,0,0" HorizontalAlignment="Left" Command="{Binding AddTag}" Content="Add tag" IsEnabled="{Binding ElementName=VersionTextTextBox, Path=Text, Converter={StaticResource StringToVisibleConverter}}">
+                        <Button Width="100" Margin="0,18,0,0" HorizontalAlignment="Left" Command="{Binding AddTag}" Content="Add tag">
                             <Button.CommandParameter>
                                 <MultiBinding Converter="{StaticResource CommandParametersConverter}">
                                     <Binding ElementName="NAVVersionComboBox" Path="SelectedIndex" />
@@ -105,8 +117,19 @@
 
                 <Expander Margin="0,8,0,0" Header="Tag remover" IsEnabled="{Binding Ready}" IsExpanded="False">
                     <StackPanel Margin="10">
-                        <TextBlock Text="Write the tag you want to remove from the &quot;Version List&quot;." TextWrapping="Wrap" />
-                        <TextBox x:Name="TagTextTextBox" Margin="0,4,0,0" />
+                        <TextBlock Text="Write the tag you want to remove from the version list." TextWrapping="Wrap" />
+                        <TextBox x:Name="TagTextTextBox" Margin="0,4,0,0">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding RemoveTag}">
+                                    <KeyBinding.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource CommandParametersConverter}">
+                                            <Binding ElementName="CaseSensitiveCheckBox" Path="IsChecked" />
+                                            <Binding ElementName="TagTextTextBox" Path="Text" />
+                                        </MultiBinding>
+                                    </KeyBinding.CommandParameter>
+                                </KeyBinding>
+                            </TextBox.InputBindings>
+                        </TextBox>
 
                         <TextBlock Margin="0,8,0,0" Text="Select the date format you want to use." TextWrapping="Wrap" Visibility="Collapsed" />
 
@@ -194,31 +217,31 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="8">
                         <TextBlock Margin="0,8,0,0" Text="Table filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Table" Text="{Binding WorkspaceTableFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Table" Text="{Binding WorkspaceTableFilter}" />
 
                         <TextBlock Margin="0,8,0,0" Text="Page filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Page" Text="{Binding WorkspacePageFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Page" Text="{Binding WorkspacePageFilter}" />
 
                         <TextBlock Margin="0,8,0,0" Text="Form filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Form" Text="{Binding WorkspaceFormFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Form" Text="{Binding WorkspaceFormFilter}" />
 
                         <TextBlock Margin="0,8,0,0" Text="Report filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Report" Text="{Binding WorkspaceReportFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Report" Text="{Binding WorkspaceReportFilter}" />
 
                         <TextBlock Margin="0,8,0,0" Text="Codeunit filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Codeunit" Text="{Binding WorkspaceCodeunitFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Codeunit" Text="{Binding WorkspaceCodeunitFilter}" />
 
                         <TextBlock Margin="0,8,0,0" Text="Query filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Query" Text="{Binding WorkspaceQueryFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Query" Text="{Binding WorkspaceQueryFilter}" />
 
                         <TextBlock Margin="0,8,0,0" Text="XMLport filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="XMLport" Text="{Binding WorkspaceXMLportFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="XMLport" Text="{Binding WorkspaceXMLportFilter}" />
 
                         <TextBlock Margin="0,8,0,0" Text="Dataport filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Dataport" Text="{Binding WorkspaceDataportFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="Dataport" Text="{Binding WorkspaceDataportFilter}" />
 
                         <TextBlock Margin="0,8,0,0" Text="MenuSuite filter:" />
-                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" MouseUp="FilterTextBox_MouseUp" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="MenuSuite" Text="{Binding WorkspaceMenuSuiteFilter}" />
+                        <TextBox Height="80" Margin="0,5,0,0" IsReadOnly="True" IsReadOnlyCaretVisible="True" GotFocus="FilterTextBox_GotFocus" ScrollViewer.HorizontalScrollBarVisibility="Visible" Tag="MenuSuite" Text="{Binding WorkspaceMenuSuiteFilter}" />
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
