@@ -388,7 +388,7 @@ namespace Project_Kittan.ViewModels
             _runningTask = Task.Run(() =>
             {
                 BackgroundActivity = CancelableBackgroundActivity = true;
-                foreach (NAVObject navObject in ObjectExtensions.PrepareData(WorkspaceFiles.ToArray(),  progress, _token))
+                foreach (NAVObject navObject in ObjectExtensions.GetObjects(WorkspaceFiles.ToArray(),  progress, _token))
                 {
                     Application.Current.Dispatcher.Invoke(delegate
                     {

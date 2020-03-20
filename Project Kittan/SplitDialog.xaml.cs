@@ -45,7 +45,7 @@ namespace Project_Kittan
             StatusTextBlock.Text = "Splitting " + Path.GetFileName(_filePath) + "...";
             UsedEncodingTextBlock.Text = "Encoding " + Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding).BodyName + " used";
 
-            KeyValuePair<int, string> returnValue = await ObjectSplitterExtensions.SplitAndStore(_filePath, Properties.Settings.Default.DefaultEncoding);
+            KeyValuePair<int, string> returnValue = await ObjectExtensions.SplitAndStore(_filePath, Properties.Settings.Default.DefaultEncoding);
             _filePath = returnValue.Value;
 
             StatusTextBlock.Text = returnValue.Key + " files extracted in:\n" + returnValue.Value;
