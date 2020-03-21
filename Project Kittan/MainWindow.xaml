@@ -86,7 +86,7 @@
 
                         <TextBlock Margin="0,8,0,0" TextWrapping="Wrap">
                             <Run>Write the tag you want to add to version list</Run>
-                            <Run Background="LightYellow">(if empty updates only date and time and checks version list length)</Run>
+                            <Run Background="LightYellow">(if empty updates only date and time (if enabled) and checks version list length based on selected NAV version)</Run>
                             <Run>.</Run>
                         </TextBlock>
                         <TextBox x:Name="VersionTextTextBox" Margin="0,4,0,0">
