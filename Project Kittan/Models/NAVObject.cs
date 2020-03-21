@@ -1,4 +1,6 @@
-﻿namespace Project_Kittan.Models
+﻿using Project_Kittan.Enums;
+
+namespace Project_Kittan.Models
 {
     /// <summary>
     /// NAVObject class
@@ -19,8 +21,8 @@
             set => SetProperty(ref _ID, value);
         }
 
-        private string _type;
-        public string Type
+        private NAVObjectType _type;
+        public NAVObjectType Type
         {
             get => _type;
             set => SetProperty(ref _type, value);
@@ -33,11 +35,17 @@
         /// <param name="id">The ID of the object</param>
         /// <param name="objectName">The name of the object</param>
         /// <param name="filePath">The path of the file object</param>
-        public NAVObject(string type, string id, string objectName, string filePath) : base(filePath)
+        public NAVObject(NAVObjectType type, string id, string objectName, string filePath) : base(filePath)
         {
             Type = type;
             ID = id;
             ObjectName = objectName;
+        }
+
+        public NAVObject(NAVObjectType type, string id) : base("")
+        {
+            Type = type;
+            ID = id;
         }
     }
 }

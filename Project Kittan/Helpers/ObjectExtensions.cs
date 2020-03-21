@@ -7,7 +7,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Project_Kittan.Enums;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace Project_Kittan.Helpers
 {
@@ -27,14 +29,13 @@ namespace Project_Kittan.Helpers
         /// <param name="files">The collection of files to update</param>
         /// <param name="version">The target version of NAV</param>
         /// <param name="tag">The tag to add to the version list</param>
+        /// <param name="ignoreCase">Specify whether use case-sensitive insert</param>
         /// <param name="updateDateTime">Specifies whether Date and Time must be updated</param>
         /// <param name="progress">The progress of the operation</param>
-        public static void AddTag(Models.File[] files, int version, string tag, bool updateDateTime, IProgress<KeyValuePair<double, string>> progress)
+        public static void AddTag(Models.File[] files, int version, string tag, bool ignoreCase, bool updateDateTime, IProgress<KeyValuePair<double, string>> progress)
         {
             double progressStep = (double)100 / files.Length;
             double step = 0;
-
-            if (string.IsNullOrWhiteSpace(tag)) return;
 
             foreach (Models.File file in files)
             {
@@ -92,7 +93,14 @@ namespace Project_Kittan.Helpers
                                             versionList = versionList.Substring(0, versionList.Length - 1);  // Remove leading ;
 
                                             string[] tags = versionList.Split(',');
-                                            if (Array.IndexOf(tags, tag) == -1)
+
+                                            StringComparison comparison = StringComparison.Ordinal;
+                                            if (ignoreCase)
+                                            {
+                                                comparison = StringComparison.OrdinalIgnoreCase;
+                                            }
+
+                                            if (Array.FindIndex(tags, item => item.Equals(tag, comparison)) == -1)
                                             {
                                                 StringBuilder versionBuilder = new StringBuilder(versionList);
                                                 versionBuilder.Append(",");
@@ -203,9 +211,16 @@ namespace Project_Kittan.Helpers
                                         versionList = versionList.Substring(0, versionList.Length - 1);  // Remove leading ;
 
                                         string[] tags = versionList.Split(',');
-                                        if (!(Array.IndexOf(tags, tag) == -1))
+
+                                        StringComparison comparison = StringComparison.Ordinal;
+                                        if (ignoreCase)
                                         {
-                                            tags = tags.Where(str => !str.Equals(tag)).ToArray();
+                                            comparison = StringComparison.OrdinalIgnoreCase;
+                                        }
+                                        
+                                        if (!(Array.FindIndex(tags, item => item.Equals(tag, comparison)) == -1))
+                                        {
+                                            tags = tags.Where(str => !str.Equals(tag, comparison)).ToArray();
                                             StringBuilder versionBuilder = new StringBuilder(string.Join(",", tags));
                                             versionBuilder.Insert(0, "    Version List=");
                                             versionBuilder.Append(";");
@@ -213,10 +228,9 @@ namespace Project_Kittan.Helpers
                                             versionBuilder.Replace(",,", ",");
                                             versionBuilder.Replace("=,", "=");
                                             line = versionBuilder.ToString();
-
-                                            builder.AppendLine(line);
-                                            builder.Append(reader.ReadToEnd());
                                         }
+                                        builder.AppendLine(line);
+                                        builder.Append(reader.ReadToEnd());
                                     }
                                     else
                                     {
@@ -279,7 +293,7 @@ namespace Project_Kittan.Helpers
                                 {
                                     string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
 
-                                    yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
+                                    yield return new NAVObject(GetObjectTypeFromString(startingLineWords[1]), startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                                 }
                             }
                         }
@@ -328,7 +342,8 @@ namespace Project_Kittan.Helpers
                             {
                                 string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
 
-                                yield return new NAVObject(startingLineWords[1], startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
+
+                                yield return new NAVObject(GetObjectTypeFromString(startingLineWords[1]), startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                             }
                         }
                     }
@@ -420,6 +435,11 @@ namespace Project_Kittan.Helpers
             return objectName.Trim();
         }
 
+        public static NAVObjectType GetObjectTypeFromString(string type)
+        {
+            return (NAVObjectType)Enum.Parse(typeof(NAVObjectType), type, true);
+        }
+
         /// <summary>
         /// Method which return an array containing splitted NAV objects.
         /// </summary>
@@ -433,6 +453,78 @@ namespace Project_Kittan.Helpers
             {
                 yield return (splittedParts[i++] + splittedParts[i]);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <returns></returns>
+        public static Filters GetFiltersFromClipboard(string lines)
+        {
+            List<NAVObject> navObjects = new List<NAVObject>();
+            
+            using (StringReader reader = new StringReader(lines))
+            {
+                if (reader.ReadLine().StartsWith("Type"))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] objectDetails = line.Split('\t');
+
+                        navObjects.Add(new NAVObject(GetObjectTypeFromString(objectDetails[0]), objectDetails[1]));
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("The clipboard doesn't contain any NAV object data.");
+                }
+            }
+
+            return GetFilters(navObjects);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="progress"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static Filters GetFiltersFromFiles(Models.File[] files, IProgress<KeyValuePair<double, string>> progress, CancellationToken token)
+        {
+            List<NAVObject> navObjects = new List<NAVObject>();
+
+            foreach (NAVObject navObject in GetObjects(files, progress, token))
+            {
+                navObjects.Add(navObject);
+            }
+
+            return GetFilters(navObjects);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="navObjects"></param>
+        /// <returns></returns>
+        private static Filters GetFilters(List<NAVObject> navObjects)
+        {
+            Filters filters = new Filters
+            {
+                Table = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Table)).Select(navObject => navObject.ID).ToArray()),
+                Form = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Form)).Select(navObject => navObject.ID).ToArray()),
+                Report = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Report)).Select(navObject => navObject.ID).ToArray()),
+                Dataport = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Dataport)).Select(navObject => navObject.ID).ToArray()),
+                Codeunit = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Codeunit)).Select(navObject => navObject.ID).ToArray()),
+                XMLport = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.XMLport)).Select(navObject => navObject.ID).ToArray()),
+                MenuSuite = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.MenuSuite)).Select(navObject => navObject.ID).ToArray()),
+                Query = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Query)).Select(navObject => navObject.ID).ToArray()),
+                Page = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Page)).Select(navObject => navObject.ID).ToArray())
+            };
+
+            return filters;
         }
     }
 }

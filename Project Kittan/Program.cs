@@ -9,7 +9,6 @@ namespace Project_Kittan
         [STAThread]
         public static void Main(string[] args)
         {
-
             switch (args.Length)
             {
                 case 0:

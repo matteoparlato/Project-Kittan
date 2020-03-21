@@ -170,7 +170,7 @@ namespace Project_Kittan
         private void ResetSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.Reset();
-            App.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
 
         #endregion Reset
