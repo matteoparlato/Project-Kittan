@@ -1,9 +1,13 @@
 ﻿using Project_Kittan.Helpers;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Media;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
@@ -13,11 +17,43 @@ namespace Project_Kittan
     /// <summary>
     /// SplitDialog class
     /// </summary>
-    public partial class SplitDialog : Window
+    public partial class SplitDialog : Window, INotifyPropertyChanged
 	{
-        private bool _closable;
-
         private string _filePath;
+
+        private Task _runningTask;
+
+        private CancellationToken _token;
+
+        private CancellationTokenSource _tokenSource;
+
+        private string _progressText;
+        public string ProgressText
+        {
+            get => _progressText;
+            set => SetProperty(ref _progressText, value);
+        }
+
+        private TaskbarItemProgressState _taskbarItemProgressState = TaskbarItemProgressState.Indeterminate;
+        public TaskbarItemProgressState TaskbarItemProgressState
+        {
+            get => _taskbarItemProgressState;
+            set => SetProperty(ref _taskbarItemProgressState, value);
+        }
+
+        private bool _progressStatus;
+        public bool ProgressStatus
+        {
+            get => _progressStatus;
+            set => SetProperty(ref _progressStatus, value);
+        }
+
+        private bool _closable;
+        public bool Closable
+        {
+            get => !_closable;
+            set => SetProperty(ref _closable, value);
+        }
 
         /// <summary>
         /// Constructor which initializes a SplitDialog Window with passed information.
@@ -29,9 +65,9 @@ namespace Project_Kittan
 
             _filePath = filePath;
 
-            UsedEncodingTextBlock.Text = "Encoding " + Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding).BodyName + " used";
-
 			WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            DataContext = this;
 		}
 
         /// <summary>
@@ -40,22 +76,29 @@ namespace Project_Kittan
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            StatusTextBlock.Text = "Splitting " + Path.GetFileName(_filePath) + "...";
             UsedEncodingTextBlock.Text = "Encoding " + Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding).BodyName + " used";
+            IProgress<KeyValuePair<bool, string>> progress = new Progress<KeyValuePair<bool, string>>(status =>
+            {
+                ProgressStatus = status.Key;
+                ProgressText = status.Value;
+            });
 
-            KeyValuePair<int, string> returnValue = await ObjectExtensions.SplitAndStore(_filePath, Properties.Settings.Default.DefaultEncoding);
-            _filePath = returnValue.Value;
+            _tokenSource = new CancellationTokenSource();
+            _token = _tokenSource.Token;
 
-            StatusTextBlock.Text = returnValue.Key + " files extracted in:\n" + returnValue.Value;
-            StatusProgressBar.IsIndeterminate = false;
-            TaskBarProgress.ProgressState = TaskbarItemProgressState.None;
-            OpenFolderButton.IsEnabled = CloseButton.IsEnabled = true;
+            _runningTask = Task.Run(() =>
+            {
+                _filePath = ObjectExtensions.SplitAndStore(_filePath, progress, _token);
+                progress.Report(new KeyValuePair<bool, string>(false, string.Format("Files extracted in: {0}", _filePath)));
 
-            SystemSounds.Asterisk.Play();
+                TaskbarItemProgressState = TaskbarItemProgressState.None;
 
-            _closable = true;
+                SystemSounds.Asterisk.Play();
+
+                _closable = true;
+            });
         }
 
         /// <summary>
@@ -66,7 +109,15 @@ namespace Project_Kittan
         /// <param name="e"></param>
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			e.Cancel = !_closable;
+            //if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
+            //{
+            //    if ((_token.IsCancellationRequested == false) && (_runningTask.Status != TaskStatus.Canceled))
+            //    {
+            //        _tokenSource.Cancel();
+            //    }
+            //}
+
+            e.Cancel = !_closable;
 		}
 
         /// <summary>
@@ -103,6 +154,21 @@ namespace Project_Kittan
             {
                 CloseButton_Click(null, null);
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
+        {
+            if (object.Equals(storage, value)) return false;
+            storage = value;
+            OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }

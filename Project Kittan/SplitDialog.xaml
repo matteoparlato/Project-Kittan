@@ -15,7 +15,7 @@
     mc:Ignorable="d">
 
     <Window.TaskbarItemInfo>
-        <TaskbarItemInfo x:Name="TaskBarProgress" ProgressState="Indeterminate" />
+        <TaskbarItemInfo x:Name="TaskBarProgress" ProgressState="{Binding TaskbarItemProgressState}" />
     </Window.TaskbarItemInfo>
 
     <Grid>
@@ -25,7 +25,7 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0" Margin="8,8,8,5" VerticalScrollBarVisibility="Auto">
-            <TextBlock x:Name="StatusTextBlock" TextWrapping="Wrap" />
+            <TextBlock Text="{Binding ProgressText}" TextWrapping="Wrap" />
         </ScrollViewer>
         <Grid Grid.Row="1" Margin="8,0,8,5">
             <Grid.ColumnDefinitions>
@@ -34,9 +34,9 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="UsedEncodingTextBlock" Margin="0,2,0,0" Opacity="0.4" />
-            <Button x:Name="OpenFolderButton" Grid.Column="1" Width="80" Click="OpenFolderButton_Click" Content="Open folder" IsEnabled="False" />
-            <Button x:Name="CloseButton" Grid.Column="2" Width="80" Margin="5,0,0,0" Click="CloseButton_Click" Content="Close" IsEnabled="False" />
+            <Button x:Name="OpenFolderButton" Grid.Column="1" Width="80" Click="OpenFolderButton_Click" Content="Open folder" IsEnabled="{Binding Closable}" />
+            <Button x:Name="CloseButton" Grid.Column="2" Width="80" Margin="5,0,0,0" Click="CloseButton_Click" Content="Close" IsEnabled="{Binding Closable}" />
         </Grid>
-        <ProgressBar x:Name="StatusProgressBar" Grid.Row="2" Height="3" Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" IsIndeterminate="True" />
+        <ProgressBar x:Name="StatusProgressBar" Grid.Row="2" Height="3" Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" IsIndeterminate="{Binding ProgressStatus}" />
     </Grid>
 </Window>
