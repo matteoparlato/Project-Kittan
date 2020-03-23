@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="clr-namespace:Project_Kittan.Helpers"
-    xmlns:local="clr-namespace:Project_Kittan"
+    xmlns:local="clr-namespace:Project_Kittan.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodel="clr-namespace:Project_Kittan.ViewModels"
     Title="Project Kittan"

@@ -12,7 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
 
-namespace Project_Kittan
+namespace Project_Kittan.Views
 {
     /// <summary>
     /// SplitDialog class

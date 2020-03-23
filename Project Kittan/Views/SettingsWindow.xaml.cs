@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 
-namespace Project_Kittan
+namespace Project_Kittan.Views
 {
     /// <summary>
     /// SettingsWindow class

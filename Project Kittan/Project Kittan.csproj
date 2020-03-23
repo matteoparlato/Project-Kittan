@@ -108,19 +108,19 @@
     <Compile Include="Models\Filters.cs" />
     <Compile Include="Models\NAVObject.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="SettingsWindow.xaml.cs">
+    <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SplitDialog.xaml.cs">
+    <Compile Include="Views\SplitDialog.xaml.cs">
       <DependentUpon>SplitDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RequestDialog.xaml.cs">
+    <Compile Include="Views\RequestDialog.xaml.cs">
       <DependentUpon>RequestDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\Settings.cs" />
     <Compile Include="ViewModels\Workspace.cs" />
     <Compile Include="ViewModels\WorkspaceFile.cs" />
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -128,19 +128,19 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SettingsWindow.xaml">
+    <Page Include="Views\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SplitDialog.xaml">
+    <Page Include="Views\SplitDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="RequestDialog.xaml">
+    <Page Include="Views\RequestDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using Project_Kittan.Helpers;
 using Project_Kittan.ViewModels;
 
-namespace Project_Kittan
+namespace Project_Kittan.Views
 {
     /// <summary>
     /// MainWindow class

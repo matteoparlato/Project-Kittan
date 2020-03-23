@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Project_Kittan
+namespace Project_Kittan.Views
 {
     /// <summary>
     /// RequestDialog class
