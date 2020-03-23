@@ -69,6 +69,9 @@
     <Reference Include="HtmlAgilityPack, Version=1.11.22.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.11.22\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -95,7 +98,8 @@
     <Compile Include="Helpers\ArrayMultiValueConverter.cs" />
     <Compile Include="Helpers\ObjectExtensions.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
-    <Compile Include="Helpers\StringToBooleanConverter.cs" />
+    <Compile Include="Helpers\IntToVisibilityConverter.cs" />
+    <Compile Include="Helpers\StringToVisibilityConverter.cs" />
     <Compile Include="Helpers\UpdateExtensions.cs" />
     <Compile Include="Models\BindableBase.cs" />
     <Compile Include="Models\DelegateCommand.cs" />
@@ -113,6 +117,7 @@
     <Compile Include="RequestDialog.xaml.cs">
       <DependentUpon>RequestDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\Settings.cs" />
     <Compile Include="ViewModels\Workspace.cs" />
     <Compile Include="ViewModels\WorkspaceFile.cs" />
     <Page Include="MainWindow.xaml">

@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Project_Kittan.Enums;
 using System.Windows;
-using System.Windows.Navigation;
+using System.Globalization;
 
 namespace Project_Kittan.Helpers
 {
@@ -36,6 +36,17 @@ namespace Project_Kittan.Helpers
         {
             double progressStep = (double)100 / files.Length;
             double step = 0;
+
+            DateTime dateTime = DateTime.Now;
+            DateTimeFormatInfo dateTimeFormat;
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultLocale))
+            {
+                dateTimeFormat = new CultureInfo(Thread.CurrentThread.CurrentCulture.Name, false).DateTimeFormat;
+            }
+            else
+            {
+                dateTimeFormat = new CultureInfo(Properties.Settings.Default.DefaultLocale, false).DateTimeFormat;
+            }
 
             foreach (Models.File file in files)
             {
@@ -69,14 +80,14 @@ namespace Project_Kittan.Helpers
                                         line = reader.ReadLine();
                                         if (line.StartsWith("    Date=") && updateDateTime)
                                         {
-                                            line = string.Format("    Date={0:dd.MM.yy};", DateTime.Today);
+                                            line = string.Format("    Date={0};", Convert.ToDateTime(dateTime, dateTimeFormat).ToString(dateTimeFormat.ShortDatePattern));
                                         }
                                         builder.AppendLine(line);
 
                                         line = reader.ReadLine();
                                         if (line.StartsWith("    Time=") && updateDateTime)
                                         {
-                                            line = string.Format("    Time={0:HH:mm:ss};", DateTime.Now);
+                                            line = string.Format("    Time={0:HH:mm:ss};", dateTime);
                                         }
                                         builder.AppendLine(line);
 

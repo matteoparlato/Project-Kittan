@@ -12,12 +12,7 @@ namespace Project_Kittan.ViewModels
             OpenFile = new DelegateCommand(new Action<object>(OpenFile_Action));
         }
 
-        private ICommand _openFile;
-        public ICommand OpenFile
-        {
-            get { return _openFile; }
-            set { _openFile = value; }
-        }
+        public ICommand OpenFile { get; set; }
 
         public void OpenFile_Action(object obj)
         {

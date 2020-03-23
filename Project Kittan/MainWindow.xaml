@@ -9,7 +9,7 @@
     xmlns:viewmodel="clr-namespace:Project_Kittan.ViewModels"
     Title="Project Kittan"
     Width="800"
-    Height="544"
+    Height="600"
     Loaded="Window_Loaded"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -22,7 +22,6 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="TrueToVisibleConverter" />
         <helpers:ArrayMultiValueConverter x:Key="CommandParametersConverter" />
-        <helpers:StringToBooleanConverter x:Key="StringToVisibleConverter" />
     </Window.Resources>
 
     <Grid>
@@ -38,7 +37,7 @@
 
         <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="8" AllowDrop="True" Drop="StackPanel_Drop">
-                <TextBlock Text="Select the folder containing all the text files of the objects exported from NAV IDE." TextWrapping="Wrap" />
+                <TextBlock Text="Select the folder containing all the text files of the objects exported from NAV Development Environment." TextWrapping="Wrap" />
                 <StackPanel Margin="0,8,0,0" HorizontalAlignment="Center" Orientation="Horizontal">
                     <Button HorizontalAlignment="Left" Command="{Binding BrowseWorkspaceFolder}" Content="Browse folder" />
                     <TextBlock Margin="8,2,0,0" Opacity="0.6" Text="or" />

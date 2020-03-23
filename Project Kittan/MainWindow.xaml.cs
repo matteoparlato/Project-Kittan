@@ -63,23 +63,27 @@ namespace Project_Kittan
         private void FilterTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = ((TextBox)sender);
-            textBox.SelectAll();
 
-            try
+            if (!string.IsNullOrWhiteSpace(textBox.Text))
             {
-                Clipboard.SetText(textBox.Text);
-            }
-            catch (COMException ex)
-            {
-                var result = System.Windows.Forms.MessageBox.Show("An error occured during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
-                if (result == System.Windows.Forms.DialogResult.Retry)
+                textBox.SelectAll();
+
+                try
                 {
-                    textBox.SelectAll();
                     Clipboard.SetText(textBox.Text);
                 }
-            }
+                catch (COMException ex)
+                {
+                    var result = System.Windows.Forms.MessageBox.Show("An error occured during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
+                    if (result == System.Windows.Forms.DialogResult.Retry)
+                    {
+                        textBox.SelectAll();
+                        Clipboard.SetText(textBox.Text);
+                    }
+                }
 
-            ((Workspace)this.DataContext).ProgressText = string.Format("{0} filter copied to clipboard", textBox.Tag);
+                ((Workspace)this.DataContext).ProgressText = string.Format("{0} filter copied to clipboard", textBox.Tag);
+            }
         }
     }
 }

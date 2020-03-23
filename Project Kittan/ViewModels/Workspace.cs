@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,13 +47,7 @@ namespace Project_Kittan.ViewModels
             get => _ready;
             set => SetProperty(ref _ready, value);
         }
-
-        private ICommand _removeFile;
-        public ICommand RemoveFile
-        {
-            get => _removeFile;
-            set => _removeFile = value;
-        }
+        public ICommand RemoveFile { get; set; }
 
         private double _progressValue;
         public double ProgressValue
@@ -65,10 +60,7 @@ namespace Project_Kittan.ViewModels
         public string ProgressText
         {
             get => _progressText;
-            set
-            {
-                SetProperty(ref _progressText, value);
-            }
+            set => SetProperty(ref _progressText, value);
         }
 
         private bool _backgroundActivity;
@@ -85,99 +77,21 @@ namespace Project_Kittan.ViewModels
             set => SetProperty(ref _cancelableBackgroundActivity, value);
         }
 
-        private ICommand _addFilesFromExecutableFolder;
-        public ICommand AddFilesFromExecutableFolder
-        {
-            get => _addFilesFromExecutableFolder;
-            set => _addFilesFromExecutableFolder = value;
-        }
+        public ICommand AddFilesFromExecutableFolder { get; set; }
+        public ICommand BrowseWorkspaceFolder { get; set; }
+        public ICommand ClearWorkspace { get; set; }
+        public ICommand OpenFile { get; set; }
+        public ICommand OpenFileLocation { get; set; }
+        public ICommand DropFile { get; set; }
+        public ICommand SearchOccurences { get; set; }
+        public ICommand AddTag { get; set; }
+        public ICommand RemoveTag { get; set; }
+        public ICommand ThrowCancellation { get; set; }
+        public ICommand OpenSettings { get; set; }
+        public ICommand GetFiltersFromFiles { get; set; }
+        public ICommand GetFiltersFromClipboard { get; set; }
 
-        private ICommand _browseWorkspaceFolder;
-        public ICommand BrowseWorkspaceFolder
-        {
-            get => _browseWorkspaceFolder;
-            set => _browseWorkspaceFolder = value;
-        }
-
-        private ICommand _clearWorkspace;
-        public ICommand ClearWorkspace
-        {
-            get => _clearWorkspace;
-            set => _clearWorkspace = value;
-        }
-
-        private ICommand _openFile;
-        public ICommand OpenFile
-        {
-            get => _openFile;
-            set => _openFile = value;
-        }
-
-        private ICommand _openFileLocation;
-        public ICommand OpenFileLocation
-        {
-            get => _openFileLocation;
-            set => _openFileLocation = value;
-        }
-
-        private ICommand _dropFile;
-        public ICommand DropFile
-        {
-            get => _dropFile;
-            set => _dropFile = value;
-        }
-
-        private ICommand _searchOccurences;
-        public ICommand SearchOccurences
-        {
-            get => _searchOccurences;
-            set => _searchOccurences = value;
-        }
-
-        private ICommand _addTag;
-        public ICommand AddTag
-        {
-            get => _addTag;
-            set => _addTag = value;
-        }
-
-        private ICommand _removeTag;
-        public ICommand RemoveTag
-        {
-            get => _removeTag;
-            set => _removeTag = value;
-        }
-
-        private ICommand _throwCancellation;
-        public ICommand ThrowCancellation
-        {
-            get => _throwCancellation;
-            set => _throwCancellation = value;
-        }
-
-        private ICommand _openSettings;
-        public ICommand OpenSettings
-        {
-            get => _openSettings;
-            set => _openSettings = value;
-        }
-
-        private ICommand _getFiltersFromFiles;
-        public ICommand GetFiltersFromFiles
-        {
-            get => _getFiltersFromFiles;
-            set => _getFiltersFromFiles = value;
-        }
-
-        private ICommand _getFiltersFromClipboard;
-        public ICommand GetFiltersFromClipboard
-        {
-            get => _getFiltersFromClipboard;
-            set => _getFiltersFromClipboard = value;
-        }
-
-
-        public Workspace()
+    public Workspace()
         {
             RemoveFile = new DelegateCommand(new Action<object>(RemoveFile_Action), new Predicate<object>(Command_CanExecute));
             AddFilesFromExecutableFolder = new DelegateCommand(new Action<object>(AddFilesFromExecutableFolder_Action), new Predicate<object>(Command_CanExecute));
@@ -295,7 +209,7 @@ namespace Project_Kittan.ViewModels
         private void OpenFolder(string path)
         {
             WorkspaceFiles.Clear();
-            foreach(string filePath in Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories))
+            foreach(string filePath in GetFilesFromDirectory(path))
             {
                 WorkspaceFiles.Add(new WorkspaceFile(filePath));
             }
@@ -489,6 +403,33 @@ namespace Project_Kittan.ViewModels
         private void OpenSettings_Action(object obj)
         {
             new SettingsWindow().ShowDialog();
+        }
+
+        /// <summary>
+        /// Method which finds all *.txt files in the specified folder and relative subfolders.
+        /// </summary>
+        /// <param name="Path">The path of the directory</param>
+        /// <returns>The list containing all the paths of the text files found in working directory</returns>
+        private List<string> GetFilesFromDirectory(string Path)
+        {
+            List<string> files = new List<string>();
+            try
+            {
+                foreach (string f in Directory.GetFiles(Path).Where(i => i.EndsWith(".txt")))
+                {
+                    files.Add(f);
+                }
+                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.EndsWith(".hg") && !i.EndsWith(".git")))
+                {
+                    files.AddRange(GetFilesFromDirectory(d));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Project Kittan", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return files;
         }
     }
 }
