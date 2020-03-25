@@ -1,5 +1,6 @@
 ﻿using Project_Kittan.Helpers;
 using Project_Kittan.Models;
+using Project_Kittan.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

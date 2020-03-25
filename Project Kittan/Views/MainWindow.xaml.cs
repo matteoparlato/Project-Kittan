@@ -20,8 +20,6 @@ namespace Project_Kittan.Views
         public MainWindow()
         {
             InitializeComponent();
-
-            Title = string.Format("{0} {1}", Properties.Resources.AppName, Assembly.GetExecutingAssembly().GetName().Version.ToString());
         }
 
         /// <summary>

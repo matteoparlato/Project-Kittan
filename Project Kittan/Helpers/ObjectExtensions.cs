@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Project_Kittan.Enums;
 using System.Windows;
 using System.Globalization;
+using Project_Kittan.Views;
 
 namespace Project_Kittan.Helpers
 {

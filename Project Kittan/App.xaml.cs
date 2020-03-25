@@ -9,7 +9,12 @@ namespace Project_Kittan
     {
         public static Window CurrentMainWindow
         {
-            get { return Current.MainWindow; }
+            get => Current.MainWindow;
+        }
+
+        public static string AppName
+        {
+            get => Project_Kittan.Properties.Resources.AppName;
         }
     }
 }
