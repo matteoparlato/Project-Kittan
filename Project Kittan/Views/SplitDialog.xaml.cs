@@ -90,7 +90,7 @@ namespace Project_Kittan.Views
 
             _runningTask = Task.Run(() =>
             {
-                _filePath = ObjectExtensions.SplitAndStore(_filePath, progress, _token);
+                _filePath = NAVObjectExtensions.SplitAndStore(_filePath, progress, _token);
                 progress.Report(new KeyValuePair<bool, string>(false, string.Format("Files extracted in: {0}", _filePath)));
 
                 TaskbarItemProgressState = TaskbarItemProgressState.None;

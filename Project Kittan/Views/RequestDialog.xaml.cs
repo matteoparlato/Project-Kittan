@@ -33,8 +33,6 @@ namespace Project_Kittan.Views
 			_maxLength = maxLength;
 
 			CharactersLeftTextBlock.Text = string.Format("The current version list exceeds the maximum length by {0} characters.", VersionListTextBox.Text.Length - _maxLength);
-
-			WindowStartupLocation = WindowStartupLocation.CenterScreen;
 		}
 
         /// <summary>

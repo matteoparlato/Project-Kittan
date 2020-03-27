@@ -3,13 +3,13 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Project_Kittan.Helpers
+namespace Project_Kittan.Converters
 {
-    public class StringToVisibilityConverter : IValueConverter
+    public class IntToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return string.IsNullOrWhiteSpace((string)value) ? Visibility.Collapsed : Visibility.Visible;
+            return (int)value == 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

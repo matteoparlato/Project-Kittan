@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -91,6 +90,7 @@ namespace Project_Kittan.ViewModels
         public ICommand OpenSettings { get; set; }
         public ICommand GetFiltersFromFiles { get; set; }
         public ICommand GetFiltersFromClipboard { get; set; }
+        public ICommand GetFiltersFromOccurences { get; set; }
 
     public Workspace()
         {
@@ -108,6 +108,7 @@ namespace Project_Kittan.ViewModels
             OpenSettings = new DelegateCommand(new Action<object>(OpenSettings_Action), new Predicate<object>(Command_CanExecute));
             GetFiltersFromFiles = new DelegateCommand(new Action<object>(GetFiltersFromFiles_Action), new Predicate<object>(Command_CanExecute));
             GetFiltersFromClipboard = new DelegateCommand(new Action<object>(GetFiltersFromClipboard_Action), new Predicate<object>(Command_CanExecute));
+            GetFiltersFromOccurences = new DelegateCommand(new Action<object>(GetFiltersFromOccurences_Action), new Predicate<object>(Command_CanExecute));
 
             WorkspaceFiles = new ObservableCollection<WorkspaceFile>();
             SearchResult = new ObservableCollection<NAVObject>();
@@ -123,10 +124,26 @@ namespace Project_Kittan.ViewModels
             {
                 try
                 {
-                    FileFilters = ObjectExtensions.GetFiltersFromClipboard(clipboardText);
+                    FileFilters = NAVObjectExtensions.GetFiltersFromClipboard(clipboardText);
                     ProgressText = "Succesfully obtained filters from clipboard";
                 }
                 catch(ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+        }
+
+        private void GetFiltersFromOccurences_Action(object obj)
+        {
+            if (!(SearchResult.Count == 0))
+            {
+                try
+                {
+                    FileFilters = NAVObjectExtensions.GetFilters(SearchResult.ToList());
+                    ProgressText = "Succesfully obtained filters from occurences";
+                }
+                catch (ArgumentException ex)
                 {
                     MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
@@ -161,7 +178,7 @@ namespace Project_Kittan.ViewModels
             {
                 BackgroundActivity = CancelableBackgroundActivity = true;
 
-                FileFilters = ObjectExtensions.GetFiltersFromFiles(WorkspaceFiles.ToArray(), progress, _token);
+                FileFilters = NAVObjectExtensions.GetFiltersFromFiles(WorkspaceFiles.ToArray(), progress, _token);
 
                 progress.Report(new KeyValuePair<double, string>(100, string.Format("Succesfully obtained filters from loaded files", SearchResult.Count, WorkspaceFiles.Count)));
                 BackgroundActivity = CancelableBackgroundActivity = false;
@@ -326,7 +343,7 @@ namespace Project_Kittan.ViewModels
                 _runningTask = Task.Run(() =>
                 {
                     BackgroundActivity = CancelableBackgroundActivity = true;
-                    foreach (NAVObject navObject in ObjectExtensions.FindWhere(WorkspaceFiles.ToArray(), keyword, progress, _token))
+                    foreach (NAVObject navObject in NAVObjectExtensions.FindWhere(WorkspaceFiles.ToArray(), keyword, progress, _token))
                     {
                         Application.Current.Dispatcher.Invoke(delegate
                         {
@@ -362,7 +379,7 @@ namespace Project_Kittan.ViewModels
             {
                 BackgroundActivity = true;
 
-                ObjectExtensions.AddTag(WorkspaceFiles.ToArray(), (int)parameters[0], (string)parameters[1], (bool)parameters[2], (bool)parameters[3], progress);
+                NAVObjectExtensions.AddTag(WorkspaceFiles.ToArray(), (int)parameters[0], (string)parameters[1], (bool)parameters[2], (bool)parameters[3], progress);
 
                 progress.Report(new KeyValuePair<double, string>(0, string.Format("Tag {0} added to the version list of {1} files", (string)parameters[1], WorkspaceFiles.Count)));
                 BackgroundActivity = false;
@@ -393,7 +410,7 @@ namespace Project_Kittan.ViewModels
                 {
                     BackgroundActivity = true;
 
-                    ObjectExtensions.RemoveTag(WorkspaceFiles.ToArray(), tag, (bool)parameters[0], progress);
+                    NAVObjectExtensions.RemoveTag(WorkspaceFiles.ToArray(), tag, (bool)parameters[0], progress);
 
                     progress.Report(new KeyValuePair<double, string>(100, string.Format("Tag {0} removed from the version list of {1} files", (string)parameters[1], WorkspaceFiles.Count)));
                     BackgroundActivity = false;

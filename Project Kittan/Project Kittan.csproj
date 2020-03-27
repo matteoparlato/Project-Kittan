@@ -95,11 +95,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Enums\NAVObjectType.cs" />
-    <Compile Include="Helpers\ArrayMultiValueConverter.cs" />
-    <Compile Include="Helpers\ObjectExtensions.cs" />
+    <Compile Include="Converters\ArrayMultiValueConverter.cs" />
+    <Compile Include="Helpers\NAVObjectExtensions.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
-    <Compile Include="Helpers\IntToVisibilityConverter.cs" />
-    <Compile Include="Helpers\StringToVisibilityConverter.cs" />
+    <Compile Include="Converters\IntToVisibilityConverter.cs" />
+    <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Helpers\UpdateExtensions.cs" />
     <Compile Include="Models\BindableBase.cs" />
     <Compile Include="Models\DelegateCommand.cs" />
@@ -175,9 +175,6 @@
     <EmbeddedResource Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Screenshot.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Project_logo.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -191,9 +188,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Project_logo_color.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ClipboardTooltip.png" />

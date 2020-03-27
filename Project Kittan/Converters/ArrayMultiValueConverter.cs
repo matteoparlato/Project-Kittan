@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Project_Kittan.Helpers
+namespace Project_Kittan.Converters
 {
     public class ArrayMultiValueConverter : IMultiValueConverter
 	{

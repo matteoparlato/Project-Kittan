@@ -15,9 +15,9 @@ using Project_Kittan.Views;
 namespace Project_Kittan.Helpers
 {
     /// <summary>
-    /// ObjectExtensions class
+    /// NAVObjectExtensions class
     /// </summary>
-    internal static class ObjectExtensions
+    internal static class NAVObjectExtensions
     {
         internal const string ObjectSplitterPattern = @"(OBJECT \w* \d* .*
 {)";
@@ -521,7 +521,7 @@ namespace Project_Kittan.Helpers
         /// </summary>
         /// <param name="navObjects"></param>
         /// <returns></returns>
-        private static Filters GetFilters(List<NAVObject> navObjects)
+        public static Filters GetFilters(List<NAVObject> navObjects)
         {
             Filters filters = new Filters
             {
