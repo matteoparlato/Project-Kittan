@@ -40,20 +40,6 @@ namespace Project_Kittan.ViewModels
             set => SetProperty(ref _customLocale, value);
         }
 
-        //private string _customLocaleName;
-        //public string CustomLocaleName
-        //{
-        //    get => _customLocaleName;
-        //    set => SetProperty(ref _customLocaleName, value);
-        //}
-
-        //private string _customLocaleDateFormat;
-        //public string CustomLocaleDateFormat
-        //{
-        //    get => _customLocaleDateFormat;
-        //    set => SetProperty(ref _customLocaleDateFormat, value);
-        //}
-
         public CultureInfo CustomLocaleCulture { get; set; }
 
         public string AppVersion
