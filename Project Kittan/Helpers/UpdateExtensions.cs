@@ -1,6 +1,5 @@
 ﻿using HtmlAgilityPack;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -37,7 +36,9 @@ namespace Project_Kittan.Helpers
                     {
                         if (MessageBox.Show("There's a new version of Project Kittan available on GitHub. Do you want to download it?", "Project Kittan", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
                         {
+#if !APPX
                             Process.Start("https://github.com/matteoparlato/Project-Kittan/releases");
+#endif
                         }
                     }
                 }

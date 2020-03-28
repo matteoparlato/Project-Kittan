@@ -25,10 +25,10 @@ namespace Project_Kittan.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int DefaultEncoding {
+        [global::System.Configuration.DefaultSettingValueAttribute("Windows-1252")]
+        public string DefaultEncoding {
             get {
-                return ((int)(this["DefaultEncoding"]));
+                return ((string)(this["DefaultEncoding"]));
             }
             set {
                 this["DefaultEncoding"] = value;

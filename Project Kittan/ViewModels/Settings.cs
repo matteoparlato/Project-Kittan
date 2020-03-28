@@ -12,22 +12,13 @@ namespace Project_Kittan.ViewModels
 {
     public class Settings : BindableBase
     {
+        public List<string> Encodings { get; set; } = new List<string>();
+
         private int _customEncoding;
         public int CustomEncoding
         {
             get => _customEncoding;
-            set
-            {
-                SetProperty(ref _customEncoding, value);
-                SetProperty(ref _customEncodingName, Encoding.GetEncoding(CustomEncoding).EncodingName);
-            }
-        }
-
-        private string _customEncodingName;
-        public string CustomEncodingName
-        {
-            get => _customEncodingName;
-            set => SetProperty(ref _customEncodingName, value);
+            set => SetProperty(ref _customEncoding, value);
         }
 
         public List<string> Locales { get; set; } = new List<string>();
@@ -49,19 +40,21 @@ namespace Project_Kittan.ViewModels
             set => SetProperty(ref _customLocale, value);
         }
 
-        private string _customLocaleName;
-        public string CustomLocaleName
-        {
-            get => _customLocaleName;
-            set => SetProperty(ref _customLocaleName, value);
-        }
+        //private string _customLocaleName;
+        //public string CustomLocaleName
+        //{
+        //    get => _customLocaleName;
+        //    set => SetProperty(ref _customLocaleName, value);
+        //}
 
-        private string _customLocaleDateFormat;
-        public string CustomLocaleDateFormat
-        {
-            get => _customLocaleDateFormat;
-            set => SetProperty(ref _customLocaleDateFormat, value);
-        }
+        //private string _customLocaleDateFormat;
+        //public string CustomLocaleDateFormat
+        //{
+        //    get => _customLocaleDateFormat;
+        //    set => SetProperty(ref _customLocaleDateFormat, value);
+        //}
+
+        public CultureInfo CustomLocaleCulture { get; set; }
 
         public string AppVersion
         {
@@ -74,37 +67,27 @@ namespace Project_Kittan.ViewModels
 
         public Settings()
         {
-            EncodingSettingsFromCodeCommand = new DelegateCommand(new Action<object>(EncodingSettingsFromCode_Action));
+            EncodingSettingsFromCodeCommand = new DelegateCommand(new Action<object>(EncodingSettings_Action));
             LocaleSettingsCommand = new DelegateCommand(new Action<object>(LocaleSettings_Action));
             ResetSettingsCommand = new DelegateCommand(new Action<object>(ResetSettings_Action));
 
-
-            CustomEncoding = Properties.Settings.Default.DefaultEncoding;
+            Encodings = Encoding.GetEncodings().Select(encoding => encoding.Name).Distinct().ToList();
+            Encodings.Insert(0, "");
+            CustomEncoding = Encodings.IndexOf(Properties.Settings.Default.DefaultEncoding);
 
             Locales = CultureInfo.GetCultures(CultureTypes.AllCultures).Select(culture => culture.Name).Distinct().ToList();
             CustomLocale = Locales.IndexOf(Properties.Settings.Default.DefaultLocale);
-            CultureInfo cultureInfo = new CultureInfo(Properties.Settings.Default.DefaultLocale, false);
-            CustomLocaleName = cultureInfo.Name;
-            CustomLocaleDateFormat = cultureInfo.DateTimeFormat.ShortDatePattern;
+            CustomLocaleCulture = new CultureInfo(Properties.Settings.Default.DefaultLocale, false);
         }
 
-        public void EncodingSettingsFromCode_Action(object obj)
+        public void EncodingSettings_Action(object obj)
         {
-            int.TryParse((string)obj, out int encodingCode);
-            try
-            {
-                Encoding encoding = Encoding.GetEncoding(encodingCode);
+            string encodingName = (string)obj;
 
-                Properties.Settings.Default.DefaultEncoding = encodingCode;
-                Properties.Settings.Default.Save();
+            Properties.Settings.Default.DefaultEncoding = encodingName;
+            Properties.Settings.Default.Save();
 
-                CustomEncoding = encodingCode;
-                CustomEncodingName = encoding.EncodingName;
-            }
-            catch (Exception)
-            {
-                return;
-            }
+            CustomEncoding = Encodings.IndexOf(encodingName);
         }
 
         public void LocaleSettings_Action(object obj)
@@ -116,9 +99,7 @@ namespace Project_Kittan.ViewModels
 
             CustomLocale = Locales.IndexOf(locale);
 
-            CultureInfo cultureInfo = new CultureInfo(Properties.Settings.Default.DefaultLocale, false);
-            CustomLocaleName = cultureInfo.Name;
-            CustomLocaleDateFormat = cultureInfo.DateTimeFormat.ShortDatePattern;
+            CustomLocaleCulture = new CultureInfo(Properties.Settings.Default.DefaultLocale, false);
         }
 
         public void ResetSettings_Action(object obj)

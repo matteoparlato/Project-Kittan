@@ -16,31 +16,12 @@
     mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="8">
-            <TextBlock
-                x:Name="CharactersLeftTextBlock"
-                Text="The current version list exceeds the maximum length by 0 characters."
-                TextWrapping="Wrap" />
-            <TextBox
-                x:Name="VersionListTextBox"
-                Height="48"
-                MaxHeight="48"
-                Margin="0,4,0,0"
-                KeyDown="TextBox_KeyDown"
-                TextChanged="TextBox_TextChanged"
-                TextWrapping="Wrap" />
+            <TextBlock x:Name="CharactersLeftTextBlock" Text="The current version list exceeds the maximum length by 0 characters." TextWrapping="Wrap" />
+            <TextBox x:Name="VersionListTextBox" Height="48" MaxHeight="48" Margin="0,4,0,0" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" TextWrapping="Wrap" />
 
             <Grid Margin="0,4,0,0">
-                <TextBlock
-                    Margin="0,2,0,0"
-                    Opacity="0.4"
-                    Text="Press CTRL + Z to undo changes" />
-                <Button
-                    x:Name="ContinueButton"
-                    Width="120"
-                    HorizontalAlignment="Right"
-                    Click="Button_Click"
-                    Content="Save and continue"
-                    IsEnabled="False" />
+                <TextBlock Margin="0,2,0,0" Opacity="0.4" Text="Press CTRL + Z to undo changes" />
+                <Button x:Name="ContinueButton" Width="120" HorizontalAlignment="Right" Click="Button_Click" Content="Save and continue" IsEnabled="False" />
             </Grid>
         </StackPanel>
     </ScrollViewer>

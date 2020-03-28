@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Media;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -128,7 +127,9 @@ namespace Project_Kittan.Views
         /// <param name="e"></param>
         private void OpenFolderButton_Click(object sender, RoutedEventArgs e)
         {
+#if !APPX
             Process.Start(_filePath);
+#endif
         }
 
         /// <summary>

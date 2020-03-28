@@ -1,6 +1,5 @@
 ﻿using Project_Kittan.Models;
 using System;
-using System.Diagnostics;
 using System.Windows.Input;
 
 namespace Project_Kittan.ViewModels
@@ -16,7 +15,9 @@ namespace Project_Kittan.ViewModels
 
         public void OpenFile_Action(object obj)
         {
+#if !APPX
             Process.Start(Path);
+#endif
         }
     }
 }

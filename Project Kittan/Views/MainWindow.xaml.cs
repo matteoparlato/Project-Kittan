@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,7 +28,9 @@ namespace Project_Kittan.Views
         /// <param name="e"></param>
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+#if !APPX
             await UpdateExtensions.Check();
+#endif
         }
 
         /// <summary>
@@ -39,7 +40,9 @@ namespace Project_Kittan.Views
         /// <param name="e"></param>
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
+#if !APPX
             Process.Start("https://github.com/matteoparlato/Project-Kittan");
+#endif
         }
 
         /// <summary>

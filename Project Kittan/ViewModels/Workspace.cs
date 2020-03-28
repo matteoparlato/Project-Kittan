@@ -193,12 +193,16 @@ namespace Project_Kittan.ViewModels
 
         public void OpenFile_Action(object obj)
         {
+#if !APPX
             Process.Start(SelectedWorkspaceFile.Path);
+#endif
         }
 
         public void OpenFileLocation_Action(object obj)
         {
+#if !APPX
             Process.Start("explorer.exe", "/select, " + SelectedWorkspaceFile.Path);
+#endif
         }
 
         internal void AddFilesFromDrop(string[] files)

@@ -16,5 +16,23 @@ namespace Project_Kittan
         {
             get => Project_Kittan.Properties.Resources.AppName;
         }
+
+        public static bool IsAPPX
+        {
+#if !APPX
+            get => false;
+#else
+            get => true;
+#endif
+        }
+
+        public static Visibility IsAPPXVisible
+        {
+#if !APPX
+            get => Visibility.Visible;
+#else
+            get => Visibility.Collapsed;
+#endif
+        }
     }
 }

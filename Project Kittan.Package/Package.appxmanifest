@@ -9,7 +9,7 @@
   <Identity
     Name="60396NeonDev.ProjectKittan"
     Publisher="CN=9549A8D5-78E1-42CB-9E2D-0F8E426F38A1"
-    Version="1.1.8.0" />
+    Version="1.2.9.0" />
 
   <Properties>
     <DisplayName>Project Kittan</DisplayName>

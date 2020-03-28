@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Project_Kittan.Views
 {
@@ -15,7 +14,7 @@ namespace Project_Kittan.Views
         {
             InitializeComponent();
 
-            if (Properties.Settings.Default.DefaultEncoding == 0)
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultEncoding))
             {
                 AutomaticEncodingRadioButton.IsChecked = AutomaticEncodingOptionsStackPanel.IsEnabled = true;
                 CustomEncodingRadioButton.IsChecked = CustomEncodingOptionsStackPanel.IsEnabled = false;
@@ -64,8 +63,11 @@ namespace Project_Kittan.Views
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
+#if !APPX
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+#endif
             e.Handled = true;
+
         }
     }
 }
