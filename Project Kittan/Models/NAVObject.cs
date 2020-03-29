@@ -11,21 +11,21 @@ namespace Project_Kittan.Models
         public string ObjectName
         {
             get => _objectName;
-            set => SetProperty(ref _objectName, value);
+            set => Set(ref _objectName, value);
         }
 
         private string _ID;
         public string ID
         {
             get => _ID;
-            set => SetProperty(ref _ID, value);
+            set => Set(ref _ID, value);
         }
 
         private NAVObjectType _type;
         public NAVObjectType Type
         {
             get => _type;
-            set => SetProperty(ref _type, value);
+            set => Set(ref _type, value);
         }
 
         /// <summary>

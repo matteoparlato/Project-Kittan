@@ -2,7 +2,6 @@
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using Project_Kittan.Helpers;
 using Project_Kittan.ViewModels;
 
 namespace Project_Kittan.Views

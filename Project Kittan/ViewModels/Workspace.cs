@@ -14,7 +14,7 @@ using System.Windows.Input;
 
 namespace Project_Kittan.ViewModels
 {
-    public class Workspace : BindableBase
+    public class Workspace : Observable
     {
         public ObservableCollection<WorkspaceFile> WorkspaceFiles { get; set; }
 
@@ -24,28 +24,28 @@ namespace Project_Kittan.ViewModels
         public Filters FileFilters
         {
             get => _fileFilters;
-            set => SetProperty(ref _fileFilters, value);
+            set => Set(ref _fileFilters, value);
         }
 
         private WorkspaceFile _selectedWorkspaceFile;
         public WorkspaceFile SelectedWorkspaceFile
         {
             get => _selectedWorkspaceFile;
-            set => SetProperty(ref _selectedWorkspaceFile, value);
+            set => Set(ref _selectedWorkspaceFile, value);
         }
 
         private string _path;
         public string Path
         {
             get => _path;
-            set => SetProperty(ref _path, value);
+            set => Set(ref _path, value);
         }
 
         private bool _ready;
         public bool Ready
         {
             get => _ready;
-            set => SetProperty(ref _ready, value);
+            set => Set(ref _ready, value);
         }
         public ICommand RemoveFile { get; set; }
 
@@ -53,28 +53,28 @@ namespace Project_Kittan.ViewModels
         public double ProgressValue
         {
             get => _progressValue;
-            set => SetProperty(ref _progressValue, value);
+            set => Set(ref _progressValue, value);
         }
 
         private string _progressText;
         public string ProgressText
         {
             get => _progressText;
-            set => SetProperty(ref _progressText, value);
+            set => Set(ref _progressText, value);
         }
 
         private bool _backgroundActivity;
         public bool BackgroundActivity
         {
             get => _backgroundActivity;
-            set => SetProperty(ref _backgroundActivity, value);
+            set => Set(ref _backgroundActivity, value);
         }
 
         private bool _cancelableBackgroundActivity;
         public bool CancelableBackgroundActivity
         {
             get => _cancelableBackgroundActivity;
-            set => SetProperty(ref _cancelableBackgroundActivity, value);
+            set => Set(ref _cancelableBackgroundActivity, value);
         }
 
         public ICommand AddFilesFromExecutableFolder { get; set; }
@@ -94,21 +94,21 @@ namespace Project_Kittan.ViewModels
 
     public Workspace()
         {
-            RemoveFile = new DelegateCommand(new Action<object>(RemoveFile_Action), new Predicate<object>(Command_CanExecute));
-            AddFilesFromExecutableFolder = new DelegateCommand(new Action<object>(AddFilesFromExecutableFolder_Action), new Predicate<object>(Command_CanExecute));
-            BrowseWorkspaceFolder = new DelegateCommand(new Action<object>(BrowseWorkspaceFolder_Action), new Predicate<object>(Command_CanExecute));
-            ClearWorkspace = new DelegateCommand(new Action<object>(ClearWorkspace_Action), new Predicate<object>(Command_CanExecute));
-            OpenFile = new DelegateCommand(new Action<object>(OpenFile_Action), new Predicate<object>(Command_CanExecute));
-            OpenFileLocation = new DelegateCommand(new Action<object>(OpenFileLocation_Action), new Predicate<object>(Command_CanExecute));
-            DropFile = new DelegateCommand(new Action<object>(DropFile_Action), new Predicate<object>(Command_CanExecute));
-            RemoveTag = new DelegateCommand(new Action<object>(RemoveTag_Action), new Predicate<object>(Command_CanExecute));
-            SearchOccurences = new DelegateCommand(new Action<object>(SearchOccurences_Action), new Predicate<object>(Command_CanExecute));
-            AddTag = new DelegateCommand(new Action<object>(AddTag_Action), new Predicate<object>(Command_CanExecute));
-            ThrowCancellation = new DelegateCommand(new Action<object>(Command_ThrowCancellation));
-            OpenSettings = new DelegateCommand(new Action<object>(OpenSettings_Action), new Predicate<object>(Command_CanExecute));
-            GetFiltersFromFiles = new DelegateCommand(new Action<object>(GetFiltersFromFiles_Action), new Predicate<object>(Command_CanExecute));
-            GetFiltersFromClipboard = new DelegateCommand(new Action<object>(GetFiltersFromClipboard_Action), new Predicate<object>(Command_CanExecute));
-            GetFiltersFromOccurences = new DelegateCommand(new Action<object>(GetFiltersFromOccurences_Action), new Predicate<object>(Command_CanExecute));
+            RemoveFile = new RelayCommand<object>(RemoveFile_Action, new Func<object, bool>(Command_CanExecute));
+            AddFilesFromExecutableFolder = new RelayCommand<object>(AddFilesFromExecutableFolder_Action, new Func<object, bool>(Command_CanExecute));
+            BrowseWorkspaceFolder = new RelayCommand<object>(BrowseWorkspaceFolder_Action, new Func<object, bool>(Command_CanExecute));
+            ClearWorkspace = new RelayCommand<object>(ClearWorkspace_Action, new Func<object, bool>(Command_CanExecute));
+            OpenFile = new RelayCommand<object>(OpenFile_Action, new Func<object, bool>(Command_CanExecute));
+            OpenFileLocation = new RelayCommand<object>(OpenFileLocation_Action, new Func<object, bool>(Command_CanExecute));
+            DropFile = new RelayCommand<object>(DropFile_Action, new Func<object, bool>(Command_CanExecute));
+            RemoveTag = new RelayCommand<object>(RemoveTag_Action, new Func<object, bool>(Command_CanExecute));
+            SearchOccurences = new RelayCommand<object>(SearchOccurences_Action, new Func<object, bool>(Command_CanExecute));
+            AddTag = new RelayCommand<object>(AddTag_Action, new Func<object, bool>(Command_CanExecute));
+            ThrowCancellation = new RelayCommand<object>(Command_ThrowCancellation);
+            OpenSettings = new RelayCommand<object>(OpenSettings_Action, new Func<object, bool>(Command_CanExecute));
+            GetFiltersFromFiles = new RelayCommand<object>(GetFiltersFromFiles_Action, new Func<object, bool>(Command_CanExecute));
+            GetFiltersFromClipboard = new RelayCommand<object>(GetFiltersFromClipboard_Action, new Func<object, bool>(Command_CanExecute));
+            GetFiltersFromOccurences = new RelayCommand<object>(GetFiltersFromOccurences_Action, new Func<object, bool>(Command_CanExecute));
 
             WorkspaceFiles = new ObservableCollection<WorkspaceFile>();
             SearchResult = new ObservableCollection<NAVObject>();

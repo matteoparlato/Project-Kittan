@@ -1,5 +1,4 @@
-﻿using Project_Kittan.Models;
-using System;
+﻿using Project_Kittan.Helpers;
 using System.Windows.Input;
 
 namespace Project_Kittan.ViewModels
@@ -8,7 +7,7 @@ namespace Project_Kittan.ViewModels
     {
         public WorkspaceFile(string path) : base(path)
         {
-            OpenFile = new DelegateCommand(new Action<object>(OpenFile_Action));
+            OpenFile = new RelayCommand<object>(OpenFile_Action);
         }
 
         public ICommand OpenFile { get; set; }

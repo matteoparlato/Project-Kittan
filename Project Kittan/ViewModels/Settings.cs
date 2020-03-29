@@ -1,5 +1,4 @@
-﻿using Project_Kittan.Models;
-using System;
+﻿using Project_Kittan.Helpers;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -10,7 +9,7 @@ using System.Windows.Input;
 
 namespace Project_Kittan.ViewModels
 {
-    public class Settings : BindableBase
+    public class Settings : Observable
     {
         public List<string> Encodings { get; set; } = new List<string>();
 
@@ -18,7 +17,7 @@ namespace Project_Kittan.ViewModels
         public int CustomEncoding
         {
             get => _customEncoding;
-            set => SetProperty(ref _customEncoding, value);
+            set => Set(ref _customEncoding, value);
         }
 
         public List<string> Locales { get; set; } = new List<string>();
@@ -37,7 +36,7 @@ namespace Project_Kittan.ViewModels
         public int CustomLocale
         {
             get => _customLocale;
-            set => SetProperty(ref _customLocale, value);
+            set => Set(ref _customLocale, value);
         }
 
         public CultureInfo CustomLocaleCulture { get; set; }
@@ -53,9 +52,9 @@ namespace Project_Kittan.ViewModels
 
         public Settings()
         {
-            EncodingSettingsFromCodeCommand = new DelegateCommand(new Action<object>(EncodingSettings_Action));
-            LocaleSettingsCommand = new DelegateCommand(new Action<object>(LocaleSettings_Action));
-            ResetSettingsCommand = new DelegateCommand(new Action<object>(ResetSettings_Action));
+            EncodingSettingsFromCodeCommand = new RelayCommand<object>(EncodingSettings_Action);
+            LocaleSettingsCommand = new RelayCommand<object>(LocaleSettings_Action);
+            ResetSettingsCommand = new RelayCommand<object>(ResetSettings_Action);
 
             Encodings = Encoding.GetEncodings().Select(encoding => encoding.Name).Distinct().ToList();
             Encodings.Insert(0, "");

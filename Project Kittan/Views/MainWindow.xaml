@@ -62,7 +62,7 @@
                     <ListView.ContextMenu>
                         <ContextMenu Visibility="{Binding Ready, Converter={StaticResource TrueToVisibleConverter}}">
                             <MenuItem Command="{Binding OpenFile}" Header="Open file" Visibility="{x:Static app:App.IsAPPXVisible}" />
-                            <MenuItem Command="{Binding OpenFileLocation}" Header="Open file location" />
+                            <MenuItem Command="{Binding OpenFileLocation}" Header="Open file location" Visibility="{x:Static app:App.IsAPPXVisible}" />
                             <MenuItem Command="{Binding RemoveFile}" Header="Remove file" />
                         </ContextMenu>
                     </ListView.ContextMenu>
