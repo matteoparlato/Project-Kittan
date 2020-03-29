@@ -46,18 +46,17 @@ namespace Project_Kittan.ViewModels
             get => Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
-        public ICommand EncodingSettingsFromCodeCommand { get; set; }
+        public ICommand EncodingSettingsCommand { get; set; }
         public ICommand LocaleSettingsCommand { get; set; }
         public ICommand ResetSettingsCommand { get; set; }
 
         public Settings()
         {
-            EncodingSettingsFromCodeCommand = new RelayCommand<object>(EncodingSettings_Action);
+            EncodingSettingsCommand = new RelayCommand<object>(EncodingSettings_Action);
             LocaleSettingsCommand = new RelayCommand<object>(LocaleSettings_Action);
             ResetSettingsCommand = new RelayCommand<object>(ResetSettings_Action);
 
             Encodings = Encoding.GetEncodings().Select(encoding => encoding.Name).Distinct().ToList();
-            Encodings.Insert(0, "");
             CustomEncoding = Encodings.IndexOf(Properties.Settings.Default.DefaultEncoding);
 
             Locales = CultureInfo.GetCultures(CultureTypes.AllCultures).Select(culture => culture.Name).Distinct().ToList();

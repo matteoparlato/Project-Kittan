@@ -66,9 +66,9 @@ namespace Project_Kittan.Helpers
                     if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
                     {
                         StringBuilder builder = new StringBuilder();
-                        foreach (string navObject in Split(lines))
+                        foreach (string navObjectLines in Split(lines))
                         {
-                            using (StringReader reader = new StringReader(navObject))
+                            using (StringReader reader = new StringReader(navObjectLines))
                             {
                                 string line;
                                 while (!((line = reader.ReadLine()) == null))
@@ -210,9 +210,9 @@ namespace Project_Kittan.Helpers
                     if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
                     {
                         StringBuilder builder = new StringBuilder();
-                        foreach (string navObject in Split(lines))
+                        foreach (string navObjectLines in Split(lines))
                         { 
-                            using (StringReader reader = new StringReader(navObject))
+                            using (StringReader reader = new StringReader(navObjectLines))
                             {
                                 string line;
                                 while (!((line = reader.ReadLine()) == null))
@@ -297,13 +297,13 @@ namespace Project_Kittan.Helpers
 
                     if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
                     {
-                        foreach (string navObject in Split(lines))
+                        foreach (string navObjectLines in Split(lines))
                         {
-                            if (navObject.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1) // The file contains the keyword
+                            if (navObjectLines.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1) // The file contains the keyword
                             {
-                                using (StringReader stringReader = new StringReader(navObject))
+                                using (StringReader stringReader = new StringReader(navObjectLines))
                                 {
-                                    string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
+                                    string[] startingLineWords = new StringReader(navObjectLines).ReadLine().Split(' '); // Get the first line of the file
 
                                     yield return new NAVObject(GetObjectTypeFromString(startingLineWords[1]), startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                                 }
@@ -348,11 +348,11 @@ namespace Project_Kittan.Helpers
 
                     if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
                     {
-                        foreach (string navObject in Split(lines))
+                        foreach (string navObjectLines in Split(lines))
                         {
-                            using (StringReader stringReader = new StringReader(navObject))
+                            using (StringReader stringReader = new StringReader(navObjectLines))
                             {
-                                string[] startingLineWords = new StringReader(navObject).ReadLine().Split(' '); // Get the first line of the file
+                                string[] startingLineWords = new StringReader(navObjectLines).ReadLine().Split(' '); // Get the first line of the file
 
 
                                 yield return new NAVObject(GetObjectTypeFromString(startingLineWords[1]), startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
@@ -402,7 +402,7 @@ namespace Project_Kittan.Helpers
 
             if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
             {
-                Parallel.ForEach(Split(lines), navObject =>
+                Parallel.ForEach(Split(lines), navObjectLines =>
                 {
                     progress.Report(new KeyValuePair<bool, string>(true, "Splitting file..."));
 
@@ -412,7 +412,7 @@ namespace Project_Kittan.Helpers
                         token.ThrowIfCancellationRequested();
                     }
 
-                    string firstLine = navObject.Substring(0, navObject.IndexOf(Environment.NewLine));
+                    string firstLine = navObjectLines.Substring(0, navObjectLines.IndexOf(Environment.NewLine));
                     string fileName = string.Join("_", firstLine.Trim().Split(InvalidFileNameChars)).Substring(7);
 
                     string destFolder = Path.Combine(extractionFolderPath, firstLine.Split(' ')[1]);
@@ -424,7 +424,7 @@ namespace Project_Kittan.Helpers
                     using (FileStream stream = new FileStream(Path.Combine(destFolder, fileName + ".txt"), FileMode.Create, FileAccess.Write))
                     using (StreamWriter writer = new StreamWriter(stream, Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding)))
                     {
-                        writer.Write(navObject);
+                        writer.Write(navObjectLines);
                     }
                 });
             }

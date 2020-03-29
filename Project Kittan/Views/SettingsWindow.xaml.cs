@@ -14,17 +14,6 @@ namespace Project_Kittan.Views
         {
             InitializeComponent();
 
-            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultEncoding))
-            {
-                AutomaticEncodingRadioButton.IsChecked = AutomaticEncodingOptionsStackPanel.IsEnabled = true;
-                CustomEncodingRadioButton.IsChecked = CustomEncodingOptionsStackPanel.IsEnabled = false;
-            }
-            else
-            {
-                AutomaticEncodingRadioButton.IsChecked = AutomaticEncodingOptionsStackPanel.IsEnabled = false;
-                CustomEncodingRadioButton.IsChecked = CustomEncodingOptionsStackPanel.IsEnabled = true;
-            }
-
             if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultLocale))
             {
                 SystemLocaleRadioButton.IsChecked = SystemLocaleOptionsStackPanel.IsEnabled = true;
@@ -37,18 +26,6 @@ namespace Project_Kittan.Views
             }
         }
 
-        private void AutomaticEncodingRadioButton_Click(object sender, RoutedEventArgs e)
-        {
-            AutomaticEncodingRadioButton.IsChecked = AutomaticEncodingOptionsStackPanel.IsEnabled = true;
-            CustomEncodingRadioButton.IsChecked = CustomEncodingOptionsStackPanel.IsEnabled = false;
-        }
-
-        private void CustomEncodingRadioButton_Click(object sender, RoutedEventArgs e)
-        {
-            AutomaticEncodingRadioButton.IsChecked = AutomaticEncodingOptionsStackPanel.IsEnabled = false;
-            CustomEncodingRadioButton.IsChecked = CustomEncodingOptionsStackPanel.IsEnabled = true;
-        }
-
         private void SystemLocaleRadioButton_Click(object sender, RoutedEventArgs e)
         {
             SystemLocaleRadioButton.IsChecked = SystemLocaleOptionsStackPanel.IsEnabled = true;
@@ -59,15 +36,6 @@ namespace Project_Kittan.Views
         {
             SystemLocaleRadioButton.IsChecked = SystemLocaleOptionsStackPanel.IsEnabled = false;
             CustomLocaleRadioButton.IsChecked = CustomLocaleOptionsStackPanel.IsEnabled = true;
-        }
-
-        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
-        {
-#if !APPX
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
-#endif
-            e.Handled = true;
-
         }
     }
 }

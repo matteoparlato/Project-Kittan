@@ -119,18 +119,14 @@ namespace Project_Kittan.ViewModels
 
         private void GetFiltersFromClipboard_Action(object obj)
         {
-            string clipboardText = Clipboard.GetText();
-            if (!string.IsNullOrWhiteSpace(clipboardText))
+            try
             {
-                try
-                {
-                    FileFilters = NAVObjectExtensions.GetFiltersFromClipboard(clipboardText);
-                    ProgressText = "Succesfully obtained filters from clipboard";
-                }
-                catch(ArgumentException ex)
-                {
-                    MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                FileFilters = NAVObjectExtensions.GetFiltersFromClipboard(Clipboard.GetText());
+                ProgressText = "Succesfully obtained filters from clipboard";
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

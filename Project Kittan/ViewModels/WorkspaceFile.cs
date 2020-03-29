@@ -1,9 +1,10 @@
 ﻿using Project_Kittan.Helpers;
+using Project_Kittan.Models;
 using System.Windows.Input;
 
 namespace Project_Kittan.ViewModels
 {
-    public class WorkspaceFile : Models.File
+    public class WorkspaceFile : NAVObject
     {
         public WorkspaceFile(string path) : base(path)
         {

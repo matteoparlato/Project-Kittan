@@ -97,6 +97,7 @@
                                         <MultiBinding Converter="{StaticResource CommandParametersConverter}">
                                             <Binding ElementName="NAVVersionComboBox" Path="SelectedIndex" />
                                             <Binding ElementName="VersionTextTextBox" Path="Text" />
+                                            <Binding ElementName="CaseSensitiveInsertCheckBox" Path="IsChecked" />
                                             <Binding ElementName="DateTimeUpdateCheckBox" Path="IsChecked" />
                                         </MultiBinding>
                                     </KeyBinding.CommandParameter>
