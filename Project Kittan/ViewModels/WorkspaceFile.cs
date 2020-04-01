@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace Project_Kittan.ViewModels
 {
-    public class WorkspaceFile : NAVObject
+    public class WorkspaceFile : Models.File
     {
         public WorkspaceFile(string path) : base(path)
         {
