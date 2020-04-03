@@ -41,6 +41,8 @@ namespace Project_Kittan.Views
         {
 #if !APPX
             Process.Start("https://github.com/matteoparlato/Project-Kittan");
+#else
+            //Windows.System.Launcher.LaunchUriAsync(uri);
 #endif
         }
 
