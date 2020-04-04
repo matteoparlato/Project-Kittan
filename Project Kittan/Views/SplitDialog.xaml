@@ -15,6 +15,10 @@
     ResizeMode="NoResize"
     mc:Ignorable="d">
 
+    <Window.Resources>
+        <ResourceDictionary Source="/Project Kittan;component/Styles/Styles.xaml" />
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
