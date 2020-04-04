@@ -11,7 +11,6 @@ using Project_Kittan.Enums;
 using System.Windows;
 using System.Globalization;
 using Project_Kittan.Views;
-using Project_Kittan.ViewModels;
 
 namespace Project_Kittan.Helpers
 {
@@ -128,16 +127,8 @@ namespace Project_Kittan.Helpers
                                                             {
                                                                 Application.Current.Dispatcher.Invoke(delegate
                                                                 {
-                                                                    VersionListRequest versionListRequest = new VersionListRequest
-                                                                    {
-                                                                        VersionList = versionBuilder.ToString(),
-                                                                        MaxVersionListLenght = 80
-                                                                    };
-                                                                    VersionListRequestDialog versionListRequestDialog = new VersionListRequestDialog()
-                                                                    {
-                                                                        DataContext = versionListRequest
-                                                                    };
-                                                                    if (!(bool)versionListRequestDialog.ShowDialog())
+                                                                    RequestDialog dialog = new RequestDialog(versionBuilder.ToString(), 80);
+                                                                    if (!(bool)dialog.ShowDialog())
                                                                     {
                                                                         versionBuilder = new StringBuilder(versionList);
                                                                     }
@@ -149,11 +140,11 @@ namespace Project_Kittan.Helpers
                                                         {
                                                             if (versionBuilder.Length > 250)
                                                             {
-                                                                //RequestDialog dialog = new RequestDialog(versionBuilder.ToString(), 250);
-                                                                //if (!(bool)dialog.ShowDialog())
-                                                                //{
-                                                                //    versionBuilder = new StringBuilder(versionList);
-                                                                //}
+                                                                RequestDialog dialog = new RequestDialog(versionBuilder.ToString(), 250);
+                                                                if (!(bool)dialog.ShowDialog())
+                                                                {
+                                                                    versionBuilder = new StringBuilder(versionList);
+                                                                }
                                                             }
                                                             break;
                                                         }
