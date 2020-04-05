@@ -5,6 +5,9 @@ using System.Windows;
 
 namespace Project_Kittan.Views
 {
+    /// <summary>
+    /// RequestDialog class
+    /// </summary>
     public partial class RequestDialog : Window, INotifyPropertyChanged
     {
         private string _versionList;

@@ -29,7 +29,7 @@ namespace Project_Kittan.Models
         }
 
         /// <summary>
-        /// Constructor which initializes a ObjectElements object with passed information.
+        /// Constructor which initializes a NAVObject object with passed information.
         /// </summary>
         /// <param name="type">The type of the object</param>
         /// <param name="id">The ID of the object</param>
@@ -42,6 +42,11 @@ namespace Project_Kittan.Models
             ObjectName = objectName;
         }
 
+        /// <summary>
+        /// Constructor which initializes a NAVObject object with passed information.
+        /// </summary>
+        /// <param name="type">The type of the object</param>
+        /// <param name="id">The ID of the object</param>
         public NAVObject(NAVObjectType type, string id) : base("")
         {
             Type = type;

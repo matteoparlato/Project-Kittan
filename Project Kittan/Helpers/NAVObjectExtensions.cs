@@ -367,6 +367,31 @@ namespace Project_Kittan.Helpers
         }
 
         /// <summary>
+        /// Method which composes NAV object name given the words of the first line of a NAV object.
+        /// </summary>
+        /// <param name="words">The words of the first line of the object</param>
+        /// <returns>The name of the object</returns>
+        private static string GetObjectNameFromFirstLine(string[] words)
+        {
+            string objectName = "";
+            for (int i = 3; i < words.Length; i++)
+            {
+                objectName += words[i] + ' ';
+            }
+            return objectName.Trim();
+        }
+
+        /// <summary>
+        /// Method which parses the NAV object type from the string.
+        /// </summary>
+        /// <param name="type">The type of the object</param>
+        /// <returns>The Enum type of the object</returns>
+        public static NAVObjectType GetObjectTypeFromString(string type)
+        {
+            return (NAVObjectType)Enum.Parse(typeof(NAVObjectType), type, true);
+        }
+
+        /// <summary>
         /// Method which splits and stores a text file containing multiple NAV objects into single NAV object text files.
         /// </summary>
         /// <param name="filePath">The path of the file to split</param>
@@ -435,30 +460,10 @@ namespace Project_Kittan.Helpers
         }
 
         /// <summary>
-        /// Method which composes NAV object name given the words of the first line of a NAV object file.
-        /// </summary>
-        /// <param name="words">The words of the first line of the file</param>
-        /// <returns>The name of the object</returns>
-        private static string GetObjectNameFromFirstLine(string[] words)
-        {
-            string objectName = "";
-            for (int i = 3; i < words.Length; i++)
-            {
-                objectName += words[i] + ' ';
-            }
-            return objectName.Trim();
-        }
-
-        public static NAVObjectType GetObjectTypeFromString(string type)
-        {
-            return (NAVObjectType)Enum.Parse(typeof(NAVObjectType), type, true);
-        }
-
-        /// <summary>
         /// Method which return an array containing splitted NAV objects.
         /// </summary>
         /// <param name="lines">The string containing multiple objects</param>
-        /// <returns>The array containig splitted objects</returns>
+        /// <returns>The array containing splitted objects</returns>
         public static IEnumerable<string> Split(string lines)
         {
             string[] splittedParts = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Compiled).Skip(1).ToArray();
@@ -470,11 +475,12 @@ namespace Project_Kittan.Helpers
         }
 
         /// <summary>
-        /// 
+        /// Method which searches for NAV object IDs in passed string in order to compose
+        /// object type filters.
         /// </summary>
-        /// <param name="lines"></param>
-        /// <returns></returns>
-        public static Filters GetFiltersFromClipboard(string lines)
+        /// <param name="lines">The string containing object IDs</param>
+        /// <returns>The filters</returns>
+        public static Filters GetFiltersFromString(string lines)
         {
             List<NAVObject> navObjects = new List<NAVObject>();
             
@@ -496,16 +502,16 @@ namespace Project_Kittan.Helpers
                 }
             }
 
-            return GetFilters(navObjects);
+            return GetFiltersFromNAVObjects(navObjects);
         }
 
         /// <summary>
-        /// 
+        /// Method which composes object type filters from passed NAV object files.
         /// </summary>
-        /// <param name="files"></param>
-        /// <param name="progress"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+        /// <param name="files">The collection of files to read</param>
+        /// <param name="progress">The progress of the operation</param>
+        /// <param name="token">The cancellation token</param>
+        /// <returns>The filters</returns>
         public static Filters GetFiltersFromFiles(Models.File[] files, IProgress<KeyValuePair<double, string>> progress, CancellationToken token)
         {
             List<NAVObject> navObjects = new List<NAVObject>();
@@ -515,15 +521,15 @@ namespace Project_Kittan.Helpers
                 navObjects.Add(navObject);
             }
 
-            return GetFilters(navObjects);
+            return GetFiltersFromNAVObjects(navObjects);
         }
 
         /// <summary>
-        /// 
+        /// Method which composes object type filters from passed NAV object files.
         /// </summary>
-        /// <param name="navObjects"></param>
-        /// <returns></returns>
-        public static Filters GetFilters(List<NAVObject> navObjects)
+        /// <param name="navObjects">The collection of NAV objects</param>
+        /// <returns>The filters</returns>
+        public static Filters GetFiltersFromNAVObjects(List<NAVObject> navObjects)
         {
             Filters filters = new Filters
             {
@@ -541,6 +547,12 @@ namespace Project_Kittan.Helpers
             return filters;
         }
 
+        /// <summary>
+        /// Method which checks if the version list value is valid.
+        /// </summary>
+        /// <param name="versionList">The version list</param>
+        /// <param name="maxLength">The maximum length of the version list</param>
+        /// <returns>The validity of the version list</returns>
         public static bool IsVersionListValid(string versionList, int maxLength)
         {
             return !string.IsNullOrWhiteSpace(versionList) && versionList.Length <= maxLength;

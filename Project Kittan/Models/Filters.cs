@@ -2,6 +2,9 @@
 
 namespace Project_Kittan.Models
 {
+    /// <summary>
+    /// Filters class
+    /// </summary>
     public class Filters : Observable
     {
         private string _table;
@@ -67,6 +70,9 @@ namespace Project_Kittan.Models
             set => Set(ref _menuSuite, value);
         }
 
+        /// <summary>
+        /// Parameterless constructor of Filters class.
+        /// </summary>
         public Filters()
         {
             Table = "";

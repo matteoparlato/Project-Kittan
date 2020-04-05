@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Media;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -51,15 +52,14 @@ namespace Project_Kittan.Views
 		public SplitDialog(string filePath)
 		{
 			InitializeComponent();
+            DataContext = this;
 
             _filePath = filePath;
-
-            DataContext = this;
 		}
 
         /// <summary>
         /// Method invoked the window is laid out, rendered, and ready for interaction.
-        /// Starts the file splitting.
+        /// Starts file splitting.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

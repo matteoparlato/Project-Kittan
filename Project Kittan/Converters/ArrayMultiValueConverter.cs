@@ -4,7 +4,10 @@ using System.Windows.Data;
 
 namespace Project_Kittan.Converters
 {
-    public class ArrayMultiValueConverter : IMultiValueConverter
+	/// <summary>
+	/// ArrayMultiValueConverter class
+	/// </summary>
+	public class ArrayMultiValueConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{

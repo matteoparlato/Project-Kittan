@@ -5,6 +5,9 @@ using System.Windows.Data;
 
 namespace Project_Kittan.Converters
 {
+    /// <summary>
+    /// StringToVisibilityConverter class
+    /// </summary>
     public class StringToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

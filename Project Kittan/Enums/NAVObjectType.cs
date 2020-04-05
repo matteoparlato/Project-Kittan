@@ -1,5 +1,8 @@
 ﻿namespace Project_Kittan.Enums
 {
+    /// <summary>
+    /// NAVObjectType enum
+    /// </summary>
     public enum NAVObjectType
     {
         Table = 1,

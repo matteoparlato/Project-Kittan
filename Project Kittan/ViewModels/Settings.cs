@@ -9,9 +9,12 @@ using System.Windows.Input;
 
 namespace Project_Kittan.ViewModels
 {
+    /// <summary>
+    /// Settings class
+    /// </summary>
     public class Settings : Observable
     {
-        public List<string> Encodings { get; set; } = new List<string>();
+        public List<string> Encodings { get; set; }
 
         private int _customEncoding;
         public int CustomEncoding
@@ -20,17 +23,11 @@ namespace Project_Kittan.ViewModels
             set => Set(ref _customEncoding, value);
         }
 
-        public List<string> Locales { get; set; } = new List<string>();
+        public List<string> Locales { get; set; }
 
-        public string CurrentLocale
-        {
-            get => Thread.CurrentThread.CurrentCulture.Name;
-        }
+        public string CurrentLocale => Thread.CurrentThread.CurrentCulture.Name;
 
-        public string CurrentLocaleDateFormat
-        {
-            get => Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
-        }
+        public string CurrentLocaleDateFormat => Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
 
         private int _customLocale;
         public int CustomLocale
@@ -41,10 +38,7 @@ namespace Project_Kittan.ViewModels
 
         public CultureInfo CustomLocaleCulture { get; set; }
 
-        public string AppVersion
-        {
-            get => Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        }
+        public string AppVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public ICommand EncodingSettingsCommand { get; set; }
         public ICommand LocaleSettingsCommand { get; set; }

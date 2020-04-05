@@ -111,7 +111,6 @@
     <Compile Include="Helpers\NAVObjectExtensions.cs" />
     <Compile Include="Helpers\Observable.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
-    <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Helpers\UpdateExtensions.cs" />
     <Compile Include="Models\File.cs" />

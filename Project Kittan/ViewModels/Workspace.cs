@@ -14,10 +14,16 @@ using System.Windows.Input;
 
 namespace Project_Kittan.ViewModels
 {
+    /// <summary>
+    /// Workspace class
+    /// </summary>
     public class Workspace : Observable
     {
-        public ObservableCollection<WorkspaceFile> WorkspaceFiles { get; set; }
+        private Task _runningTask;
+        private CancellationToken _token;
+        private CancellationTokenSource _tokenSource;
 
+        public ObservableCollection<WorkspaceFile> WorkspaceFiles { get; set; }
         public ObservableCollection<NAVObject> SearchResult { get; set; }
 
         private Filters _fileFilters;
@@ -47,7 +53,6 @@ namespace Project_Kittan.ViewModels
             get => _ready;
             set => Set(ref _ready, value);
         }
-        public ICommand RemoveFile { get; set; }
 
         private double _progressValue;
         public double ProgressValue
@@ -77,38 +82,40 @@ namespace Project_Kittan.ViewModels
             set => Set(ref _cancelableBackgroundActivity, value);
         }
 
-        public ICommand AddFilesFromExecutableFolder { get; set; }
-        public ICommand BrowseWorkspaceFolder { get; set; }
-        public ICommand ClearWorkspace { get; set; }
-        public ICommand OpenFile { get; set; }
-        public ICommand OpenFileLocation { get; set; }
-        public ICommand DropFile { get; set; }
-        public ICommand SearchOccurences { get; set; }
-        public ICommand AddTag { get; set; }
-        public ICommand RemoveTag { get; set; }
-        public ICommand ThrowCancellation { get; set; }
-        public ICommand OpenSettings { get; set; }
-        public ICommand GetFiltersFromFiles { get; set; }
-        public ICommand GetFiltersFromClipboard { get; set; }
-        public ICommand GetFiltersFromOccurences { get; set; }
+        public ICommand AddFilesFromExecutableFolderCommand { get; set; }
+        public ICommand AddFilesFromFolderCommand { get; set; }
+        public ICommand AddTagCommand { get; set; }
+        public ICommand ClearWorkspaceCommand { get; set; }
+        public ICommand DropFileCommand { get; set; }
+        public ICommand GetFiltersFromFilesCommand { get; set; }
+        public ICommand GetFiltersFromOccurrencesCommand { get; set; }
+        public ICommand GetFiltersFromStringCommand { get; set; }
+        public ICommand OpenFileCommand { get; set; }
+        public ICommand OpenFileLocationCommand { get; set; }
+        public ICommand OpenSettingsCommand { get; set; }
+        public ICommand RemoveFileCommand { get; set; }
+        public ICommand RemoveTagCommand { get; set; }
+        public ICommand SearchOccurrencesCommand { get; set; }
+        public ICommand ThrowCancellationCommand { get; set; }
 
-    public Workspace()
+        public Workspace()
         {
-            RemoveFile = new RelayCommand<object>(RemoveFile_Action, new Func<object, bool>(Command_CanExecute));
-            AddFilesFromExecutableFolder = new RelayCommand<object>(AddFilesFromExecutableFolder_Action, new Func<object, bool>(Command_CanExecute));
-            BrowseWorkspaceFolder = new RelayCommand<object>(BrowseWorkspaceFolder_Action, new Func<object, bool>(Command_CanExecute));
-            ClearWorkspace = new RelayCommand<object>(ClearWorkspace_Action, new Func<object, bool>(Command_CanExecute));
-            OpenFile = new RelayCommand<object>(OpenFile_Action, new Func<object, bool>(Command_CanExecute));
-            OpenFileLocation = new RelayCommand<object>(OpenFileLocation_Action, new Func<object, bool>(Command_CanExecute));
-            DropFile = new RelayCommand<object>(DropFile_Action, new Func<object, bool>(Command_CanExecute));
-            RemoveTag = new RelayCommand<object>(RemoveTag_Action, new Func<object, bool>(Command_CanExecute));
-            SearchOccurences = new RelayCommand<object>(SearchOccurences_Action, new Func<object, bool>(Command_CanExecute));
-            AddTag = new RelayCommand<object>(AddTag_Action, new Func<object, bool>(Command_CanExecute));
-            ThrowCancellation = new RelayCommand<object>(Command_ThrowCancellation);
-            OpenSettings = new RelayCommand<object>(OpenSettings_Action, new Func<object, bool>(Command_CanExecute));
-            GetFiltersFromFiles = new RelayCommand<object>(GetFiltersFromFiles_Action, new Func<object, bool>(Command_CanExecute));
-            GetFiltersFromClipboard = new RelayCommand<object>(GetFiltersFromClipboard_Action, new Func<object, bool>(Command_CanExecute));
-            GetFiltersFromOccurences = new RelayCommand<object>(GetFiltersFromOccurences_Action, new Func<object, bool>(Command_CanExecute));
+            AddFilesFromExecutableFolderCommand = new RelayCommand<object>(AddFilesFromExecutableFolder_Action, new Func<object, bool>(Command_CanExecute));
+            AddFilesFromFolderCommand = new RelayCommand<object>(AddFilesFromFolder_Action, new Func<object, bool>(Command_CanExecute));
+            AddTagCommand = new RelayCommand<object>(AddTag_Action, new Func<object, bool>(Command_CanExecute));
+            ClearWorkspaceCommand = new RelayCommand<object>(ClearWorkspace_Action, new Func<object, bool>(Command_CanExecute));
+            DropFileCommand = new RelayCommand<object>(DropFile_Action, new Func<object, bool>(Command_CanExecute));
+            GetFiltersFromFilesCommand = new RelayCommand<object>(GetFiltersFromFiles_Action, new Func<object, bool>(Command_CanExecute));
+            GetFiltersFromStringCommand = new RelayCommand<object>(GetFiltersFromString_Action, new Func<object, bool>(Command_CanExecute));
+            GetFiltersFromOccurrencesCommand = new RelayCommand<object>(GetFiltersFromOccurences_Action, new Func<object, bool>(Command_CanExecute));            
+            OpenFileCommand = new RelayCommand<object>(OpenFile_Action, new Func<object, bool>(Command_CanExecute));
+            OpenFileLocationCommand = new RelayCommand<object>(OpenFileLocation_Action, new Func<object, bool>(Command_CanExecute));
+            OpenSettingsCommand = new RelayCommand<object>(OpenSettings_Action, new Func<object, bool>(Command_CanExecute));
+            RemoveFileCommand = new RelayCommand<object>(RemoveFile_Action, new Func<object, bool>(Command_CanExecute));
+            RemoveTagCommand = new RelayCommand<object>(RemoveTag_Action, new Func<object, bool>(Command_CanExecute));
+            SearchOccurrencesCommand = new RelayCommand<object>(SearchOccurrences_Action, new Func<object, bool>(Command_CanExecute));            
+            ThrowCancellationCommand = new RelayCommand<object>(ThrowCancellation_Action);
+
 
             WorkspaceFiles = new ObservableCollection<WorkspaceFile>();
             SearchResult = new ObservableCollection<NAVObject>();
@@ -117,31 +124,114 @@ namespace Project_Kittan.ViewModels
             WorkspaceFiles.CollectionChanged += Files_CollectionChanged;
         }
 
-        private void GetFiltersFromClipboard_Action(object obj)
+        public bool Command_CanExecute(object obj)
         {
-            try
+            if (_runningTask == null) return true;
+
+            return !(_runningTask.Status == TaskStatus.Running);
+        }
+
+        private void AddFilesFromExecutableFolder_Action(object obj)
+        {
+            string executablePath = Process.GetCurrentProcess().MainModule.FileName;
+            executablePath = executablePath.Substring(0, executablePath.Length - System.IO.Path.GetFileName(executablePath).Length);
+
+            OpenFolder(executablePath);
+        }
+
+        private void AddFilesFromFolder_Action(object obj)
+        {
+            using (System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
-                FileFilters = NAVObjectExtensions.GetFiltersFromClipboard(Clipboard.GetText());
-                ProgressText = "Succesfully obtained filters from clipboard";
-            }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+
+                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+                {
+                    OpenFolder(dialog.SelectedPath);
+                }
             }
         }
 
-        private void GetFiltersFromOccurences_Action(object obj)
+        private void AddTag_Action(object obj)
         {
-            if (!(SearchResult.Count == 0))
+            var parameters = (object[])obj;
+            string tag = (string)parameters[1];
+
+            IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
             {
-                try
+                ProgressValue = status.Key;
+                ProgressText = status.Value;
+            });
+
+            SearchResult.Clear();
+            _runningTask = Task.Run(() =>
+            {
+                BackgroundActivity = true;
+
+                NAVObjectExtensions.AddTag(WorkspaceFiles.ToArray(), (int)parameters[0], (string)parameters[1], (bool)parameters[2], (bool)parameters[3], progress);
+
+                progress.Report(new KeyValuePair<double, string>(0, string.Format("Tag {0} added to the version list of {1} files", (string)parameters[1], WorkspaceFiles.Count)));
+                BackgroundActivity = false;
+            });
+        }
+
+        private void OpenFolder(string path)
+        {
+            WorkspaceFiles.Clear();
+            foreach (string filePath in GetFilesFromDirectory(path))
+            {
+                WorkspaceFiles.Add(new WorkspaceFile(filePath));
+            }
+
+            if (WorkspaceFiles.Count == 0)
+            {
+                if (MessageBox.Show("No file found. Do you want to select another folder?", Properties.Resources.AppName, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
-                    FileFilters = NAVObjectExtensions.GetFilters(SearchResult.ToList());
-                    ProgressText = "Succesfully obtained filters from occurences";
+                    return;
                 }
-                catch (ArgumentException ex)
+                else
                 {
-                    MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AddFilesFromFolder_Action(null);
+                }
+            }
+
+            Path = path;
+        }
+
+        private List<string> GetFilesFromDirectory(string Path)
+        {
+            List<string> files = new List<string>();
+            try
+            {
+                foreach (string f in Directory.GetFiles(Path).Where(i => i.EndsWith(".txt")))
+                {
+                    files.Add(f);
+                }
+                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.EndsWith(".hg") && !i.EndsWith(".git")))
+                {
+                    files.AddRange(GetFilesFromDirectory(d));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return files;
+        }
+
+        private void ClearWorkspace_Action(object obj) => WorkspaceFiles.Clear();
+
+        public void DropFile_Action(object obj)
+        {
+            DragEventArgs args = (DragEventArgs)obj;
+            if (args.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])args.Data.GetData(DataFormats.FileDrop);
+                files = files.Where(i => i.EndsWith(".txt")).ToArray();
+                foreach (string file in files)
+                {
+                    WorkspaceFiles.Add(new WorkspaceFile(file));
                 }
             }
         }
@@ -176,15 +266,38 @@ namespace Project_Kittan.ViewModels
 
                 FileFilters = NAVObjectExtensions.GetFiltersFromFiles(WorkspaceFiles.ToArray(), progress, _token);
 
-                progress.Report(new KeyValuePair<double, string>(100, string.Format("Succesfully obtained filters from loaded files", SearchResult.Count, WorkspaceFiles.Count)));
+                progress.Report(new KeyValuePair<double, string>(100, string.Format("Successfully obtained filters from loaded files", SearchResult.Count, WorkspaceFiles.Count)));
                 BackgroundActivity = CancelableBackgroundActivity = false;
             }, _token);
         }
 
-        public void RemoveFile_Action(object obj)
+        private void GetFiltersFromOccurences_Action(object obj)
         {
-            WorkspaceFiles.Remove(SelectedWorkspaceFile);
-            // TODO: Filters.Remove(SelectedWorkspaceFile);
+            if (!(SearchResult.Count == 0))
+            {
+                try
+                {
+                    FileFilters = NAVObjectExtensions.GetFiltersFromNAVObjects(SearchResult.ToList());
+                    ProgressText = "Successfully obtained filters from concurrences";
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+        }
+
+        private void GetFiltersFromString_Action(object obj)
+        {
+            try
+            {
+                FileFilters = NAVObjectExtensions.GetFiltersFromString(Clipboard.GetText());
+                ProgressText = "Successfully obtained filters from clipboard";
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         public void OpenFile_Action(object obj)
@@ -201,115 +314,37 @@ namespace Project_Kittan.ViewModels
 #endif
         }
 
-        public void DropFile_Action(object obj)
+        private void OpenSettings_Action(object obj) => new SettingsWindow().ShowDialog();
+
+        public void RemoveFile_Action(object obj) => WorkspaceFiles.Remove(SelectedWorkspaceFile);
+
+        private void RemoveTag_Action(object obj)
         {
-            DragEventArgs args = (DragEventArgs)obj;
-            if (args.Data.GetDataPresent(DataFormats.FileDrop))
+            var parameters = (object[])obj;
+            string tag = (string)parameters[1];
+
+            if (!string.IsNullOrWhiteSpace(tag))
             {
-                string[] files = (string[])args.Data.GetData(DataFormats.FileDrop);
-                files = files.Where(i => i.EndsWith(".txt")).ToArray();
-                foreach (string file in files)
+                IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
                 {
-                    WorkspaceFiles.Add(new WorkspaceFile(file));
-                }
-            }
-        }
+                    ProgressValue = status.Key;
+                    ProgressText = status.Value;
+                });
 
-        /// <summary>
-        /// Method invoked when the user clicks on Use current folder button.
-        /// Set current Project Kittan.exe directory as working directory.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AddFilesFromExecutableFolder_Action(object obj)
-        {
-            string executablePath = Process.GetCurrentProcess().MainModule.FileName;
-            executablePath = executablePath.Substring(0, executablePath.Length - System.IO.Path.GetFileName(executablePath).Length);
-
-            OpenFolder(executablePath);
-        }
-
-        private void OpenFolder(string path)
-        {
-            WorkspaceFiles.Clear();
-            foreach(string filePath in GetFilesFromDirectory(path))
-            {
-                WorkspaceFiles.Add(new WorkspaceFile(filePath));
-            }
-
-            if (WorkspaceFiles.Count == 0)
-            {
-                if (MessageBox.Show("No file found. Do you want to select another folder?", Properties.Resources.AppName, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                SearchResult.Clear();
+                _runningTask = Task.Run(() =>
                 {
-                    return;
-                }
-                else
-                {
-                    BrowseWorkspaceFolder_Action(null);
-                }
-            }
+                    BackgroundActivity = true;
 
-            Path = path;
-        }
+                    NAVObjectExtensions.RemoveTag(WorkspaceFiles.ToArray(), tag, (bool)parameters[0], progress);
 
-        /// <summary>
-        /// Method invoked when the user clicks on Browse Folder button.
-        /// Opens OpenFolderDialog for choosing the working directory.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BrowseWorkspaceFolder_Action(object obj)
-        {
-            using (System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog())
-            {
-                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-
-                if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
-                {
-                    OpenFolder(dialog.SelectedPath);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Method invoked when the user clicks on Clear textblock.
-        /// Clear Files collection and FoundFilesListBox.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ClearWorkspace_Action(object obj)
-        {
-            WorkspaceFiles.Clear();
-        }
-
-        private Task _runningTask;
-        private CancellationToken _token;
-        private CancellationTokenSource _tokenSource;
-
-        public bool Command_CanExecute(object obj)
-        {
-            if (_runningTask == null) return true;
-            
-            return !(_runningTask.Status == TaskStatus.Running);
-        }
-
-        public void Command_ThrowCancellation(object obj)
-        {
-            if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
-            {
-                if ((_token.IsCancellationRequested == false) && (_runningTask.Status != TaskStatus.Canceled))
-                {
+                    progress.Report(new KeyValuePair<double, string>(100, string.Format("Tag {0} removed from the version list of {1} files", (string)parameters[1], WorkspaceFiles.Count)));
                     BackgroundActivity = false;
-                    _tokenSource.Cancel();
-                }
+                });
             }
         }
 
-        /// <summary>
-        /// Method invoked when the user clicks on Search for occurrences button.
-        /// Start occurrences search on all text files in working directory.
-        /// </summary>
-        private void SearchOccurences_Action(object obj)
+        private void SearchOccurrences_Action(object obj)
         {
             string keyword = obj as string;
 
@@ -342,97 +377,16 @@ namespace Project_Kittan.ViewModels
             }
         }
 
-        /// <summary>
-        /// Method invoked when the user clicks on Update OBJECT-PROPERTIES button.
-        /// Start OBJECT-PROPERTIES update on all text files in working directory.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AddTag_Action(object obj)
+        public void ThrowCancellation_Action(object obj)
         {
-            var parameters = (object[])obj;
-            string tag = (string)parameters[1];
-            
-            IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
+            if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
             {
-                ProgressValue = status.Key;
-                ProgressText = status.Value;
-            });
-
-            SearchResult.Clear();
-            _runningTask = Task.Run(() =>
-            {
-                BackgroundActivity = true;
-
-                NAVObjectExtensions.AddTag(WorkspaceFiles.ToArray(), (int)parameters[0], (string)parameters[1], (bool)parameters[2], (bool)parameters[3], progress);
-
-                progress.Report(new KeyValuePair<double, string>(0, string.Format("Tag {0} added to the version list of {1} files", (string)parameters[1], WorkspaceFiles.Count)));
-                BackgroundActivity = false;
-            });
-        }
-
-        /// <summary>
-        /// Method invoked when the user clicks on Update Remove tag button.
-        /// Start tag removal from all text files in working directory.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RemoveTag_Action(object obj)
-        {
-            var parameters = (object[])obj;
-            string tag = (string)parameters[1];
-
-            if (!string.IsNullOrWhiteSpace(tag))
-            {
-                IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
+                if ((_token.IsCancellationRequested == false) && (_runningTask.Status != TaskStatus.Canceled))
                 {
-                    ProgressValue = status.Key;
-                    ProgressText = status.Value;
-                });
-
-                SearchResult.Clear();
-                _runningTask = Task.Run(() =>
-                {
-                    BackgroundActivity = true;
-
-                    NAVObjectExtensions.RemoveTag(WorkspaceFiles.ToArray(), tag, (bool)parameters[0], progress);
-
-                    progress.Report(new KeyValuePair<double, string>(100, string.Format("Tag {0} removed from the version list of {1} files", (string)parameters[1], WorkspaceFiles.Count)));
                     BackgroundActivity = false;
-                });
-            }
-        }
-
-        private void OpenSettings_Action(object obj)
-        {
-            new SettingsWindow().ShowDialog();
-        }
-
-        /// <summary>
-        /// Method which finds all *.txt files in the specified folder and relative subfolders.
-        /// </summary>
-        /// <param name="Path">The path of the directory</param>
-        /// <returns>The list containing all the paths of the text files found in working directory</returns>
-        private List<string> GetFilesFromDirectory(string Path)
-        {
-            List<string> files = new List<string>();
-            try
-            {
-                foreach (string f in Directory.GetFiles(Path).Where(i => i.EndsWith(".txt")))
-                {
-                    files.Add(f);
-                }
-                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.EndsWith(".hg") && !i.EndsWith(".git")))
-                {
-                    files.AddRange(GetFilesFromDirectory(d));
+                    _tokenSource.Cancel();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Project Kittan", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            return files;
         }
     }
 }

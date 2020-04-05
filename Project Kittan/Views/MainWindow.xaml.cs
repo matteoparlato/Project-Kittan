@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,19 +23,26 @@ namespace Project_Kittan.Views
 
         /// <summary>
         /// Method invoked the window is laid out, rendered, and ready for interaction.
-        /// Verify if there are new updates available for Project Kittan.
+        /// Verify if there are new updates available for Project Kittan on GitHub.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
 #if !APPX
-            await UpdateExtensions.Check();
+            if (await UpdateExtensions.Check())
+            {
+                if (MessageBox.Show("There's a new version of Project Kittan available on GitHub. Do you want to download it?", Properties.Resources.AppName, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                {
+                    Process.Start("https://github.com/matteoparlato/Project-Kittan/releases");
+                }
+            }
 #endif
         }
 
         /// <summary>
-        /// Method invoked when the user clicks on About menu item.
+        /// Method invoked when the user clicks on GitHub button.
+        /// Navigates to Project Kittan GitHub page.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -42,14 +50,12 @@ namespace Project_Kittan.Views
         {
 #if !APPX
             Process.Start("https://github.com/matteoparlato/Project-Kittan");
-#else
-            //Windows.System.Launcher.LaunchUriAsync(uri);
 #endif
         }
 
         /// <summary>
-        /// Method invoked when the user drag and drop a file on left pane.
-        /// Add dropped *.txt files to Files collection.
+        /// Method invoked when the user drag and drop a file on the left pane.
+        /// Adds dropped *.txt files to the Workspace.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -62,6 +68,12 @@ namespace Project_Kittan.Views
             }
         }
 
+        /// <summary>
+        /// Method invoked when the Filters controls get the focus.
+        /// Copies the text of the selected textbox in Filters.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FilterTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = ((TextBox)sender);
@@ -76,7 +88,7 @@ namespace Project_Kittan.Views
                 }
                 catch (COMException ex)
                 {
-                    var result = System.Windows.Forms.MessageBox.Show("An error occured during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
+                    var result = System.Windows.Forms.MessageBox.Show("An error occurred during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
                     if (result == System.Windows.Forms.DialogResult.Retry)
                     {
                         textBox.SelectAll();
