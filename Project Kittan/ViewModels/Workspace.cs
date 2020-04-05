@@ -1,9 +1,11 @@
 ﻿using Project_Kittan.Helpers;
 using Project_Kittan.Models;
+using Project_Kittan.Properties;
 using Project_Kittan.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -100,20 +102,20 @@ namespace Project_Kittan.ViewModels
 
         public Workspace()
         {
-            AddFilesFromExecutableFolderCommand = new RelayCommand<object>(AddFilesFromExecutableFolder_Action, new Func<object, bool>(Command_CanExecute));
-            AddFilesFromFolderCommand = new RelayCommand<object>(AddFilesFromFolder_Action, new Func<object, bool>(Command_CanExecute));
-            AddTagCommand = new RelayCommand<object>(AddTag_Action, new Func<object, bool>(Command_CanExecute));
-            ClearWorkspaceCommand = new RelayCommand<object>(ClearWorkspace_Action, new Func<object, bool>(Command_CanExecute));
-            DropFileCommand = new RelayCommand<object>(DropFile_Action, new Func<object, bool>(Command_CanExecute));
-            GetFiltersFromFilesCommand = new RelayCommand<object>(GetFiltersFromFiles_Action, new Func<object, bool>(Command_CanExecute));
-            GetFiltersFromStringCommand = new RelayCommand<object>(GetFiltersFromString_Action, new Func<object, bool>(Command_CanExecute));
-            GetFiltersFromOccurrencesCommand = new RelayCommand<object>(GetFiltersFromOccurences_Action, new Func<object, bool>(Command_CanExecute));            
-            OpenFileCommand = new RelayCommand<object>(OpenFile_Action, new Func<object, bool>(Command_CanExecute));
-            OpenFileLocationCommand = new RelayCommand<object>(OpenFileLocation_Action, new Func<object, bool>(Command_CanExecute));
-            OpenSettingsCommand = new RelayCommand<object>(OpenSettings_Action, new Func<object, bool>(Command_CanExecute));
-            RemoveFileCommand = new RelayCommand<object>(RemoveFile_Action, new Func<object, bool>(Command_CanExecute));
-            RemoveTagCommand = new RelayCommand<object>(RemoveTag_Action, new Func<object, bool>(Command_CanExecute));
-            SearchOccurrencesCommand = new RelayCommand<object>(SearchOccurrences_Action, new Func<object, bool>(Command_CanExecute));            
+            AddFilesFromExecutableFolderCommand = new RelayCommand<object>(AddFilesFromExecutableFolder_Action, Command_CanExecute);
+            AddFilesFromFolderCommand = new RelayCommand<object>(AddFilesFromFolder_Action, Command_CanExecute);
+            AddTagCommand = new RelayCommand<object>(AddTag_Action, Command_CanExecute);
+            ClearWorkspaceCommand = new RelayCommand<object>(ClearWorkspace_Action, Command_CanExecute);
+            DropFileCommand = new RelayCommand<object>(DropFile_Action, Command_CanExecute);
+            GetFiltersFromFilesCommand = new RelayCommand<object>(GetFiltersFromFiles_Action, Command_CanExecute);
+            GetFiltersFromStringCommand = new RelayCommand<object>(GetFiltersFromString_Action, Command_CanExecute);
+            GetFiltersFromOccurrencesCommand = new RelayCommand<object>(GetFiltersFromOccurrences_Action, Command_CanExecute);            
+            OpenFileCommand = new RelayCommand<object>(OpenFile_Action, Command_CanExecute);
+            OpenFileLocationCommand = new RelayCommand<object>(OpenFileLocation_Action, Command_CanExecute);
+            OpenSettingsCommand = new RelayCommand<object>(OpenSettings_Action, Command_CanExecute);
+            RemoveFileCommand = new RelayCommand<object>(RemoveFile_Action, Command_CanExecute);
+            RemoveTagCommand = new RelayCommand<object>(RemoveTag_Action, Command_CanExecute);
+            SearchOccurrencesCommand = new RelayCommand<object>(SearchOccurrences_Action, Command_CanExecute);            
             ThrowCancellationCommand = new RelayCommand<object>(ThrowCancellation_Action);
 
 
@@ -128,13 +130,13 @@ namespace Project_Kittan.ViewModels
         {
             if (_runningTask == null) return true;
 
-            return !(_runningTask.Status == TaskStatus.Running);
+            return _runningTask.Status != TaskStatus.Running;
         }
 
         private void AddFilesFromExecutableFolder_Action(object obj)
         {
-            string executablePath = Process.GetCurrentProcess().MainModule.FileName;
-            executablePath = executablePath.Substring(0, executablePath.Length - System.IO.Path.GetFileName(executablePath).Length);
+            string executablePath = Process.GetCurrentProcess().MainModule?.FileName;
+            executablePath = executablePath?.Substring(0, executablePath.Length - System.IO.Path.GetFileName(executablePath).Length);
 
             OpenFolder(executablePath);
         }
@@ -185,25 +187,23 @@ namespace Project_Kittan.ViewModels
 
             if (WorkspaceFiles.Count == 0)
             {
-                if (MessageBox.Show("No file found. Do you want to select another folder?", Properties.Resources.AppName, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                if (System.Windows.MessageBox.Show("No file found. Do you want to select another folder?", Resources.AppName, MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     return;
                 }
-                else
-                {
-                    AddFilesFromFolder_Action(null);
-                }
+
+                AddFilesFromFolder_Action(null);
             }
 
             Path = path;
         }
 
-        private List<string> GetFilesFromDirectory(string Path)
+        private List<string> GetFilesFromDirectory(string path)
         {
             List<string> files = new List<string>();
             try
             {
-                foreach (string f in Directory.GetFiles(Path).Where(i => i.EndsWith(".txt")))
+                foreach (string f in Directory.GetFiles(path).Where(i => i.EndsWith(".txt")))
                 {
                     files.Add(f);
                 }
@@ -214,7 +214,7 @@ namespace Project_Kittan.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return files;
@@ -236,7 +236,7 @@ namespace Project_Kittan.ViewModels
             }
         }
 
-        private void Files_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Files_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (WorkspaceFiles.Count > 0)
             {
@@ -271,9 +271,9 @@ namespace Project_Kittan.ViewModels
             }, _token);
         }
 
-        private void GetFiltersFromOccurences_Action(object obj)
+        private void GetFiltersFromOccurrences_Action(object obj)
         {
-            if (!(SearchResult.Count == 0))
+            if (SearchResult.Count != 0)
             {
                 try
                 {
@@ -282,7 +282,7 @@ namespace Project_Kittan.ViewModels
                 }
                 catch (ArgumentException ex)
                 {
-                    MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(ex.Message, Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -296,18 +296,18 @@ namespace Project_Kittan.ViewModels
             }
             catch (ArgumentException ex)
             {
-                MessageBox.Show(ex.Message, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(ex.Message, Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        public void OpenFile_Action(object obj)
+        private void OpenFile_Action(object obj)
         {
 #if !APPX
             Process.Start(SelectedWorkspaceFile.Path);
 #endif
         }
 
-        public void OpenFileLocation_Action(object obj)
+        private void OpenFileLocation_Action(object obj)
         {
 #if !APPX
             Process.Start("explorer.exe", "/select, " + SelectedWorkspaceFile.Path);
@@ -316,7 +316,7 @@ namespace Project_Kittan.ViewModels
 
         private void OpenSettings_Action(object obj) => new SettingsWindow().ShowDialog();
 
-        public void RemoveFile_Action(object obj) => WorkspaceFiles.Remove(SelectedWorkspaceFile);
+        private void RemoveFile_Action(object obj) => WorkspaceFiles.Remove(SelectedWorkspaceFile);
 
         private void RemoveTag_Action(object obj)
         {
@@ -377,9 +377,9 @@ namespace Project_Kittan.ViewModels
             }
         }
 
-        public void ThrowCancellation_Action(object obj)
+        private void ThrowCancellation_Action(object obj)
         {
-            if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
+            if (_runningTask != null && _tokenSource != null)
             {
                 if ((_token.IsCancellationRequested == false) && (_runningTask.Status != TaskStatus.Canceled))
                 {

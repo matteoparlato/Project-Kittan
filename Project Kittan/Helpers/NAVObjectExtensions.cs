@@ -19,10 +19,10 @@ namespace Project_Kittan.Helpers
     /// </summary>
     internal static class NAVObjectExtensions
     {
-        internal const string ObjectSplitterPattern = @"(OBJECT \w* \d* .*
+        private const string ObjectSplitterPattern = @"(OBJECT \w* \d* .*
 {)";
 
-        internal static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
+        private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 
         /// <summary>
         /// Method which adds a tag to the Version List of passed NAV object files.
@@ -63,7 +63,7 @@ namespace Project_Kittan.Helpers
                         lines = reader.ReadToEnd();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
+                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
                     {
                         StringBuilder builder = new StringBuilder();
                         foreach (string navObjectLines in Split(lines))
@@ -71,7 +71,7 @@ namespace Project_Kittan.Helpers
                             using (StringReader reader = new StringReader(navObjectLines))
                             {
                                 string line;
-                                while (!((line = reader.ReadLine()) == null))
+                                while ((line = reader.ReadLine()) != null)
                                 {
                                     if (line.StartsWith("  OBJECT-PROPERTIES"))
                                     {
@@ -210,7 +210,7 @@ namespace Project_Kittan.Helpers
                         lines = reader.ReadToEnd();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
+                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
                     {
                         StringBuilder builder = new StringBuilder();
                         foreach (string navObjectLines in Split(lines))
@@ -218,7 +218,7 @@ namespace Project_Kittan.Helpers
                             using (StringReader reader = new StringReader(navObjectLines))
                             {
                                 string line;
-                                while (!((line = reader.ReadLine()) == null))
+                                while ((line = reader.ReadLine()) != null)
                                 {
                                     if (line.StartsWith("    Version List="))
                                     {
@@ -233,7 +233,7 @@ namespace Project_Kittan.Helpers
                                             comparison = StringComparison.OrdinalIgnoreCase;
                                         }
                                         
-                                        if (!(Array.FindIndex(tags, item => item.Equals(tag, comparison)) == -1))
+                                        if (Array.FindIndex(tags, item => item.Equals(tag, comparison)) != -1)
                                         {
                                             tags = tags.Where(str => !str.Equals(tag, comparison)).ToArray();
                                             StringBuilder versionBuilder = new StringBuilder(string.Join(",", tags));
@@ -298,7 +298,7 @@ namespace Project_Kittan.Helpers
                         lines = reader.ReadToEnd();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
+                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
                     {
                         foreach (string navObjectLines in Split(lines))
                         {
@@ -306,9 +306,9 @@ namespace Project_Kittan.Helpers
                             {
                                 using (StringReader stringReader = new StringReader(navObjectLines))
                                 {
-                                    string[] startingLineWords = new StringReader(navObjectLines).ReadLine().Split(' '); // Get the first line of the file
+                                    string[] startingLineWords = new StringReader(navObjectLines).ReadLine()?.Split(' '); // Get the first line of the file
 
-                                    yield return new NAVObject(GetObjectTypeFromString(startingLineWords[1]), startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
+                                    yield return new NAVObject(GetObjectTypeFromString(startingLineWords?[1]), startingLineWords?[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                                 }
                             }
                         }
@@ -324,7 +324,7 @@ namespace Project_Kittan.Helpers
         /// <param name="progress">The progress of the operation</param>
         /// <param name="token">The cancellation token</param>
         /// <returns>The NAV object details</returns>
-        public static IEnumerable<NAVObject> GetObjects(Models.File[] files, IProgress<KeyValuePair<double, string>> progress, CancellationToken token)
+        private static IEnumerable<NAVObject> GetObjects(Models.File[] files, IProgress<KeyValuePair<double, string>> progress, CancellationToken token)
         {
             double progressStep = (double)100 / files.Length;
             double step = 0;
@@ -349,16 +349,15 @@ namespace Project_Kittan.Helpers
                         lines = reader.ReadToEnd();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
+                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
                     {
                         foreach (string navObjectLines in Split(lines))
                         {
                             using (StringReader stringReader = new StringReader(navObjectLines))
                             {
-                                string[] startingLineWords = new StringReader(navObjectLines).ReadLine().Split(' '); // Get the first line of the file
+                                string[] startingLineWords = new StringReader(navObjectLines).ReadLine()?.Split(' '); // Get the first line of the file
 
-
-                                yield return new NAVObject(GetObjectTypeFromString(startingLineWords[1]), startingLineWords[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
+                                yield return new NAVObject(GetObjectTypeFromString(startingLineWords?[1]), startingLineWords?[2], GetObjectNameFromFirstLine(startingLineWords), file.Path);
                             }
                         }
                     }
@@ -386,7 +385,7 @@ namespace Project_Kittan.Helpers
         /// </summary>
         /// <param name="type">The type of the object</param>
         /// <returns>The Enum type of the object</returns>
-        public static NAVObjectType GetObjectTypeFromString(string type)
+        private static NAVObjectType GetObjectTypeFromString(string type)
         {
             return (NAVObjectType)Enum.Parse(typeof(NAVObjectType), type, true);
         }
@@ -411,7 +410,7 @@ namespace Project_Kittan.Helpers
         /// <param name="progress">The progress of the operation</param>
         /// <param name="token">The cancellation token</param>
         /// <returns>The path of the destination folder</returns>
-        public static string SplitAndStore(string filePath, string destinationFolder, IProgress<KeyValuePair<bool, string>> progress, CancellationToken token)
+        private static string SplitAndStore(string filePath, string destinationFolder, IProgress<KeyValuePair<bool, string>> progress, CancellationToken token)
         {
             string folderName = Path.GetFileNameWithoutExtension(filePath) + "_" + string.Format("{0:yyyyMMdd}", DateTime.Now);
 
@@ -430,7 +429,7 @@ namespace Project_Kittan.Helpers
 
             progress.Report(new KeyValuePair<bool, string>(true, "Splitting file..."));
 
-            if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
+            if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
             {
                 Parallel.ForEach(Split(lines), navObjectLines =>
                 {
@@ -439,7 +438,7 @@ namespace Project_Kittan.Helpers
                         token.ThrowIfCancellationRequested();
                     }
 
-                    string firstLine = navObjectLines.Substring(0, navObjectLines.IndexOf(Environment.NewLine));
+                    string firstLine = navObjectLines.Substring(0, navObjectLines.IndexOf(Environment.NewLine, StringComparison.Ordinal));
                     string fileName = string.Join("_", firstLine.Trim().Split(InvalidFileNameChars)).Substring(7);
 
                     string destFolder = Path.Combine(extractionFolderPath, firstLine.Split(' ')[1]);
@@ -464,7 +463,7 @@ namespace Project_Kittan.Helpers
         /// </summary>
         /// <param name="lines">The string containing multiple objects</param>
         /// <returns>The array containing splitted objects</returns>
-        public static IEnumerable<string> Split(string lines)
+        private static IEnumerable<string> Split(string lines)
         {
             string[] splittedParts = Regex.Split(lines, ObjectSplitterPattern, RegexOptions.Compiled).Skip(1).ToArray();
 

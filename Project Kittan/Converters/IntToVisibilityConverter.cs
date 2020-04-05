@@ -12,7 +12,7 @@ namespace Project_Kittan.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (int)value == 0 ? Visibility.Collapsed : Visibility.Visible;
+            return (int?)value == 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

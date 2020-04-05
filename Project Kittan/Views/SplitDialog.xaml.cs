@@ -82,7 +82,7 @@ namespace Project_Kittan.Views
                 SystemSounds.Asterisk.Play();
 
                 CanClose = true;
-            });
+            }, _token);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -100,7 +100,7 @@ namespace Project_Kittan.Views
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
+            if (_runningTask != null && _tokenSource != null)
             {
                 if ((_token.IsCancellationRequested == false) && (_runningTask.Status != TaskStatus.Canceled))
                 {

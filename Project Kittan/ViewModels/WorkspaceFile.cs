@@ -20,7 +20,7 @@ namespace Project_Kittan.ViewModels
 
         public ICommand OpenFileCommand { get; set; }
 
-        public void OpenFile_Action(object obj)
+        private void OpenFile_Action(object obj)
         {
 #if !APPX
             Process.Start(Path);

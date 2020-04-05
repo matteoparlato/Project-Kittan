@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace Project_Kittan.Helpers
 {
-    internal class UpdateExtensions
+    /// <summary>
+    /// UpdateExtensions class
+    /// </summary>
+    internal static class UpdateExtensions
     {
         /// <summary>
         /// Method which connects to Project Kittan releases page (GitHub) and then
@@ -18,7 +21,6 @@ namespace Project_Kittan.Helpers
         {
             try
             {
-                using (HttpClient client = new HttpClient())
                 using (HttpResponseMessage response = await new HttpClient().GetAsync(new Uri("https://github.com/matteoparlato/Project-Kittan/releases")))
                 {
                     response.EnsureSuccessStatusCode();

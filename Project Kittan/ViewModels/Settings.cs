@@ -58,7 +58,7 @@ namespace Project_Kittan.ViewModels
             CustomLocaleCulture = new CultureInfo(Properties.Settings.Default.DefaultLocale, false);
         }
 
-        public void EncodingSettings_Action(object obj)
+        private void EncodingSettings_Action(object obj)
         {
             string encodingName = (string)obj;
 
@@ -68,7 +68,7 @@ namespace Project_Kittan.ViewModels
             CustomEncoding = Encodings.IndexOf(encodingName);
         }
 
-        public void LocaleSettings_Action(object obj)
+        private void LocaleSettings_Action(object obj)
         {
             string locale = (string)obj;
 
@@ -80,7 +80,7 @@ namespace Project_Kittan.ViewModels
             CustomLocaleCulture = new CultureInfo(Properties.Settings.Default.DefaultLocale, false);
         }
 
-        public void ResetSettings_Action(object obj)
+        private void ResetSettings_Action(object obj)
         {
             Properties.Settings.Default.Reset();
             System.Windows.Application.Current.Shutdown();
