@@ -10,9 +10,10 @@
     Width="430"
     Height="140"
     Closing="Window_Closing"
-    KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
+    Owner="{x:Static app:App.CurrentMainWindow}"
     ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
     <Window.Resources>
@@ -34,9 +35,8 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock x:Name="UsedEncodingTextBlock" Margin="0,2,0,0" Opacity="0.4" />
-            <Button x:Name="OpenFolderButton" Grid.Column="1" Width="80" Click="OpenFolderButton_Click" Content="Open folder" IsEnabled="{Binding Closable}" Visibility="{x:Static app:App.IsAPPXVisible}" />
-            <Button x:Name="CloseButton" Grid.Column="2" Width="80" Margin="5,0,0,0" Click="CloseButton_Click" Content="Close" IsEnabled="{Binding Closable}" />
+            <Button Grid.Column="1" Width="80" Click="Button_Click" Content="Open folder" Visibility="{x:Static app:App.IsAPPXVisible}" />
+            <Button Grid.Column="2" Width="80" Margin="5,0,0,0" Click="Button_Click_1" Content="Close" IsEnabled="{Binding Closable}" />
         </Grid>
         <ProgressBar x:Name="StatusProgressBar" Grid.Row="2" Height="3" Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" IsIndeterminate="{Binding ProgressStatus}" />
     </Grid>

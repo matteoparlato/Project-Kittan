@@ -4,12 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Media;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Shell;
 
 namespace Project_Kittan.Views
 {
@@ -30,28 +27,21 @@ namespace Project_Kittan.Views
         public string ProgressText
         {
             get => _progressText;
-            set => SetProperty(ref _progressText, value);
-        }
-
-        private TaskbarItemProgressState _taskbarItemProgressState = TaskbarItemProgressState.Indeterminate;
-        public TaskbarItemProgressState TaskbarItemProgressState
-        {
-            get => _taskbarItemProgressState;
-            set => SetProperty(ref _taskbarItemProgressState, value);
+            set => Set(ref _progressText, value);
         }
 
         private bool _progressStatus;
         public bool ProgressStatus
         {
             get => _progressStatus;
-            set => SetProperty(ref _progressStatus, value);
+            set => Set(ref _progressStatus, value);
         }
 
-        private bool _closable;
-        public bool Closable
+        private bool _canClose;
+        public bool CanClose
         {
-            get => !_closable;
-            set => SetProperty(ref _closable, value);
+            get => !_canClose;
+            set => Set(ref _canClose, value);
         }
 
         /// <summary>
@@ -64,8 +54,6 @@ namespace Project_Kittan.Views
 
             _filePath = filePath;
 
-			WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
             DataContext = this;
 		}
 
@@ -77,7 +65,6 @@ namespace Project_Kittan.Views
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            UsedEncodingTextBlock.Text = "Encoding " + Encoding.GetEncoding(Properties.Settings.Default.DefaultEncoding).BodyName + " used";
             IProgress<KeyValuePair<bool, string>> progress = new Progress<KeyValuePair<bool, string>>(status =>
             {
                 ProgressStatus = status.Key;
@@ -90,86 +77,54 @@ namespace Project_Kittan.Views
             _runningTask = Task.Run(() =>
             {
                 _filePath = NAVObjectExtensions.SplitAndStore(_filePath, progress, _token);
+
                 progress.Report(new KeyValuePair<bool, string>(false, string.Format("Files extracted in: {0}", _filePath)));
-
-                TaskbarItemProgressState = TaskbarItemProgressState.None;
-
                 SystemSounds.Asterisk.Play();
 
-                _closable = true;
+                CanClose = true;
             });
         }
 
-        /// <summary>
-        /// Method invoked when closing the window.
-        /// If _closable = true the window closes, otherwise not.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-		private void Window_Closing(object sender, CancelEventArgs e)
-		{
-            //if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
-            //{
-            //    if ((_token.IsCancellationRequested == false) && (_runningTask.Status != TaskStatus.Canceled))
-            //    {
-            //        _tokenSource.Cancel();
-            //    }
-            //}
-
-            e.Cancel = !_closable;
-		}
-
-        /// <summary>
-        /// Method invoked when the user clicks on Open Folder button.
-        /// Opens the extraction folder in Explorer.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OpenFolderButton_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
 #if !APPX
             Process.Start(_filePath);
 #endif
+            Close();
         }
 
-        /// <summary>
-        /// Method invoked when the user clicks on Close button.
-        /// Closes the current window.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
-        /// <summary>
-        /// Method invoked when the user presses a keyboard key.
-        /// If the user presses Enter close the window.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
             {
-                CloseButton_Click(null, null);
+                if ((_token.IsCancellationRequested == false) && (_runningTask.Status != TaskStatus.Canceled))
+                {
+                    _tokenSource.Cancel();
+                    CanClose = true;
+                }
             }
+
+            e.Cancel = !CanClose;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            if (Equals(storage, value))
+            {
+                return;
+            }
 
-        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
-        {
-            if (Equals(storage, value)) return false;
             storage = value;
             OnPropertyChanged(propertyName);
-            return true;
         }
+
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -403,15 +403,14 @@ namespace Project_Kittan.Helpers
                 lines = reader.ReadToEnd();
             }
 
+            progress.Report(new KeyValuePair<bool, string>(true, "Splitting file..."));
+
             if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES") != -1)
             {
                 Parallel.ForEach(Split(lines), navObjectLines =>
                 {
-                    progress.Report(new KeyValuePair<bool, string>(true, "Splitting file..."));
-
                     if (token.IsCancellationRequested)
                     {
-                        progress.Report(new KeyValuePair<bool, string>(false, "Operation aborted"));
                         token.ThrowIfCancellationRequested();
                     }
 

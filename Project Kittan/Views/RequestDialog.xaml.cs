@@ -42,7 +42,13 @@ namespace Project_Kittan.Views
             AvailableChars = maxLength - versionList.Length;
         }
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            AvailableChars = MaxLength - VersionList.Length;
+            CanSave = NAVObjectExtensions.IsVersionListValid(VersionList, MaxLength);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
 		{
             DialogResult = false;
             CanClose = true;
@@ -60,12 +66,6 @@ namespace Project_Kittan.Views
 		{
 			e.Cancel = !CanClose;
 		}
-
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            AvailableChars = MaxLength - VersionList.Length;
-            CanSave = NAVObjectExtensions.IsVersionListValid(VersionList, MaxLength);
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
