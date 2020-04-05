@@ -35,9 +35,9 @@ namespace Project_Kittan.Views
 
         private bool CanClose;
 
-		public RequestDialog(string versionList, int maxLength)
-		{
-			InitializeComponent();
+        public RequestDialog(string versionList, int maxLength)
+        {
+            InitializeComponent();
             DataContext = this;
 
             VersionList = versionList;
@@ -52,7 +52,7 @@ namespace Project_Kittan.Views
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
-		{
+        {
             DialogResult = false;
             CanClose = true;
             Close();
@@ -66,9 +66,9 @@ namespace Project_Kittan.Views
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
-		{
-			e.Cancel = !CanClose;
-		}
+        {
+            e.Cancel = !CanClose;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -83,6 +83,9 @@ namespace Project_Kittan.Views
             OnPropertyChanged(propertyName);
         }
 
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

@@ -1,16 +1,16 @@
-﻿using Project_Kittan.Models;
+﻿using Project_Kittan.Enums;
+using Project_Kittan.Models;
+using Project_Kittan.Views;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Project_Kittan.Enums;
 using System.Windows;
-using System.Globalization;
-using Project_Kittan.Views;
 
 namespace Project_Kittan.Helpers
 {
@@ -194,7 +194,10 @@ namespace Project_Kittan.Helpers
             double progressStep = (double)100 / files.Length;
             double step = 0;
 
-            if (string.IsNullOrWhiteSpace(tag)) return;
+            if (string.IsNullOrWhiteSpace(tag))
+            {
+                return;
+            }
 
             foreach (Models.File file in files)
             {
@@ -214,7 +217,7 @@ namespace Project_Kittan.Helpers
                     {
                         StringBuilder builder = new StringBuilder();
                         foreach (string navObjectLines in Split(lines))
-                        { 
+                        {
                             using (StringReader reader = new StringReader(navObjectLines))
                             {
                                 string line;
@@ -232,7 +235,7 @@ namespace Project_Kittan.Helpers
                                         {
                                             comparison = StringComparison.OrdinalIgnoreCase;
                                         }
-                                        
+
                                         if (Array.FindIndex(tags, item => item.Equals(tag, comparison)) != -1)
                                         {
                                             tags = tags.Where(str => !str.Equals(tag, comparison)).ToArray();
@@ -273,7 +276,7 @@ namespace Project_Kittan.Helpers
         /// <param name="progress">The progress of the operation</param>
         /// <param name="token">The cancellation token</param>
         /// <returns>The NAV object where an occurrence of the keyword is found</returns>
-        public static IEnumerable<NAVObject> FindWhere(Models.File[] files, string keyword, IProgress<KeyValuePair<double,string>> progress, CancellationToken token)
+        public static IEnumerable<NAVObject> FindWhere(Models.File[] files, string keyword, IProgress<KeyValuePair<double, string>> progress, CancellationToken token)
         {
             double progressStep = (double)100 / files.Length;
             double step = 0;
@@ -482,7 +485,7 @@ namespace Project_Kittan.Helpers
         public static Filters GetFiltersFromString(string lines)
         {
             List<NAVObject> navObjects = new List<NAVObject>();
-            
+
             using (StringReader reader = new StringReader(lines))
             {
                 if (reader.ReadLine().StartsWith("Type"))

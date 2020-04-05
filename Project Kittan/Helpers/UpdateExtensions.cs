@@ -39,7 +39,7 @@ namespace Project_Kittan.Helpers
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 //
             }

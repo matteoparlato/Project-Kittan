@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Project_Kittan.Helpers;
+using Project_Kittan.ViewModels;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using Project_Kittan.Helpers;
-using Project_Kittan.ViewModels;
 
 namespace Project_Kittan.Views
 {
@@ -88,7 +88,7 @@ namespace Project_Kittan.Views
                 }
                 catch (COMException ex)
                 {
-                    var result = System.Windows.Forms.MessageBox.Show("An error occurred during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
+                    System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show("An error occurred during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
                     if (result == System.Windows.Forms.DialogResult.Retry)
                     {
                         textBox.SelectAll();
@@ -96,7 +96,7 @@ namespace Project_Kittan.Views
                     }
                 }
 
-                ((Workspace)this.DataContext).ProgressText = string.Format("{0} filter copied to clipboard", textBox.Tag);
+                ((Workspace)DataContext).ProgressText = string.Format("{0} filter copied to clipboard", textBox.Tag);
             }
         }
     }

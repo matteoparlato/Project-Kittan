@@ -15,7 +15,7 @@ namespace Project_Kittan.Views
     /// SplitDialog class
     /// </summary>
     public partial class SplitDialog : Window, INotifyPropertyChanged
-	{
+    {
         private string _filePath;
 
         private Task _runningTask;
@@ -50,12 +50,12 @@ namespace Project_Kittan.Views
         /// </summary>
         /// <param name="filePath">The path of the file to split</param>
 		public SplitDialog(string filePath)
-		{
-			InitializeComponent();
+        {
+            InitializeComponent();
             DataContext = this;
 
             _filePath = filePath;
-		}
+        }
 
         /// <summary>
         /// Method invoked the window is laid out, rendered, and ready for interaction.
@@ -125,6 +125,9 @@ namespace Project_Kittan.Views
             OnPropertyChanged(propertyName);
         }
 
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

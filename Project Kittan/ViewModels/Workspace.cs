@@ -109,13 +109,13 @@ namespace Project_Kittan.ViewModels
             DropFileCommand = new RelayCommand<object>(DropFile_Action, Command_CanExecute);
             GetFiltersFromFilesCommand = new RelayCommand<object>(GetFiltersFromFiles_Action, Command_CanExecute);
             GetFiltersFromStringCommand = new RelayCommand<object>(GetFiltersFromString_Action, Command_CanExecute);
-            GetFiltersFromOccurrencesCommand = new RelayCommand<object>(GetFiltersFromOccurrences_Action, Command_CanExecute);            
+            GetFiltersFromOccurrencesCommand = new RelayCommand<object>(GetFiltersFromOccurrences_Action, Command_CanExecute);
             OpenFileCommand = new RelayCommand<object>(OpenFile_Action, Command_CanExecute);
             OpenFileLocationCommand = new RelayCommand<object>(OpenFileLocation_Action, Command_CanExecute);
             OpenSettingsCommand = new RelayCommand<object>(OpenSettings_Action, Command_CanExecute);
             RemoveFileCommand = new RelayCommand<object>(RemoveFile_Action, Command_CanExecute);
             RemoveTagCommand = new RelayCommand<object>(RemoveTag_Action, Command_CanExecute);
-            SearchOccurrencesCommand = new RelayCommand<object>(SearchOccurrences_Action, Command_CanExecute);            
+            SearchOccurrencesCommand = new RelayCommand<object>(SearchOccurrences_Action, Command_CanExecute);
             ThrowCancellationCommand = new RelayCommand<object>(ThrowCancellation_Action);
 
 
@@ -128,7 +128,10 @@ namespace Project_Kittan.ViewModels
 
         public bool Command_CanExecute(object obj)
         {
-            if (_runningTask == null) return true;
+            if (_runningTask == null)
+            {
+                return true;
+            }
 
             return _runningTask.Status != TaskStatus.Running;
         }
@@ -156,7 +159,7 @@ namespace Project_Kittan.ViewModels
 
         private void AddTag_Action(object obj)
         {
-            var parameters = (object[])obj;
+            object[] parameters = (object[])obj;
             string tag = (string)parameters[1];
 
             IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
@@ -220,7 +223,10 @@ namespace Project_Kittan.ViewModels
             return files;
         }
 
-        private void ClearWorkspace_Action(object obj) => WorkspaceFiles.Clear();
+        private void ClearWorkspace_Action(object obj)
+        {
+            WorkspaceFiles.Clear();
+        }
 
         public void DropFile_Action(object obj)
         {
@@ -314,13 +320,19 @@ namespace Project_Kittan.ViewModels
 #endif
         }
 
-        private void OpenSettings_Action(object obj) => new SettingsWindow().ShowDialog();
+        private void OpenSettings_Action(object obj)
+        {
+            new SettingsWindow().ShowDialog();
+        }
 
-        private void RemoveFile_Action(object obj) => WorkspaceFiles.Remove(SelectedWorkspaceFile);
+        private void RemoveFile_Action(object obj)
+        {
+            WorkspaceFiles.Remove(SelectedWorkspaceFile);
+        }
 
         private void RemoveTag_Action(object obj)
         {
-            var parameters = (object[])obj;
+            object[] parameters = (object[])obj;
             string tag = (string)parameters[1];
 
             if (!string.IsNullOrWhiteSpace(tag))
