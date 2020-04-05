@@ -107,15 +107,14 @@
     <Compile Include="Models\Filters.cs" />
     <Compile Include="Models\NAVObject.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ViewModels\VersionListRequest.cs" />
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SplitDialog.xaml.cs">
       <DependentUpon>SplitDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\VersionListRequestDialog.xaml.cs">
-      <DependentUpon>VersionListRequestDialog.xaml</DependentUpon>
+    <Compile Include="Views\RequestDialog.xaml.cs">
+      <DependentUpon>RequestDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\Settings.cs" />
     <Compile Include="ViewModels\Workspace.cs" />
@@ -144,7 +143,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\VersionListRequestDialog.xaml">
+    <Page Include="Views\RequestDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

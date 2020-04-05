@@ -106,7 +106,7 @@ namespace Project_Kittan.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		private void Window_Closing(object sender, CancelEventArgs e)
 		{
             //if ((_token != null) && (_runningTask != null) && (_tokenSource != null))
             //{

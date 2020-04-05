@@ -201,12 +201,17 @@ namespace Project_Kittan.ViewModels
 #endif
         }
 
-        internal void AddFilesFromDrop(string[] files)
+        public void DropFile_Action(object obj)
         {
-            files = files.Where(i => i.EndsWith(".txt")).ToArray();
-            foreach (string file in files)
+            DragEventArgs args = (DragEventArgs)obj;
+            if (args.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                WorkspaceFiles.Add(new WorkspaceFile(file));
+                string[] files = (string[])args.Data.GetData(DataFormats.FileDrop);
+                files = files.Where(i => i.EndsWith(".txt")).ToArray();
+                foreach (string file in files)
+                {
+                    WorkspaceFiles.Add(new WorkspaceFile(file));
+                }
             }
         }
 
@@ -275,26 +280,6 @@ namespace Project_Kittan.ViewModels
         private void ClearWorkspace_Action(object obj)
         {
             WorkspaceFiles.Clear();
-        }
-
-        /// <summary>
-        /// Method invoked when the user drag and drop a file on left pane.
-        /// Add dropped *.txt files to Files collection.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DropFile_Action(object obj)
-        {
-            DragEventArgs args = (DragEventArgs)obj;
-            if (args.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] files = (string[])args.Data.GetData(DataFormats.FileDrop);
-                files = files.Where(i => i.EndsWith(".txt")).ToArray();
-                foreach (string file in files)
-                {
-                    WorkspaceFiles.Add(new WorkspaceFile(file));
-                }
-            }
         }
 
         private Task _runningTask;

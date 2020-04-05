@@ -54,10 +54,10 @@ namespace Project_Kittan.Views
         /// <param name="e"></param>
         private void StackPanel_Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            Workspace workspace = (Workspace)DataContext;
+            if (workspace.Command_CanExecute(null))
             {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                ((Workspace)this.DataContext).AddFilesFromDrop(files);
+                workspace.DropFile_Action(e);
             }
         }
 
