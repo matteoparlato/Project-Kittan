@@ -4,6 +4,26 @@
     <VisualStudioVersion>15.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="APPX|AnyCPU">
+      <Configuration>APPX</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="APPX|ARM">
+      <Configuration>APPX</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="APPX|ARM64">
+      <Configuration>APPX</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="APPX|x64">
+      <Configuration>APPX</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="APPX|x86">
+      <Configuration>APPX</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x86">
       <Configuration>Debug</Configuration>
       <Platform>x86</Platform>
@@ -60,7 +80,7 @@
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <PackageCertificateThumbprint>563F76E19CB0EBA43F42593BF93645D38E83FC3E</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>30281EB1CFAD3FC63D32E5A66583C85E46CD345A</PackageCertificateThumbprint>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -72,7 +92,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='APPX|x86'">
+    <AppxBundle>Never</AppxBundle>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <AppxBundle>Never</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='APPX|ARM64'">
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -81,13 +107,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='APPX|AnyCPU'">
+    <AppxBundle>Never</AppxBundle>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='APPX|x64'">
+    <AppxBundle>Never</AppxBundle>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <AppxBundle>Never</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='APPX|ARM'">
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -99,11 +134,12 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\LargeTile.scale-100.png" />
-    <Content Include="Images\LargeTile.scale-125.png" />
-    <Content Include="Images\LargeTile.scale-150.png" />
-    <Content Include="Images\LargeTile.scale-200.png" />
-    <Content Include="Images\LargeTile.scale-400.png" />
+    <None Include="Package.StoreAssociation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Project Kittan\Project Kittan.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Images\SmallTile.scale-100.png" />
     <Content Include="Images\SmallTile.scale-125.png" />
     <Content Include="Images\SmallTile.scale-150.png" />
@@ -113,7 +149,6 @@
     <Content Include="Images\SplashScreen.scale-125.png" />
     <Content Include="Images\SplashScreen.scale-150.png" />
     <Content Include="Images\SplashScreen.scale-200.png" />
-    <Content Include="Images\LockScreenLogo.scale-200.png" />
     <Content Include="Images\SplashScreen.scale-400.png" />
     <Content Include="Images\Square150x150Logo.scale-100.png" />
     <Content Include="Images\Square150x150Logo.scale-125.png" />
@@ -126,6 +161,7 @@
     <Content Include="Images\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
     <Content Include="Images\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
     <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-24.png" />
     <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-256.png" />
     <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-32.png" />
     <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-48.png" />
@@ -136,7 +172,6 @@
     <Content Include="Images\Square44x44Logo.scale-400.png" />
     <Content Include="Images\Square44x44Logo.targetsize-16.png" />
     <Content Include="Images\Square44x44Logo.targetsize-24.png" />
-    <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Images\Square44x44Logo.targetsize-256.png" />
     <Content Include="Images\Square44x44Logo.targetsize-32.png" />
     <Content Include="Images\Square44x44Logo.targetsize-48.png" />
@@ -145,15 +180,6 @@
     <Content Include="Images\StoreLogo.scale-150.png" />
     <Content Include="Images\StoreLogo.scale-200.png" />
     <Content Include="Images\StoreLogo.scale-400.png" />
-    <Content Include="Images\Wide310x150Logo.scale-100.png" />
-    <Content Include="Images\Wide310x150Logo.scale-125.png" />
-    <Content Include="Images\Wide310x150Logo.scale-150.png" />
-    <Content Include="Images\Wide310x150Logo.scale-200.png" />
-    <Content Include="Images\Wide310x150Logo.scale-400.png" />
-    <None Include="Package.StoreAssociation.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Project Kittan\Project Kittan.csproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>
