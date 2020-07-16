@@ -1,12 +1,12 @@
 
 # Project Kittan
 
-Project Kittan is a little tool which can help all those who have to make changes to lots of Microsoft Dynamics NAV objects and so have to update the modified date and time and version list in each of these objects. Here's where Project Kittan comes to help you:
+Project Kittan is a little tool which can help all those who have to develop on Microsoft Dynamics NAV. Here's where Project Kittan comes to help you:
   - Massively update modified date and time.
-  - Massively update version list.
-  - Checks that the version list is "short enough" in order to avoid import errors according to the selected NAV version.
-  - Avoid inserting a version tag which is already included.
-  - Preserve accented characters (ANSI encoding used).
+  - Massively add and remove version list tags (with lenght check!).
+  - Get a list of objects where a keyword is contained.
+  - Get object filters from file (and clipboard too!).
+  - Correctly handles different file encodings and locales.
 
 
 <p align="center">
@@ -19,9 +19,8 @@ Project Kittan is a little tool which can help all those who have to make change
 For all those who want to extend the functionality or fix bugs (hope not) here are the prerequisites for developing Project Kittan:
 
   - Visual Studio 2017 with .NET desktop development workload.
+  - Visual Studio 2019 with UWP development workload for APPX builds.
   - XAML Styler (optional but recommended for keeping XAML code in a good shape).
-
-When testing the changes press the "GO" button multiple times and check that all the fields in "OBJECT PROPERTIES" are correct. If everything looks good then you're good to commit.
 
 ## Authors
 
@@ -29,7 +28,7 @@ When testing the changes press the "GO" button multiple times and check that all
 
 ## Special thanks
 
-* [**Beatrice Foffani**](https://github.com/drumbirdie) for the idea :D
+* [**Beatrice Foffani**](https://github.com/f0ffee) for the idea :D
 * Luca Baratin and his interest even if he doesn't really know how this tool can help him ;)
 * Marco Guidi Colombi for suggesting useful features ;)
 * Everyone who will use, appreciate and share this tool!
