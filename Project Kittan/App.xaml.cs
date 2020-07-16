@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using Microsoft.AppCenter;
+using Microsoft.AppCenter.Crashes;
+using System.Windows;
 
 namespace Project_Kittan
 {
@@ -33,6 +35,11 @@ namespace Project_Kittan
 #else
             get => Visibility.Collapsed;
 #endif
+        }
+
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            AppCenter.Start("ef0a6c74-973c-4a77-93ab-4fc7d7d2ee95", typeof(Crashes));
         }
     }
 }

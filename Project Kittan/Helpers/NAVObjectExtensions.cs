@@ -533,7 +533,7 @@ namespace Project_Kittan.Helpers
         /// <returns>The filters</returns>
         public static Filters GetFiltersFromNAVObjects(List<NAVObject> navObjects)
         {
-            Filters filters = new Filters
+            return new Filters
             {
                 Table = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Table)).Select(navObject => navObject.ID).ToArray()),
                 Form = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Form)).Select(navObject => navObject.ID).ToArray()),
@@ -545,8 +545,6 @@ namespace Project_Kittan.Helpers
                 Query = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Query)).Select(navObject => navObject.ID).ToArray()),
                 Page = string.Join("|", navObjects.Where(navObject => navObject.Type.Equals(NAVObjectType.Page)).Select(navObject => navObject.ID).ToArray())
             };
-
-            return filters;
         }
 
         /// <summary>

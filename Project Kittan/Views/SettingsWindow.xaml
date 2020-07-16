@@ -40,8 +40,26 @@
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <ContentPresenter x:Name="ItemPresenter" Grid.Column="0" Width="100" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ContentSource="Header" TextBlock.FontSize="16" TextBlock.FontWeight="SemiBold" TextBlock.Foreground="White" TextBlock.TextAlignment="Center" Typography.Capitals="AllSmallCaps" />
-                                    <Polygon x:Name="TrianglePolygon" Grid.Column="1" Margin="0,6,-2,0" VerticalAlignment="Center" Fill="White" Points="16,8 10,4 16,0  " Stroke="White" />
+                                    <ContentPresenter
+                                        x:Name="ItemPresenter"
+                                        Grid.Column="0"
+                                        Width="100"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        ContentSource="Header"
+                                        TextBlock.FontSize="16"
+                                        TextBlock.FontWeight="SemiBold"
+                                        TextBlock.Foreground="White"
+                                        TextBlock.TextAlignment="Center"
+                                        Typography.Capitals="AllSmallCaps" />
+                                    <Polygon
+                                        x:Name="TrianglePolygon"
+                                        Grid.Column="1"
+                                        Margin="0,6,-2,0"
+                                        VerticalAlignment="Center"
+                                        Fill="White"
+                                        Points="16,8 10,4 16,0  "
+                                        Stroke="White" />
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
@@ -66,12 +84,26 @@
                 <Grid>
                     <ScrollViewer Padding="8" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <TextBlock FontSize="20" FontWeight="Light" Text="Encoding settings" TextWrapping="Wrap" />
+                            <TextBlock
+                                FontSize="20"
+                                FontWeight="Light"
+                                Text="Encoding settings"
+                                TextWrapping="Wrap" />
                             <StackPanel Margin="8,8,0,0">
-                                <TextBlock FontSize="16" FontWeight="Light" Text="Custom encoding" TextWrapping="Wrap" />
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="Light"
+                                    Text="Custom encoding"
+                                    TextWrapping="Wrap" />
                                 <TextBlock Text="Specify below the encoding you want to use when reading and writing files with Project Kittan:" TextWrapping="Wrap" />
 
-                                <ComboBox x:Name="EncodingsComboBox" Width="150" Margin="8,16,0,0" HorizontalAlignment="Left" ItemsSource="{Binding Encodings}" SelectedIndex="{Binding CustomEncoding}">
+                                <ComboBox
+                                    x:Name="EncodingsComboBox"
+                                    Width="150"
+                                    Margin="8,16,0,0"
+                                    HorizontalAlignment="Left"
+                                    ItemsSource="{Binding Encodings}"
+                                    SelectedIndex="{Binding CustomEncoding}">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
                                             <i:InvokeCommandAction Command="{Binding EncodingSettingsCommand}" CommandParameter="{Binding ElementName=EncodingsComboBox, Path=SelectedItem}" />
@@ -82,7 +114,12 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <Viewbox HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="-1" RenderTransformOrigin="0.5,0.5" Style="{StaticResource SettingsViewBox}">
+                    <Viewbox
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Panel.ZIndex="-1"
+                        RenderTransformOrigin="0.5,0.5"
+                        Style="{StaticResource SettingsViewBox}">
                         <Viewbox.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="15" />
@@ -96,12 +133,25 @@
                 <Grid>
                     <ScrollViewer Padding="8" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <TextBlock FontSize="20" FontWeight="Light" Text="Locale settings" TextWrapping="Wrap" />
+                            <TextBlock
+                                FontSize="20"
+                                FontWeight="Light"
+                                Text="Locale settings"
+                                TextWrapping="Wrap" />
                             <StackPanel Margin="8,8,0,0">
-                                <TextBlock FontSize="16" FontWeight="Light" Text="Date format" TextWrapping="Wrap" />
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="Light"
+                                    Text="Date format"
+                                    TextWrapping="Wrap" />
                                 <TextBlock Text="Specify below the date format you want to use when updating files with Project Kittan:" TextWrapping="Wrap" />
 
-                                <RadioButton x:Name="SystemLocaleRadioButton" Margin="0,16,0,0" Click="SystemLocaleRadioButton_Click" Content="Use system locale" GroupName="Locale">
+                                <RadioButton
+                                    x:Name="SystemLocaleRadioButton"
+                                    Margin="0,16,0,0"
+                                    Click="SystemLocaleRadioButton_Click"
+                                    Content="Use system locale"
+                                    GroupName="Locale">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Click">
                                             <i:InvokeCommandAction Command="{Binding LocaleSettingsCommand}" CommandParameter="" />
@@ -118,11 +168,27 @@
                                     </TextBlock>
                                 </StackPanel>
 
-                                <RadioButton x:Name="CustomLocaleRadioButton" Margin="0,16,0,0" Click="RadioButton_Click" Command="{Binding LocaleSettingsCommand}" CommandParameter="{Binding ElementName=LocalesComboBox, Path=SelectedItem}" Content="Use a custom locale:" GroupName="Locale" />
+                                <RadioButton
+                                    x:Name="CustomLocaleRadioButton"
+                                    Margin="0,16,0,0"
+                                    Click="RadioButton_Click"
+                                    Command="{Binding LocaleSettingsCommand}"
+                                    CommandParameter="{Binding ElementName=LocalesComboBox, Path=SelectedItem}"
+                                    Content="Use a custom locale:"
+                                    GroupName="Locale" />
 
-                                <StackPanel x:Name="CustomLocaleOptionsStackPanel" Margin="8,5,0,0" IsEnabled="False">
+                                <StackPanel
+                                    x:Name="CustomLocaleOptionsStackPanel"
+                                    Margin="8,5,0,0"
+                                    IsEnabled="False">
                                     <TextBlock Text="Select a custom locale from the list:" TextWrapping="Wrap" />
-                                    <ComboBox x:Name="LocalesComboBox" Width="100" Margin="0,5,0,0" HorizontalAlignment="Left" ItemsSource="{Binding Locales}" SelectedIndex="{Binding CustomLocale}">
+                                    <ComboBox
+                                        x:Name="LocalesComboBox"
+                                        Width="100"
+                                        Margin="0,5,0,0"
+                                        HorizontalAlignment="Left"
+                                        ItemsSource="{Binding Locales}"
+                                        SelectedIndex="{Binding CustomLocale}">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="SelectionChanged">
                                                 <i:InvokeCommandAction Command="{Binding LocaleSettingsCommand}" CommandParameter="{Binding ElementName=LocalesComboBox, Path=SelectedItem}" />
@@ -130,7 +196,10 @@
                                         </i:Interaction.Triggers>
                                     </ComboBox>
 
-                                    <TextBlock Margin="0,5,0,0" TextWrapping="Wrap" Visibility="{Binding CustomLocale, Converter={StaticResource ZeroToVisibleConverter}}">
+                                    <TextBlock
+                                        Margin="0,5,0,0"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding CustomLocale, Converter={StaticResource ZeroToVisibleConverter}}">
                                         <Run Text="Current custom locale is:" />
                                         <Span Background="LightYellow" FontStyle="Italic">
                                             <Run Text="{Binding CustomLocaleCulture.Name, Mode=OneWay}" />
@@ -142,7 +211,12 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <Viewbox HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="-1" RenderTransformOrigin="0.5,0.5" Style="{StaticResource SettingsViewBox}">
+                    <Viewbox
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Panel.ZIndex="-1"
+                        RenderTransformOrigin="0.5,0.5"
+                        Style="{StaticResource SettingsViewBox}">
                         <Viewbox.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="15" />
@@ -163,22 +237,43 @@
                 <Grid>
                     <ScrollViewer Padding="8" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <TextBlock FontSize="20" FontWeight="Light" Text="Project Kittan" TextWrapping="Wrap" />
+                            <TextBlock
+                                FontSize="20"
+                                FontWeight="Light"
+                                Text="Project Kittan"
+                                TextWrapping="Wrap" />
                             <StackPanel Margin="8,8,0,0">
-                                <TextBlock FontSize="16" FontWeight="Light" TextWrapping="Wrap">
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="Light"
+                                    TextWrapping="Wrap">
                                     <Run Text="Version" />
                                     <Run Text="{Binding AppVersion, Mode=OneWay}" />
                                 </TextBlock>
                             </StackPanel>
                             <StackPanel Margin="8,16,0,0">
-                                <TextBlock FontSize="16" FontWeight="Light" Text="Reset settings to default" TextWrapping="Wrap" />
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="Light"
+                                    Text="Reset settings to default"
+                                    TextWrapping="Wrap" />
                                 <TextBlock Text="If you want to reset Project Kittan settings to default click on reset button. Project Kittan will close to complete the reset procedure." TextWrapping="Wrap" />
-                                <Button Width="80" Margin="0,5,0,0" HorizontalAlignment="Left" Command="{Binding ResetSettingsCommand}" Content="Reset" />
+                                <Button
+                                    Width="80"
+                                    Margin="0,5,0,0"
+                                    HorizontalAlignment="Left"
+                                    Command="{Binding ResetSettingsCommand}"
+                                    Content="Reset" />
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
 
-                    <Viewbox HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="-1" RenderTransformOrigin="0.5,0.5" Style="{StaticResource SettingsViewBox}">
+                    <Viewbox
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Panel.ZIndex="-1"
+                        RenderTransformOrigin="0.5,0.5"
+                        Style="{StaticResource SettingsViewBox}">
                         <Viewbox.RenderTransform>
                             <TransformGroup>
                                 <RotateTransform Angle="15" />

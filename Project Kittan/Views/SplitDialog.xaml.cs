@@ -109,7 +109,7 @@ namespace Project_Kittan.Views
                 }
             }
 
-            e.Cancel = !CanClose;
+            e.Cancel = CanClose;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

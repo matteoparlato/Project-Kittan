@@ -11,7 +11,6 @@
     Height="140"
     Closing="Window_Closing"
     Loaded="Window_Loaded"
-    Owner="{x:Static app:App.CurrentMainWindow}"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
@@ -26,7 +25,10 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" Margin="8,8,8,5" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer
+            Grid.Row="0"
+            Margin="8,8,8,5"
+            VerticalScrollBarVisibility="Auto">
             <TextBlock Text="{Binding ProgressText}" TextWrapping="Wrap" />
         </ScrollViewer>
         <Grid Grid.Row="1" Margin="8,0,8,5">
@@ -35,9 +37,27 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Width="80" Click="Button_Click" Content="Open folder" Visibility="{x:Static app:App.IsAPPXVisible}" />
-            <Button Grid.Column="2" Width="80" Margin="5,0,0,0" Click="Button_Click_1" Content="Close" IsEnabled="{Binding Closable}" />
+            <Button
+                Grid.Column="1"
+                Width="80"
+                Click="Button_Click"
+                Content="Open folder"
+                Visibility="{x:Static app:App.IsAPPXVisible}" />
+            <Button
+                Grid.Column="2"
+                Width="80"
+                Margin="5,0,0,0"
+                Click="Button_Click_1"
+                Content="Close"
+                IsEnabled="{Binding Closable}" />
         </Grid>
-        <ProgressBar x:Name="StatusProgressBar" Grid.Row="2" Height="3" Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" IsIndeterminate="{Binding ProgressStatus}" />
+        <ProgressBar
+            x:Name="StatusProgressBar"
+            Grid.Row="2"
+            Height="3"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+            IsIndeterminate="{Binding ProgressStatus}" />
     </Grid>
 </Window>

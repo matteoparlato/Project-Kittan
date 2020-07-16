@@ -22,7 +22,13 @@
                 <Run Text="Available chars:" />
                 <Run Text="{Binding AvailableChars}" />
             </TextBlock>
-            <TextBox Height="100" MaxHeight="100" Margin="0,5,0,0" Text="{Binding VersionList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBox_TextChanged" TextWrapping="Wrap" />
+            <TextBox
+                Height="100"
+                MaxHeight="100"
+                Margin="0,5,0,0"
+                Text="{Binding VersionList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextChanged="TextBox_TextChanged"
+                TextWrapping="Wrap" />
 
             <Grid Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
@@ -31,9 +37,23 @@
                     <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Margin="0,2,0,0" Opacity="0.4" Text="CTRL + Z to undo changes" />
-                <Button Grid.Column="1" Width="60" Click="Button_Click" Content="Skip" />
-                <Button Grid.Column="2" Width="120" Margin="4,0,0,0" Click="Button_Click_1" Content="Save and continue" IsEnabled="{Binding CanSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="0,2,0,0"
+                    Opacity="0.4"
+                    Text="CTRL + Z to undo changes" />
+                <Button
+                    Grid.Column="1"
+                    Width="60"
+                    Click="Button_Click"
+                    Content="Skip" />
+                <Button
+                    Grid.Column="2"
+                    Width="120"
+                    Margin="4,0,0,0"
+                    Click="Button_Click_1"
+                    Content="Save and continue"
+                    IsEnabled="{Binding CanSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </StackPanel>
     </ScrollViewer>
