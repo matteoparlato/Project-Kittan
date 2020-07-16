@@ -244,7 +244,7 @@
                     IsEnabled="{Binding Ready}"
                     IsExpanded="False">
                     <StackPanel Margin="10">
-                        <TextBlock Text="Write the text you want to search in objects to find in which ones there is such text." TextWrapping="Wrap" />
+                        <TextBlock Text="Write the text you want to find in NAV objects." TextWrapping="Wrap" />
                         <Grid Margin="0,8,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -269,7 +269,7 @@
                                 Background="#FFF4F4F4"
                                 BorderBrush="{Binding BorderBrush, ElementName=PatternTextBox}"
                                 BorderThickness="0,1,1,1"
-                                Command="{Binding SearchOccurences}"
+                                Command="{Binding SearchOccurrencesCommand}"
                                 CommandParameter="{Binding ElementName=PatternTextBox, Path=Text}">
                                 <StackPanel>
                                     <Viewbox
