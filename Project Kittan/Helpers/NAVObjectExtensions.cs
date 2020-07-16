@@ -63,7 +63,7 @@ namespace Project_Kittan.Helpers
                         lines = reader.ReadToEnd();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
+                    if (!string.IsNullOrWhiteSpace(lines) && lines.Contains("  OBJECT-PROPERTIES"))
                     {
                         StringBuilder builder = new StringBuilder();
                         foreach (string navObjectLines in Split(lines))
@@ -213,7 +213,7 @@ namespace Project_Kittan.Helpers
                         lines = reader.ReadToEnd();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
+                    if (!string.IsNullOrWhiteSpace(lines) && lines.Contains("  OBJECT-PROPERTIES"))
                     {
                         StringBuilder builder = new StringBuilder();
                         foreach (string navObjectLines in Split(lines))
@@ -301,7 +301,7 @@ namespace Project_Kittan.Helpers
                         lines = reader.ReadToEnd();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
+                    if (!string.IsNullOrWhiteSpace(lines) && lines.Contains("  OBJECT-PROPERTIES"))
                     {
                         foreach (string navObjectLines in Split(lines))
                         {
@@ -352,7 +352,7 @@ namespace Project_Kittan.Helpers
                         lines = reader.ReadToEnd();
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
+                    if (!string.IsNullOrWhiteSpace(lines) && lines.Contains("  OBJECT-PROPERTIES"))
                     {
                         foreach (string navObjectLines in Split(lines))
                         {
@@ -432,7 +432,7 @@ namespace Project_Kittan.Helpers
 
             progress.Report(new KeyValuePair<bool, string>(true, "Splitting file..."));
 
-            if (!string.IsNullOrWhiteSpace(lines) && lines.IndexOf("  OBJECT-PROPERTIES", StringComparison.Ordinal) != -1)
+            if (!string.IsNullOrWhiteSpace(lines) && lines.Contains("  OBJECT-PROPERTIES"))
             {
                 Parallel.ForEach(Split(lines), navObjectLines =>
                 {

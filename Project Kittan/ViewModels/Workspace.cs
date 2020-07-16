@@ -183,7 +183,7 @@ namespace Project_Kittan.ViewModels
         private void OpenFolder(string path)
         {
             WorkspaceFiles.Clear();
-            foreach (string filePath in GetFilesFromDirectory(path))
+            foreach (string filePath in FileExtensions.GetFilesFromDirectory(path))
             {
                 WorkspaceFiles.Add(new WorkspaceFile(filePath));
             }
@@ -199,28 +199,6 @@ namespace Project_Kittan.ViewModels
             }
 
             Path = path;
-        }
-
-        private List<string> GetFilesFromDirectory(string path)
-        {
-            List<string> files = new List<string>();
-            try
-            {
-                foreach (string f in Directory.GetFiles(path).Where(i => i.EndsWith(".txt")))
-                {
-                    files.Add(f);
-                }
-                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.EndsWith(".hg") || !i.EndsWith(".git")))
-                {
-                    files.AddRange(GetFilesFromDirectory(d));
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            return files;
         }
 
         private void ClearWorkspace_Action(object obj)
