@@ -210,7 +210,7 @@ namespace Project_Kittan.ViewModels
                 {
                     files.Add(f);
                 }
-                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.EndsWith(".hg") && !i.EndsWith(".git")))
+                foreach (string d in Directory.GetDirectories(Path).Where(i => !i.EndsWith(".hg") || !i.EndsWith(".git")))
                 {
                     files.AddRange(GetFilesFromDirectory(d));
                 }
