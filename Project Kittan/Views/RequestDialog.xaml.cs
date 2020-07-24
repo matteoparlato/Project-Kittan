@@ -35,11 +35,12 @@ namespace Project_Kittan.Views
 
         private bool CanClose;
 
-        public RequestDialog(string versionList, int maxLength)
+        public RequestDialog(string versionList, int maxLength, string objectName)
         {
             InitializeComponent();
             DataContext = this;
 
+            Title = objectName;
             VersionList = versionList;
             MaxLength = maxLength;
             AvailableChars = maxLength - versionList.Length;

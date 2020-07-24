@@ -44,9 +44,9 @@
                     Text="CTRL + Z to undo changes" />
                 <Button
                     Grid.Column="1"
-                    Width="60"
+                    Width="120"
                     Click="Button_Click"
-                    Content="Skip" />
+                    Content="Skip check" />
                 <Button
                     Grid.Column="2"
                     Width="120"

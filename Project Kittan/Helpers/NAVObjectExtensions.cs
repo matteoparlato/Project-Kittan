@@ -71,8 +71,17 @@ namespace Project_Kittan.Helpers
                             using (StringReader reader = new StringReader(navObjectLines))
                             {
                                 string line;
+                                string firstLine = "";
+                                bool firstLineRead = false;
+
                                 while ((line = reader.ReadLine()) != null)
                                 {
+                                    if (!firstLineRead)
+                                    {
+                                        firstLine = line;
+                                        firstLineRead = true;
+                                    }
+
                                     if (line.StartsWith("  OBJECT-PROPERTIES"))
                                     {
                                         builder.AppendLine(line);
@@ -127,7 +136,7 @@ namespace Project_Kittan.Helpers
                                                             {
                                                                 Application.Current.Dispatcher.Invoke(delegate
                                                                 {
-                                                                    RequestDialog requestDialog = new RequestDialog(versionBuilder.ToString(), 80);
+                                                                    RequestDialog requestDialog = new RequestDialog(versionBuilder.ToString(), 80, firstLine);
                                                                     if (requestDialog.ShowDialog() == true)
                                                                     {
                                                                         versionBuilder = new StringBuilder(requestDialog.VersionList);
@@ -142,7 +151,7 @@ namespace Project_Kittan.Helpers
                                                             {
                                                                 Application.Current.Dispatcher.Invoke(delegate
                                                                 {
-                                                                    RequestDialog requestDialog = new RequestDialog(versionBuilder.ToString(), 250);
+                                                                    RequestDialog requestDialog = new RequestDialog(versionBuilder.ToString(), 250, firstLine);
                                                                     if (requestDialog.ShowDialog() == true)
                                                                     {
                                                                         versionBuilder = new StringBuilder(requestDialog.VersionList);
