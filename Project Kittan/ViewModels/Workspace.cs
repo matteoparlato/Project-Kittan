@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -210,11 +211,21 @@ namespace Project_Kittan.ViewModels
             DragEventArgs args = (DragEventArgs)obj;
             if (args.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] files = (string[])args.Data.GetData(DataFormats.FileDrop);
-                files = files.Where(i => i.EndsWith(".txt")).ToArray();
-                foreach (string file in files)
+                string[] paths = (string[])args.Data.GetData(DataFormats.FileDrop);
+                foreach (string path in paths)
                 {
-                    WorkspaceFiles.Add(new WorkspaceFile(file));
+                    FileAttributes fileAttributes = System.IO.File.GetAttributes(path);
+                    if (fileAttributes.HasFlag(FileAttributes.Directory))
+                    {
+                        foreach (string file in FileExtensions.GetFilesFromDirectory(path))
+                        {
+                            WorkspaceFiles.Add(new WorkspaceFile(file));
+                        }
+                    }
+                    else
+                    {
+                        WorkspaceFiles.Add(new WorkspaceFile(path));
+                    }
                 }
             }
         }
