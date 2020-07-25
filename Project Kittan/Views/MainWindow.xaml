@@ -130,8 +130,8 @@
                             x:Name="NAVVersionComboBox"
                             Margin="0,4,0,0"
                             SelectedIndex="1">
-                            <ComboBoxItem Content="NAV 2009 R2 and below (max. 80 chars for version list field)" />
-                            <ComboBoxItem Content="NAV 2013 and above (max. 250 chars for version list field)" />
+                            <ComboBoxItem Content="NAV 2013 and below (max. 80 chars for version list field)" />
+                            <ComboBoxItem Content="NAV 2013 R2 and above (max. 250 chars for version list field)" />
                         </ComboBox>
 
                         <TextBlock Margin="0,8,0,0" TextWrapping="Wrap">

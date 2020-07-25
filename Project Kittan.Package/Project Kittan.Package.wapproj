@@ -80,8 +80,9 @@
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <PackageCertificateThumbprint>30281EB1CFAD3FC63D32E5A66583C85E46CD345A</PackageCertificateThumbprint>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+    <PackageCertificateKeyFile>Project Kittan_StoreKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <AppxBundle>Never</AppxBundle>
@@ -134,9 +135,6 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Package.StoreAssociation.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Project Kittan\Project Kittan.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +178,8 @@
     <Content Include="Images\StoreLogo.scale-150.png" />
     <Content Include="Images\StoreLogo.scale-200.png" />
     <Content Include="Images\StoreLogo.scale-400.png" />
+    <None Include="Project Kittan_StoreKey.pfx" />
+    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>
