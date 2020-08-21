@@ -33,8 +33,6 @@ namespace Project_Kittan.Views
             set => Set(ref _canSave, value);
         }
 
-        private bool CanClose;
-
         public RequestDialog(string versionList, int maxLength, string objectName)
         {
             InitializeComponent();
