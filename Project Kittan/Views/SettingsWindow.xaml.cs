@@ -37,5 +37,10 @@ namespace Project_Kittan.Views
             SystemLocaleRadioButton.IsChecked = SystemLocaleOptionsStackPanel.IsEnabled = false;
             CustomLocaleRadioButton.IsChecked = CustomLocaleOptionsStackPanel.IsEnabled = true;
         }
+
+        private void CloseCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

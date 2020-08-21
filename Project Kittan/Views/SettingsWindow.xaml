@@ -27,6 +27,14 @@
         <converters:StringToVisibilityConverter x:Key="EmptyToVisibleConverter" />
     </Window.Resources>
 
+    <Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="CloseCommandBinding_Executed" />
+    </Window.CommandBindings>
+    
+    <Window.InputBindings>
+        <KeyBinding Command="Close" Key="Esc" />
+    </Window.InputBindings>
+
     <Grid>
         <TabControl BorderThickness="0" TabStripPlacement="Left">
             <TabControl.Resources>
