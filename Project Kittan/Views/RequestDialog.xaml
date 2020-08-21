@@ -10,7 +10,6 @@
     Title="{x:Static app:App.AppName}"
     Width="430"
     Height="202"
-    Closing="Window_Closing"
     Owner="{x:Static app:App.CurrentMainWindow}"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
@@ -44,14 +43,15 @@
                     Text="CTRL + Z to undo changes" />
                 <Button
                     Grid.Column="1"
+                    IsCancel="True"
                     Width="120"
-                    Click="Button_Click"
                     Content="Skip check" />
                 <Button
                     Grid.Column="2"
                     Width="120"
+                    IsDefault="True"
                     Margin="4,0,0,0"
-                    Click="Button_Click_1"
+                    Click="Button_Click"
                     Content="Save and continue"
                     IsEnabled="{Binding CanSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
