@@ -31,7 +31,7 @@ For all those who want to extend the functionality or fix bugs (hope not) here a
 * [**Beatrice Foffani**](https://github.com/f0ffee) for the idea :D
 * Luca Baratin and his interest even if he doesn't really know how this tool can help him ;)
 * Marco Guidi Colombi for suggesting useful features ;)
-* Federico Perucca (which loves electronic invoicing merges)
+* Federico Perucca (who loves electronic invoicing merges)
 * Everyone who will use, appreciate and share this tool!
 
 ## License
