@@ -14,8 +14,8 @@ Project Kittan is a little tool which can help all those who have to develop on 
   
   </br>
   </br>
-  <a href='//www.microsoft.com/store/apps/9PFPZQC4MVVR?cid=storebadge&ocid=badge'>
-    <img src='images/English_get_L.png' alt='English badge' style='width: 127px; height: 52px;'/>
+  <a href="//www.microsoft.com/store/apps/9PFPZQC4MVVR?cid=storebadge&ocid=badge">
+    <img src="https://developer.microsoft.com/en-us/store/badges/images/English_get_L.png" width="127" height="52"/>
   </a>
   </br>
 </p>
