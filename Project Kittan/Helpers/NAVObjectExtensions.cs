@@ -124,9 +124,12 @@ namespace Project_Kittan.Helpers
                                             if (Array.FindIndex(tags, item => item.Equals(tag, comparison)) == -1)
                                             {
                                                 StringBuilder versionBuilder = new StringBuilder(versionList);
-                                                versionBuilder.Append(",");
-                                                versionBuilder.Append(tag);
-                                                versionBuilder.Replace(",,", ",");
+                                                if (!string.IsNullOrWhiteSpace(tag))
+                                                {
+                                                    versionBuilder.Append(",");
+                                                    versionBuilder.Append(tag);
+                                                    versionBuilder.Replace(",,", ",");
+                                                }
 
                                                 switch (version)
                                                 {

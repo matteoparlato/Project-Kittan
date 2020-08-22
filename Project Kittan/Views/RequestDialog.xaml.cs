@@ -33,8 +33,6 @@ namespace Project_Kittan.Views
             set => Set(ref _canSave, value);
         }
 
-        private bool CanClose;
-
         public RequestDialog(string versionList, int maxLength, string objectName)
         {
             InitializeComponent();
@@ -54,21 +52,8 @@ namespace Project_Kittan.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
-            CanClose = true;
-            Close();
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
             DialogResult = true;
-            CanClose = true;
             Close();
-        }
-
-        private void Window_Closing(object sender, CancelEventArgs e)
-        {
-            e.Cancel = !CanClose;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
