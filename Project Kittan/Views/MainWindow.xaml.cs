@@ -85,18 +85,13 @@ namespace Project_Kittan.Views
                 try
                 {
                     Clipboard.SetText(textBox.Text);
-                }
-                catch (COMException ex)
-                {
-                    System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show("An error occurred during the copy operation." + Environment.NewLine + Environment.NewLine + ex.Message, Properties.Resources.AppName, System.Windows.Forms.MessageBoxButtons.RetryCancel, System.Windows.Forms.MessageBoxIcon.Error);
-                    if (result == System.Windows.Forms.DialogResult.Retry)
-                    {
-                        textBox.SelectAll();
-                        Clipboard.SetText(textBox.Text);
-                    }
-                }
 
-                ((Workspace)DataContext).ProgressText = string.Format("{0} filter copied to clipboard", textBox.Tag);
+                    ((Workspace)DataContext).ProgressText = string.Format("{0} filter copied to clipboard", textBox.Tag);
+                }
+                catch (Exception)
+                {
+                    ((Workspace)DataContext).ProgressText = string.Format("An error occurred during the copy operation");
+                }
             }
         }
     }
