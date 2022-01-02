@@ -500,9 +500,9 @@ namespace Project_Kittan.Helpers
 
             using (StringReader reader = new StringReader(lines))
             {
-                if (reader.ReadLine().StartsWith("Type"))
+                string line = reader.ReadLine() ?? "";
+                if (line.StartsWith("Type"))
                 {
-                    string line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         string[] objectDetails = line.Split('\t');

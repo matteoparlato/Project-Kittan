@@ -1,7 +1,8 @@
-﻿using HtmlAgilityPack;
+﻿using Newtonsoft.Json;
+using Project_Kittan.Models;
 using System;
-using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -13,29 +14,25 @@ namespace Project_Kittan.Helpers
     internal static class UpdateExtensions
     {
         /// <summary>
-        /// Method which connects to Project Kittan releases page (GitHub) and then
-        /// reads the HTML code of the web page to get the latest version published.
+        /// Method which calls GitHun REST API to obtain lastest release version.
         /// </summary>
-        /// <returns>The availability of new updates</returns>
+        /// <returns>The availability of a new release</returns>
         public static async Task<bool> Check()
         {
             try
             {
-                using (HttpResponseMessage response = await new HttpClient().GetAsync(new Uri("https://github.com/matteoparlato/Project-Kittan/releases")))
+                using (HttpClient client = new HttpClient())
                 {
-                    response.EnsureSuccessStatusCode();
+                    client.BaseAddress = new Uri("https://api.github.com/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Project-Kittan", Assembly.GetExecutingAssembly().GetName().Version.ToString()));
 
-                    HtmlDocument document = new HtmlDocument() { OptionFixNestedTags = true };
-                    document.LoadHtml(await response.Content.ReadAsStringAsync());
-
-                    HtmlNode[] subnode = document.DocumentNode.Descendants("a").Where(tag => tag.GetAttributeValue("class", "").Equals("muted-link css-truncate") && tag.GetAttributeValue("href", "").Contains("/matteoparlato/Project-Kittan/tree/")).ToArray();
-                    if (subnode.Length > 0)
+                    HttpResponseMessage response = await client.GetAsync("repos/matteoparlato/Project-Kittan/releases/latest");
+                    if (response.IsSuccessStatusCode)
                     {
-                        string latestVersion = subnode[0].GetAttributeValue("title", "");
-                        if (latestVersion != Assembly.GetExecutingAssembly().GetName().Version.ToString())
-                        {
-                            return true;
-                        }
+                        Release release = JsonConvert.DeserializeObject<Release>(await response.Content.ReadAsStringAsync());
+                        return !(release.tag_name == Assembly.GetExecutingAssembly().GetName().Version.ToString());
                     }
                 }
             }

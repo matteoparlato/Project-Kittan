@@ -1,4 +1,5 @@
 ﻿using Project_Kittan.Helpers;
+using System.IO;
 
 namespace Project_Kittan.Models
 {
@@ -19,6 +20,11 @@ namespace Project_Kittan.Models
         {
             get => _path;
             set => Set(ref _path, value);
+        }
+
+        public bool IsReadOnly
+        {
+            get => new FileInfo(Path).IsReadOnly;
         }
 
         /// <summary>

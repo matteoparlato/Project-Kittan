@@ -162,6 +162,15 @@ namespace Project_Kittan.ViewModels
             object[] parameters = (object[])obj;
             string tag = (string)parameters[1];
 
+            if (FileExtensions.WorkspaceHasReadOnlyFiles(WorkspaceFiles))
+            {
+                MessageBox.Show("The workspace contains read-only files. Edit files properties and retry.",
+                                Properties.Resources.AppName,
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+                return;
+            }
+
             IProgress<KeyValuePair<double, string>> progress = new Progress<KeyValuePair<double, string>>(status =>
             {
                 ProgressValue = status.Key;
@@ -322,6 +331,15 @@ namespace Project_Kittan.ViewModels
         {
             object[] parameters = (object[])obj;
             string tag = (string)parameters[1];
+
+            if (FileExtensions.WorkspaceHasReadOnlyFiles(WorkspaceFiles))
+            {
+                MessageBox.Show("The workspace contains read-only files. Edit files properties and retry.",
+                                Properties.Resources.AppName,
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+                return;
+            }
 
             if (!string.IsNullOrWhiteSpace(tag))
             {
